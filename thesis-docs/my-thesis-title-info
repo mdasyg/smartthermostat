@@ -31,11 +31,11 @@
 
 -> Αν μια συσκευή είναι offline (δεν έχει κάνει check) το site για πάνω από ένα προκαθορισμένο χρονικό διάστημα, θα στέλνεται email και θα υπάρχει ενημέρωση στο site.
 
--> Να υπάρχει επιλογή για IGNORE των ειδοποιήσεων για μια συσκευή.
+-> Να υπάρχει επιλογή για IGNORE των ειδοποιήσεων για μια συσκευή. <<<<<<<<<<<<<
 
--> Calendar view (day/week/month) per device, per group, total.
+-> Calendar view (day/week/month) per device, per group, total. <<<<<<<<<<<<<<<<
 
--> Summary of on/off time per device/group/total, time period.
+-> Summary of on/off time per device/group/total, time period. <<<<<<<<<<<<<<<<<
 
 -> Remote Admin per device/group.
 
