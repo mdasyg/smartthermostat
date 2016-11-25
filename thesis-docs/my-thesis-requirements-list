@@ -52,6 +52,7 @@ THE SERVER
 		* integer/float [ set a value e.g: 15.4 ] και AUTO
 		* set of levels?? και AUTO [ see the Q's about AC ] subsection of integers, with min and max values
 	- και ενα μεταβλητο πληθος ρυθμισεων
+		* MQTT ON or OFF
 		* Ποσα quick button διαθετει η συσκευη?
 		* για παραδειγμα τροπος για την λήψη της ωρας
 		* για παραδειγμα IP του ntp server. <<<<
