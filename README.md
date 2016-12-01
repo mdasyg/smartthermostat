@@ -1,24 +1,18 @@
-# README
+# Design Links
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Database
 
-Things you may want to cover:
+[my-thesis-db-schema-design](https://dbdesigner.net/designer/schema/54771)
 
-* Ruby version
+## Wireframe
 
-* System dependencies
+[my-thesis-wireframe](https://app.mockflow.com/index.jsp?editor=on&publicid=Da8f54e4c4cd2adeb757a8f5723ca6d64&projectid=D09b31f58b04a901571e0d79f7f8e17c0&perm=Owner&template=)
 
-* Configuration
+# Settings on Rails config files
 
-* Database creation
+## Database specifiec
 
-* Database initialization
+set the following configurations on the general application file(config/application.rb) or in the environment specifiec files(config/environments/...)
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
++ config.active_record.table_name_prefix
++ config.active_record.table_name_suffix
