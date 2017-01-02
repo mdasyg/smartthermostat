@@ -40,6 +40,9 @@ config.action_mailer.smtp_settings = {
 change accordingly the from adress where needed.
 eg: app/mailers/application_mailer.rb
 
+Test emails with:
+ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com", subject: "Test", body: "Test").deliver
+
 # Initial app configurations
 
 + rails configs keys,e.t.c
