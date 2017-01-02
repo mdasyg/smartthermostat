@@ -2,4 +2,8 @@ my-thesis-thoughts-questions-notes
 to-do.list
 *~
 *autosave
-/.idea
+.idea
+/tmp/*
+/log/*.log*
+/db/*.sqlite3
+/db/*.sqlite3-journal
