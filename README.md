@@ -16,3 +16,32 @@ set the following configurations on the general application file(config/applicat
 
 + config.active_record.table_name_prefix
 + config.active_record.table_name_suffix
+
+## whitelisting for web-console
+
+config.web_console.whitelisted_ips = '10.168.10.40'
+
+## Config mailer
+
+set the following to config/environments/<enviroment>.rd 
+and set the appropriate secrets on config/secrets.yml
+
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+    address:              'smtp.gmail.com',
+    port:                 587,
+    domain:               'tasloum.eu',
+    user_name:            Rails.application.secrets.mail_username,
+    password:             Rails.application.secrets.mail_pass,
+    authentication:       'plain',
+    enable_starttls_auto: true
+}
+
+change accordingly the from adress where needed.
+eg: app/mailers/application_mailer.rb
+
+# Initial app configurations
+
++ rails configs keys,e.t.c
++ devise
++ secrets.yml
