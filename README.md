@@ -48,3 +48,8 @@ ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com
 + rails configs keys,e.t.c
 + devise
 + secrets.yml
+
+
+# Possible modifications
+
++ On "app/assets/javascripts/application.js" consider using "//= require bootstrap" instead of "//= require bootstrap-sprockets" when in production
