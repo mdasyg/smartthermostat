@@ -1,12 +1,23 @@
+# project private files
+/config/secrets.yml
+
+# custom project ignore
 my-thesis-thoughts-questions-notes
 to-do.list
+
+# rails sqlite db
+/db/*.sqlite3
+/db/*.sqlite3-journal
+
+# IDE environmets
+/.idea
+/nbproject
+
+#tmp files
 *~
 *autosave
-.idea
 /tmp/*
 /log/*.log*
 *.log
 *.swp
-/db/*.sqlite3
-/db/*.sqlite3-journal
-/config/secrets.yml
+.byebug_history
