@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 
+  name: MyString
+  location: MyString
+  description: MyText
+  access_token: 
+  last_contact_at: 2017-01-15 12:27:59
+
+two:
+  id: 
+  name: MyString
+  location: MyString
+  description: MyText
+  access_token: 
+  last_contact_at: 2017-01-15 12:27:59

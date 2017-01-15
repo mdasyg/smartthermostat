@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Id:</strong>
+  <%= @device.id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @device.name %>
+</p>
+
+<p>
+  <strong>Location:</strong>
+  <%= @device.location %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @device.description %>
+</p>
+
+<p>
+  <strong>Access token:</strong>
+  <%= @device.access_token %>
+</p>
+
+<p>
+  <strong>Last contact at:</strong>
+  <%= @device.last_contact_at %>
+</p>
+
+<%= link_to 'Edit', edit_device_path(@device) %> |
+<%= link_to 'Back', devices_path %>
