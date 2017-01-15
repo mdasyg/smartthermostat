@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :devices
+  resources :devices, param: :uid
   root to: 'static_pages#home'
 
   devise_for :users

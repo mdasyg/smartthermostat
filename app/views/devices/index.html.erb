@@ -1,37 +1,30 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Devices</h1>
+<h1>User Devices List</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>Name</th>
-      <th>Location</th>
-      <th>Description</th>
-      <th>Access token</th>
-      <th>Last contact at</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @devices.each do |device| %>
-      <tr>
-        <td><%= device.id %></td>
-        <td><%= device.name %></td>
-        <td><%= device.location %></td>
-        <td><%= device.description %></td>
-        <td><%= device.access_token %></td>
-        <td><%= device.last_contact_at %></td>
-        <td><%= link_to 'Show', device %></td>
-        <td><%= link_to 'Edit', edit_device_path(device) %></td>
-        <td><%= link_to 'Destroy', device, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="row">
+  <div class="col-xs-10">Name</div>
+	<div class="col-xs-2">Actions</div>
+</div>
 
-<br>
+<% @devices.each do |device| %>
+	<div class="row">
+		<div class="col-xs-10"><%= device.name %></div>
+		<div class="col-xs-2">
+			<%= link_to(device) do %>
+				<span class="glyphicon glyphicon-zoom-in"></span>
+			<% end %> |
+			<%= link_to edit_device_path(device) do%>
+				<span class="glyphicon glyphicon-pencil"></span> 
+      <% end %>  |
+			<%= link_to device, method: :delete, data: { confirm: 'Are you sure?' } do %>
+				<span class="glyphicon glyphicon-remove"></span> 
+      <% end %>
+		</div>
+	</div>
+<% end %>
+
+<hr>
 
 <%= link_to 'New Device', new_device_path %>

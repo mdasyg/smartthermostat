@@ -64,11 +64,11 @@ class DevicesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_device
-      @device = Device.find(params[:id])
+      @device = Device.find(params[:uid])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def device_params
-      params.require(:device).permit(:id, :name, :location, :description, :access_token, :last_contact_at)
+      params.require(:device).permit(:name, :location, :description)
     end
 end
