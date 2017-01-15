@@ -13,7 +13,6 @@
 ActiveRecord::Schema.define(version: 20170115141410) do
 
   create_table "device_properties", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "user_id",                                  null: false, unsigned: true
     t.bigint  "device_id",                                null: false, unsigned: true
     t.string  "name",                                     null: false
     t.boolean "auto",                     default: false, null: false
@@ -24,11 +23,11 @@ ActiveRecord::Schema.define(version: 20170115141410) do
     t.string  "property_value"
     t.index ["device_id"], name: "fk_rails_f31d09a8fc", using: :btree
     t.index ["property_type"], name: "fk_rails_f53c99c074", using: :btree
-    t.index ["user_id"], name: "fk_rails_05599f9c75", using: :btree
     t.index ["value_type"], name: "fk_rails_eb74a57de9", using: :btree
   end
 
   create_table "devices", primary_key: "uid", id: :bigint, default: nil, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "user_id",                       null: false, unsigned: true
     t.string   "name",                          null: false
     t.string   "location",                      null: false
     t.text     "description",     limit: 65535
@@ -37,6 +36,7 @@ ActiveRecord::Schema.define(version: 20170115141410) do
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
     t.index ["access_token"], name: "index_devices_on_access_token", unique: true, using: :btree
+    t.index ["user_id"], name: "fk_rails_410b63ef65", using: :btree
   end
 
   create_table "property_types", id: :integer, limit: 1, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -75,6 +75,6 @@ ActiveRecord::Schema.define(version: 20170115141410) do
 
   add_foreign_key "device_properties", "devices", primary_key: "uid"
   add_foreign_key "device_properties", "property_types", column: "property_type"
-  add_foreign_key "device_properties", "users"
   add_foreign_key "device_properties", "value_types", column: "value_type"
+  add_foreign_key "devices", "users"
 end

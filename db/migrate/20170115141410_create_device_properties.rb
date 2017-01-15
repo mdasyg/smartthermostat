@@ -12,7 +12,6 @@ class CreateDeviceProperties < ActiveRecord::Migration[5.0]
 		
 		create_table :device_properties, id: false do |t|
 			t.integer :id, null: false, primary_key: true, unsigned: true
-      t.integer :user_id, null: false, unsigned: true
       t.bigint  :device_id, unsigned: true, null: false
 			t.string  :name, null: false
 			t.boolean :auto, null: false, default: 0
@@ -27,7 +26,6 @@ class CreateDeviceProperties < ActiveRecord::Migration[5.0]
 		add_foreign_key :device_properties, :devices, column: 'device_id', primary_key: 'uid'
 		add_foreign_key :device_properties, :property_types, column: 'property_type'
 		add_foreign_key :device_properties, :value_types, column: 'value_type'
-    add_foreign_key :device_properties, :users
 
 
   end
