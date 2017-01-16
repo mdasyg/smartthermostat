@@ -1,18 +1,18 @@
 class CreateDeviceProperties < ActiveRecord::Migration[5.0]
   def change
-		create_table :value_types, id:false do |t|
-			t.integer :id, null: false, primary_key: true, unsigned: true, limit: 1
+		create_table :value_types, id: false do |t|
+			t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true, limit: 1
 			t.string :type
 		end
 
-		create_table :property_types, id:false do |t|
-      t.integer :id, null: false, primary_key: true, unsigned: true, limit: 1
+		create_table :property_types, id: false do |t|
+      t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true, limit: 1
       t.string :type
     end
 		
 		create_table :device_properties, id: false do |t|
-			t.integer :id, null: false, primary_key: true, unsigned: true
-      t.bigint  :device_id, unsigned: true, null: false
+			t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
+      t.bigint  :device_id, null: false, unsigned: true
 			t.string  :name, null: false
 			t.boolean :auto, null: false, default: 0
 			t.integer :property_type, null: false, unsigned: true, limit: 1

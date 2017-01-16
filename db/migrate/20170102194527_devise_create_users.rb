@@ -1,7 +1,7 @@
 class DeviseCreateUsers < ActiveRecord::Migration[5.0]
   def change
     create_table :users, id: false do |t| # i custom made the id
-			t.integer :id, null: false, primary_key: true, unsigned: true
+			t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
 
       ## Database authenticatable
       t.string :email,              null: false, default: ""

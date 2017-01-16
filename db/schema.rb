@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 20170115141410) do
 
-  create_table "device_properties", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "device_properties", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint  "device_id",                                null: false, unsigned: true
     t.string  "name",                                     null: false
     t.boolean "auto",                     default: false, null: false
@@ -39,11 +39,11 @@ ActiveRecord::Schema.define(version: 20170115141410) do
     t.index ["user_id"], name: "fk_rails_410b63ef65", using: :btree
   end
 
-  create_table "property_types", id: :integer, limit: 1, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "property_types", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "type"
   end
 
-  create_table "users", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "users", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 20170115141410) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
   end
 
-  create_table "value_types", id: :integer, limit: 1, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "value_types", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "type"
   end
 
