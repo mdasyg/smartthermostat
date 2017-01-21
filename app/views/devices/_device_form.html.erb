@@ -1,5 +1,6 @@
 <%= form_for(device) do |f| %>
-  <% if device.errors.any? %>
+
+    <% if device.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(device.errors.count, "error") %> prohibited this device from being saved:</h2>
 
@@ -16,6 +17,11 @@
     <%= f.text_field :name, class: "form-control" %>
   </div>
 
+    <div class="field form-group">
+      <%= f.label :name %>
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
+
   <div class="field form-group">
     <%= f.label :location %>
     <%= f.text_field :location, class: "form-control" %>
@@ -25,6 +31,10 @@
     <%= f.label :description %>
     <%= f.text_area :description, class: "form-control" %>
   </div>
+
+
+
+
 
   <div class="actions">
     <%= f.submit %>

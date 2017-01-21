@@ -1,37 +1,41 @@
-<p>
+<h1>User Device Overview</h1>
+
+<div>
   <strong>Serial No:</strong>
   <%= @device.uid %>
-</p>
+</div>
 
-<p>
+<div>
   <strong>User Name:</strong>
   <%= @device.user.email %>
-</p>
+</div>
 
-<p>
+<div>
   <strong>Device Name:</strong>
   <%= @device.name %>
-</p>
+</div>
 
-<p>
+<div>
   <strong>Location:</strong>
   <%= @device.location %>
-</p>
+</div>
 
-<p>
+<div>
   <strong>Description:</strong>
   <%= @device.description %>
-</p>
+</div>
 
-<p>
+<div>
   <strong>Access token:</strong>
   <%= @device.access_token %>
-</p>
+</div>
 
-<p>
+<div>
   <strong>Last contact at:</strong>
   <%= @device.last_contact_at %>
-</p>
+</div>
+
+<hr/>
 
 <%= link_to 'Edit', edit_device_path(@device) %> |
 <%= link_to 'Back', devices_path %>

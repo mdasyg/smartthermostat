@@ -19,6 +19,7 @@ class DevicesController < ApplicationController
   # GET /devices/new
   def new
     @device = Device.new
+    @device_property = Device.all
   end
 
   # GET /devices/1/edit

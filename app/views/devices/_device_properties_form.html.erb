@@ -1,0 +1,107 @@
+<%= form_for(device_property, url: devices_path) do |f| %>
+
+    <% device_property.each do |device| %>
+
+        <div class="row">
+          <div class="col-xs-1">
+            <div class="field form-group">
+              <%= f.label :name, 'Value' %>
+              <%= f.number_field :name, class: 'form-control' %>
+            </div>
+          </div>
+        </div>
+
+    <% end %>
+
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+
+
+
+<%= form_for(device_property, url: devices_path) do |f| %>
+
+    <% if device_property.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(device_property.errors.count, "error") %> prohibited this device from being saved:</h2>
+
+          <ul>
+            <% device_property.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+
+
+    <%= device_property.inspect %>
+
+    <div class="row">
+
+      <div class="col-xs-2">
+        <div class="field form-group">
+          <%= f.label :name %>
+          <%= f.text_field :name, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="field form-group">
+          <%= f.label :auto %>
+          <%= f.check_box :auto, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="field form-group">
+          <%= f.label :property_type_id, 'Prop Type' %>
+          <%= f.select(:property_type_id, {}, {},  { class: 'form-control' } ) do %>
+              <% [['Lisbon', 1], ['Madrid', 2]].each do |c| -%>
+                  <%= content_tag(:option, c.first, value: c.last) %>
+              <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="field form-group">
+          <%= f.label :value_type_id %>
+          <%= f.select(:value_type_id, {}, {},  { class: 'form-control' } ) do %>
+              <% [['Lisbon', 1], ['Madrid', 2]].each do |c| -%>
+                  <%= content_tag(:option, c.first, value: c.last) %>
+              <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="field form-group">
+          <%= f.label :value_min %>
+          <%= f.number_field :value_min, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="field form-group">
+          <%= f.label :value_max %>
+          <%= f.number_field :value_max, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="field form-group">
+          <%= f.label :property_value, 'Value' %>
+          <%= f.number_field :property_value, class: 'form-control' %>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+
