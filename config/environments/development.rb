@@ -46,24 +46,23 @@ Rails.application.configure do
   config.assets.quiet = true
 
   # Raises error for missing translations
-  # config.action_view.raise_on_missing_translations = true
+  config.action_view.raise_on_missing_translations = true
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-
 
 	##### MY CUSTOM setup connection with gmail
 	config.action_mailer.delivery_method = :smtp
 	config.action_mailer.smtp_settings = {
   	address:              'smtp.gmail.com',
 	  port:                 587,
-	  domain:               'tasloum.eu',
-	  user_name:            Rails.application.secrets.mail_username,
-	  password:             Rails.application.secrets.mail_pass,
+	  domain:               Rails.application.secrets[:mail][:domain],
+	  user_name:            Rails.application.secrets[:mail][:username],
+	  password:             Rails.application.secrets[:mail][:pass],
 	  authentication:       'plain',
 	  enable_starttls_auto: true
-	}
+  }
 
 	##### THIS IS FOR DEVISE
   config.action_mailer.default_url_options = { host: '10.168.10.50', port: 3000 }

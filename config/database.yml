@@ -4,30 +4,35 @@
 #   Ensure the SQLite 3 gem is defined in your Gemfile
 #   gem 'sqlite3'
 #
-default: &default
+default_sqlite3: &default_sqlite3
   adapter: sqlite3
   pool: 5
   timeout: 5000
+
+
+# MySQL default
+default_mysql: &default_mysql
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  username: <%= Rails.application.secrets[:database][:username] %>
+  password: <%= Rails.application.secrets[:database][:password] %>
+  socket: /var/run/mysqld/mysqld.sock
 
 #development:
 #  <<: *default
 #  database: db/development.sqlite3
 development:
-  adapter: mysql2
-  encoding: utf8
-  database: home_automation
-  pool: 5
-  username: home_auto_user
-  password: N3@Fd7nSwl#69$w
-  socket: /var/run/mysqld/mysqld.sock
+  <<: *default_mysql
+  database: home_automation_dev
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
+  <<: *default_sqlite3
   database: db/test.sqlite3
 
 production:
-  <<: *default
-  database: db/production.sqlite3
+  <<: *default_mysql
+  database: home_automation_prod
