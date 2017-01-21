@@ -13,17 +13,17 @@
 ActiveRecord::Schema.define(version: 20170115141410) do
 
   create_table "device_properties", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint  "device_id",                                null: false, unsigned: true
-    t.string  "name",                                     null: false
-    t.boolean "auto",                     default: false, null: false
-    t.integer "property_type",  limit: 1,                 null: false, unsigned: true
-    t.integer "value_type",     limit: 1,                 null: false, unsigned: true
+    t.bigint  "device_id",                                  null: false, unsigned: true
+    t.string  "name",                                       null: false
+    t.boolean "auto",                       default: false, null: false
+    t.integer "property_type_id", limit: 1,                 null: false, unsigned: true
+    t.integer "value_type_id",    limit: 1,                 null: false, unsigned: true
     t.string  "value_min"
     t.string  "value_max"
     t.string  "property_value"
     t.index ["device_id"], name: "fk_rails_f31d09a8fc", using: :btree
-    t.index ["property_type"], name: "fk_rails_f53c99c074", using: :btree
-    t.index ["value_type"], name: "fk_rails_eb74a57de9", using: :btree
+    t.index ["property_type_id"], name: "fk_rails_a5964b2a4f", using: :btree
+    t.index ["value_type_id"], name: "fk_rails_56f2035299", using: :btree
   end
 
   create_table "devices", primary_key: "uid", id: :bigint, default: nil, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20170115141410) do
   end
 
   create_table "property_types", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "type"
+    t.string "name"
   end
 
   create_table "users", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -70,11 +70,11 @@ ActiveRecord::Schema.define(version: 20170115141410) do
   end
 
   create_table "value_types", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "type"
+    t.string "name"
   end
 
   add_foreign_key "device_properties", "devices", primary_key: "uid"
-  add_foreign_key "device_properties", "property_types", column: "property_type"
-  add_foreign_key "device_properties", "value_types", column: "value_type"
+  add_foreign_key "device_properties", "property_types"
+  add_foreign_key "device_properties", "value_types"
   add_foreign_key "devices", "users"
 end
