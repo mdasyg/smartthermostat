@@ -15,9 +15,11 @@
       <% end %>
       <%= yield %>
       <%= render 'layouts/footer' %>
-			<%= debug(instance_variables) if Rails.env.development? %>
+      <%= debug( user_signed_in?.inspect ) if Rails.env.development? %>
+      <%= debug( current_user.id  ) if user_signed_in? if Rails.env.development? %>
+      <%= debug(user_session.inspect) if Rails.env.development? %>
+      <%= debug(instance_variables) if Rails.env.development? %>
 			<%= debug(local_variables) if Rails.env.development? %>
-			<%= debug(current_user.inspect) if Rails.env.development? %>
       <%= debug(params) if Rails.env.development? %>
     </div>
   </body>

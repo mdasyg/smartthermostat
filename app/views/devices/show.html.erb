@@ -1,12 +1,15 @@
-<p id="notice"><%= notice %></p>
-
 <p>
-  <strong>UId:</strong>
+  <strong>Serial No:</strong>
   <%= @device.uid %>
 </p>
 
 <p>
-  <strong>Name:</strong>
+  <strong>User Name:</strong>
+  <%= @device.user.email %>
+</p>
+
+<p>
+  <strong>Device Name:</strong>
   <%= @device.name %>
 </p>
 

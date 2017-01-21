@@ -1,10 +1,14 @@
 class DevicesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_device, only: [:show, :edit, :update, :destroy]
 
   # GET /devices
   # GET /devices.json
   def index
-    @devices = Device.all
+    @devices = Device
+                   .select( 'uid, name, location' )
+                   .where( user_id: current_user.id )
+                   .find_each
   end
 
   # GET /devices/1
@@ -25,9 +29,11 @@ class DevicesController < ApplicationController
   # POST /devices.json
   def create
     @device = Device.new(device_params)
-		
+    @device.user_id = current_user.id
+
     respond_to do |format|
       if @device.save
+
         format.html { redirect_to @device, notice: 'Device was successfully created.' }
         format.json { render :show, status: :created, location: @device }
       else
@@ -64,7 +70,9 @@ class DevicesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_device
-      @device = Device.find(params[:uid])
+      @device = Device
+                    .where( user_id: current_user.id )
+                    .find(params[:uid])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
