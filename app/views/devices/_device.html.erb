@@ -31,7 +31,25 @@
       <%= render partial: 'device_property', collection: @device.properties %>
     </div>
 
+    <span id="add_new_property" class="add-line">Add New Property</span>
+
     <div class="actions">
       <%= df.submit %>
     </div>
 <% end -%>
+
+<script>
+
+    $('#add_new_property').click(function () {
+//        if ($('#education_text_field').val()) {
+//            var text = $("#device-properties").val().replace(/\"/g, "&#34");
+            var append_text = '<li> <span class="del-icon">X</span><input type="hidden" name="new_education_descriptions[]" value=""></li>';
+            $('#device-properties').append(append_text);
+//            $('#education_text_field').val("");
+//        }
+    });
+//    $('body').on('click', '#education_list li span', function () {
+//        $(this).closest('li').remove();
+//    });
+
+</script>
