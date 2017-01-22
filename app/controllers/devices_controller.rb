@@ -19,7 +19,9 @@ class DevicesController < ApplicationController
   # GET /devices/new
   def new
     @device = Device.new
-    @device_property = Device.all
+    @device.device_properties.build
+    @prop_types = PropertyType.select( 'id, name' ).find_each
+    @value_types = ValueType.select( 'id, name' ).find_each
   end
 
   # GET /devices/1/edit

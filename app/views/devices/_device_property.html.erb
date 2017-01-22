@@ -1,0 +1,40 @@
+<div class="device-property">
+
+   <%= fields_for create_properties_prefix(device_property), device_property, index: device_property.id do |pf| %>
+
+      <div class="row">
+
+        <div class="col-xs-4">
+          <div class="field form-group">
+            <%= pf.label :name, 'Prop Name' %>
+            <%= pf.text_field :name, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-4">
+          <div class="field form-group">
+            <%= pf.label :property_type_id, 'Prop Type' %>
+            <%= pf.select(:property_type_id, {}, {},  { class: 'form-control' } ) do %>
+                <% @prop_types.each do |c| -%>
+                    <%= content_tag(:option, c.name, value: c.id) %>
+                <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="col-xs-4">
+          <div class="field form-group">
+            <%= pf.label :value_type_id %>
+            <%= pf.select(:value_type_id, {}, {},  { class: 'form-control' } ) do %>
+                <% @value_types.each do |c| -%>
+                    <%= content_tag(:option, c.name, value: c.id) %>
+                <% end %>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
+
+  <% end %>
+
+</div>
