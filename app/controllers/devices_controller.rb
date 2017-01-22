@@ -18,8 +18,12 @@ class DevicesController < ApplicationController
 
   # GET /devices/new
   def new
-    @device = Device.new
-    @device.device_properties.build
+
+    @device = DeviceForm.new
+    @device.properties = DevicePropertyAttribute.new
+
+    # @device = Device.new
+    # @device.device_properties.build
     @prop_types = PropertyType.select( 'id, name' ).find_each
     @value_types = ValueType.select( 'id, name' ).find_each
   end

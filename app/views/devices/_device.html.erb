@@ -1,4 +1,4 @@
-<%= form_for(@device) do |df| -%>
+<%= form_for @device, url: devices_path do |df| -%>
 
     <% if @device.errors.any? %>
         <div id="error_explanation">
@@ -28,7 +28,7 @@
     </div>
 
     <div id="device-properties">
-      <%= render partial: 'device_property', collection: @device.device_properties %>
+      <%= render partial: 'device_property', collection: @device.properties %>
     </div>
 
     <div class="actions">

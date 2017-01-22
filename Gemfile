@@ -4,6 +4,8 @@ gem 'rails', '~> 5.0.0' # Bundle edge Rails instead: gem 'rails', github: 'rails
 gem 'bcrypt', '~> 3.1.7'
 gem 'devise', '~> 4.2' # Device gem for user AUTHENTICATION
 
+gem 'virtus'
+
 gem 'sqlite3'
 gem 'mysql2', '~> 0.4.4'
 # gem 'redis', '~> 3.0' # Use Redis adapter to run Action Cable in production
