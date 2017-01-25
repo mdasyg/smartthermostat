@@ -2,6 +2,9 @@ class DevicePropertyAttribute
   include ActiveModel::Model
   include Virtus.model
 
+  RECORD_NEW = :new
+  RECORD_EXISTING = :existing
+
   attribute :id, Integer
   attribute :name, String
   attribute :auto, Integer
@@ -10,6 +13,7 @@ class DevicePropertyAttribute
   attribute :value_min, String
   attribute :value_max, String
   attribute :property_value, String
+  attribute :record_state, Integer
 end
 
 class DeviceForm

@@ -1,0 +1,6 @@
+$(document).ready(function () {
+    $('#add_new_property').click(function () {
+        var new_property = $('#device-property-new-template').html();
+        $('#device-properties').append(new_property);
+    });
+});

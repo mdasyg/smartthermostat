@@ -1,6 +1,7 @@
 class DevicesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_device, only: [:show, :edit, :update, :destroy]
+  before_action :set_device_form_template, only: [:new, :edit]
 
   # GET /devices
   # GET /devices.json
@@ -18,9 +19,8 @@ class DevicesController < ApplicationController
 
   # GET /devices/new
   def new
-
-    @device = DeviceForm.new
-    @device.properties = DevicePropertyAttribute.new
+    @device_form = DeviceForm.new
+    @device_form.properties = DevicePropertyAttribute.new(record_state: DevicePropertyAttribute::RECORD_NEW )
 
     # @device = Device.new
     # @device.device_properties.build
@@ -37,7 +37,7 @@ class DevicesController < ApplicationController
   def create
     @device = Device.new(device_params)
     @device.user_id = current_user.id
-
+abort
     respond_to do |format|
       if @device.save
 
@@ -75,6 +75,13 @@ class DevicesController < ApplicationController
   end
 
   private
+
+    # Set a new DeviceForm object for use in the device-property-template in "NEW" and "EDIT" actions
+    def set_device_form_template
+      @device_form_template = DeviceForm.new
+      @device_form_template.properties = DevicePropertyAttribute.new(record_state: DevicePropertyAttribute::RECORD_NEW )
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_device
       @device = Device
@@ -84,6 +91,6 @@ class DevicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def device_params
-      params.require(:device).permit(:name, :location, :description)
+      params.require(:device_form).permit(:name, :location, :description)
     end
 end

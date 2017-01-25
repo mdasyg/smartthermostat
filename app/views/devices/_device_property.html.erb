@@ -1,19 +1,41 @@
-<%= device_property.inspect %>
-
 <div class="device-property">
 
-  <%= fields_for create_properties_prefix(device_property), device_property, index: device_property.id do |pf| %>
+  <% prefix = "#{@device_form.model_name.singular}[#{device_property.record_state}_properties]" %>
+
+  <%= fields_for prefix, device_property, index: device_property.id do |pf| %>
 
       <div class="row">
 
-        <div class="col-xs-4">
+        <div class="col-xs-8">
           <div class="field form-group">
             <%= pf.label :name, 'Prop Name' %>
             <%= pf.text_field :name, class: 'form-control' %>
           </div>
         </div>
 
-        <div class="col-xs-4">
+        <div class="col-xs-1">
+          <div class="field form-group">
+            <%= pf.label :auto %>
+            <%= pf.check_box :auto, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="field form-group">
+            <%= pf.label :property_value %>
+            <%= pf.text_field :property_value, class: 'form-control' %>
+          </div>
+        </div>
+
+
+
+
+
+      </div>
+
+      <div class="row">
+
+        <div class="col-xs-3">
           <div class="field form-group">
             <%= pf.label :property_type_id, 'Prop Type' %>
             <%= pf.select(:property_type_id, {}, {},  { class: 'form-control' } ) do %>
@@ -24,7 +46,7 @@
           </div>
         </div>
 
-        <div class="col-xs-4">
+        <div class="col-xs-3">
           <div class="field form-group">
             <%= pf.label :value_type_id %>
             <%= pf.select(:value_type_id, {}, {},  { class: 'form-control' } ) do %>
@@ -35,8 +57,24 @@
           </div>
         </div>
 
+        <div class="col-xs-3">
+          <div class="field form-group">
+            <%= pf.label :value_min %>
+            <%= pf.number_field :value_min, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="field form-group">
+            <%= pf.label :value_max %>
+            <%= pf.number_field :value_max, class: 'form-control' %>
+          </div>
+        </div>
+
       </div>
 
   <% end %>
 
 </div>
+
+<hr/>

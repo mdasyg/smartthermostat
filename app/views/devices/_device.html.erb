@@ -1,11 +1,11 @@
-<%= form_for @device, url: devices_path do |df| -%>
+<%= form_for @device_form, url: devices_path do |df| -%>
 
-    <% if @device.errors.any? %>
+    <% if @device_form.errors.any? %>
         <div id="error_explanation">
-          <h2><%= pluralize(@device.errors.count, "error") %> prohibited this @device from being saved:</h2>
+          <h2><%= pluralize(@device_form.errors.count, "error") %> prohibited this @device_form from being saved:</h2>
 
           <ul>
-            <% @device.errors.full_messages.each do |message| %>
+            <% @device_form.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
             <% end %>
           </ul>
@@ -27,29 +27,20 @@
       <%= df.text_area :description, class: "form-control" %>
     </div>
 
-    <div id="device-properties">
-      <%= render partial: 'device_property', collection: @device.properties %>
+    <div class="field form-group">
+      <button type="button" id="add_new_property" class="add-line">Add New Property</button>
     </div>
 
-    <span id="add_new_property" class="add-line">Add New Property</span>
+    <div id="device-properties">
+      <%= render partial: 'device_property', collection: @device_form.properties %>
+    </div>
 
     <div class="actions">
       <%= df.submit %>
     </div>
+
 <% end -%>
 
-<script>
-
-    $('#add_new_property').click(function () {
-//        if ($('#education_text_field').val()) {
-//            var text = $("#device-properties").val().replace(/\"/g, "&#34");
-            var append_text = '<li> <span class="del-icon">X</span><input type="hidden" name="new_education_descriptions[]" value=""></li>';
-            $('#device-properties').append(append_text);
-//            $('#education_text_field').val("");
-//        }
-    });
-//    $('body').on('click', '#education_list li span', function () {
-//        $(this).closest('li').remove();
-//    });
-
-</script>
+<div id="device-property-new-template" style="display: none;">
+  <%= render partial: 'device_property', collection: @device_form_template.properties %>
+</div>
