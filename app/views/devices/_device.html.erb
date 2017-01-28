@@ -1,11 +1,13 @@
-<%= form_for @device_form, url: devices_path do |df| -%>
+<%= local_variables %>
 
-    <% if @device_form.errors.any? %>
+<%= form_for device do |df| -%>
+
+    <% if device.errors.any? %>
         <div id="error_explanation">
-          <h2><%= pluralize(@device_form.errors.count, "error") %> prohibited this @device_form from being saved:</h2>
+          <h2><%= pluralize(device.errors.count, "error") %> prohibited this device from being saved:</h2>
 
           <ul>
-            <% @device_form.errors.full_messages.each do |message| %>
+            <% device.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
             <% end %>
           </ul>
@@ -28,11 +30,11 @@
     </div>
 
     <div class="field form-group">
-      <button type="button" id="add_new_property" class="add-line">Add New Property</button>
+      <button type="button" id="add_new_property" class="form-control">Add New Property</button>
     </div>
 
     <div id="device-properties">
-      <%= render partial: 'device_property', collection: @device_form.properties %>
+      <%= render partial: 'device_property', collection: device.device_properties %>
     </div>
 
     <div class="actions">
@@ -41,6 +43,6 @@
 
 <% end -%>
 
-<div id="device-property-new-template" style="display: none;">
-  <%= render partial: 'device_property', collection: @device_form_template.properties %>
+<div id="new-device-property-template" style="display: none;">
+  <%= render partial: 'device_property', collection: device_form_template.device_properties %>
 </div>

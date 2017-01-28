@@ -7,6 +7,7 @@ class Device < ApplicationRecord
   end
 
 	belongs_to :user, inverse_of: :devices
+
 	has_many :device_properties, primary_key: :uid, inverse_of: :device
 
 end

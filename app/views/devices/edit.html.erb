@@ -1,8 +1,6 @@
 <h1>Editing Device</h1>
 
-<%= render 'device', device: @device %>
-
-<%= render 'properties_form', device: @device %>
+<%= render partial: 'device', object: @device, locals: { device_form_template: @device_form_template} %>
 
 <hr>
 

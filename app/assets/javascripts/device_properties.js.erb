@@ -1,6 +1,25 @@
+function remove_property() {
+    $('#device-properties .device-property#' + $(this).attr('id')).remove();
+}
+
 $(document).ready(function () {
+
     $('#add_new_property').click(function () {
-        var new_property = $('#device-property-new-template').html();
-        $('#device-properties').append(new_property);
+
+        var cur_id = $('#device-properties .device-property').last().attr('id');
+        if (!cur_id) { cur_id = 0; }
+        var next_id = parseInt(cur_id) + 1;
+
+        $('#new-device-property-template .device-property').attr('id', next_id);
+        $('#new-device-property-template .device-property .remove-new-property').attr('id', next_id);
+
+        var new_property_template = $('#new-device-property-template').html();
+        $('#device-properties').append(new_property_template);
+
+        $('#device-properties .device-property#' + next_id + ' button').on('click', remove_property);
+
     });
+
+    $('#device-properties .device-property button').on('click', remove_property);
+
 });

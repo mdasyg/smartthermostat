@@ -1,22 +1,27 @@
-<div class="device-property">
+<div class="device-property"  id="<%= device_property_counter %>" >
 
-  <% prefix = "#{@device_form.model_name.singular}[#{device_property.record_state}_properties]" %>
+  <% record_state = device_property.new_record? ? 'new' : 'existing' %>
+  <% prefix = "device[#{record_state}_properties]" %>
 
   <%= fields_for prefix, device_property, index: device_property.id do |pf| %>
 
       <div class="row">
 
-        <div class="col-xs-8">
+        <div class="col-xs-7">
           <div class="field form-group">
             <%= pf.label :name, 'Prop Name' %>
             <%= pf.text_field :name, class: 'form-control' %>
           </div>
         </div>
 
-        <div class="col-xs-1">
+        <div class="col-xs-2">
           <div class="field form-group">
             <%= pf.label :auto %>
-            <%= pf.check_box :auto, class: 'form-control' %>
+            <%= pf.select(:auto, {}, {},  { class: 'form-control' } ) do %>
+                <% [['ON', 1], ['OFF', 0] ].each do |c| -%>
+                    <%= content_tag(:option, c.first, value: c.last) %>
+                <% end %>
+            <% end %>
           </div>
         </div>
 
@@ -26,10 +31,6 @@
             <%= pf.text_field :property_value, class: 'form-control' %>
           </div>
         </div>
-
-
-
-
 
       </div>
 
@@ -73,8 +74,18 @@
 
       </div>
 
+      <div class="row">
+
+        <div class="col-xs-12">
+          <div class="field form-group">
+            <button type="button" id="0" class="remove-new-property form-control">Remove Property</button>
+          </div>
+        </div>
+
+      </div>
+
   <% end %>
 
-</div>
+  <hr/>
 
-<hr/>
+</div>
