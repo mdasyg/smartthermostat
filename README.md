@@ -53,3 +53,10 @@ ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com
 # Possible modifications
 
 + On "app/assets/javascripts/application.js" consider using "//= require bootstrap" instead of "//= require bootstrap-sprockets" when in production
+
+# Notes
+
++ When using javascript remember that rails uses turbolinks,
+read [this](http://guides.rubyonrails.org/working_with_javascript_in_rails.html#page-change-events)
+for more info. To workaround this we need to replace the '$(document).ready()' 
+with '$(document).on("turbolinks:load", function() {})'
