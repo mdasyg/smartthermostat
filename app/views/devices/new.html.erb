@@ -1,4 +1,10 @@
-<h1>New Device</h1>
+<!-- This provides the title for the page-->
+<% provide(:title, "Create New Device") %>
+<!-- Dont remove the previous -->
+
+<div class="well">
+  <h1>Create Device</h1>
+</div>
 
 <%= render partial: 'device', object: @device, locals: { device_form_template: @device_form_template} %>
 

@@ -1,41 +1,79 @@
-<h1>User Device Overview</h1>
+<!-- This provides the title for the page-->
+<% provide(:title, "Device Overview") %>
+<!-- Dont remove the previous -->
 
-<div>
-  <strong>Serial No:</strong>
-  <%= @device.uid %>
+<div class="well">
+  <h1>Overview</h1>
+  <h1><small><%= @device.name %> @  <%= @device.location %></small></h1>
 </div>
 
-<div>
-  <strong>User Name:</strong>
-  <%= @device.user.email %>
+<!-- STATUS -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Status</h3>
+  </div>
+  <div class="panel-body">
+    <div>
+      <strong>Last contact at:</strong>
+      <%= @device.last_contact_at %>
+    </div>
+  </div>
 </div>
 
-<div>
-  <strong>Device Name:</strong>
-  <%= @device.name %>
+<!-- PROPERTIES -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Properties</h3>
+  </div>
+  <div class="panel-body">
+
+    <% @device.device_properties.each do |property| %>
+
+        <div class="row">
+
+          <div class="col-xs-4">
+            <%= property.name %>
+          </div>
+
+          <div class="col-xs-4">
+            <%= property.property_value %>
+          </div>
+
+          <div class="col-xs-4">
+            <%= property.auto %>
+          </div>
+
+        </div>
+
+    <% end %>
+
+  </div>
 </div>
 
-<div>
-  <strong>Location:</strong>
-  <%= @device.location %>
-</div>
+<!-- INFO -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Info</h3>
+  </div>
+  <div class="panel-body">
 
-<div>
-  <strong>Description:</strong>
-  <%= @device.description %>
-</div>
+    <div>
+      <strong>Description:</strong>
+      <%= @device.description %>
+    </div>
 
-<div>
-  <strong>Access token:</strong>
-  <%= @device.access_token %>
-</div>
+    <div>
+      <strong>Serial No:</strong>
+      <%= @device.uid %>
+    </div>
 
-<div>
-  <strong>Last contact at:</strong>
-  <%= @device.last_contact_at %>
-</div>
+    <div>
+      <strong>Access token:</strong>
+      <%= @device.access_token %>
+    </div>
 
-<hr/>
+  </div>
+</div>
 
 <%= link_to 'Edit', edit_device_path(@device) %> |
 <%= link_to 'Back', devices_path %>

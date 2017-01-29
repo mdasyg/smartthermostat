@@ -77,9 +77,7 @@ class DevicesController < ApplicationController
   # PATCH/PUT /devices/1.json
   def update
 
-    ##### CheckLater ###########################################################
-    # check if we need some validations on existing ids.
-    ############################################################################
+    # CHECKLATER: check if we need some validations on existing ids.
 
     # clear out the params
     secure_params = device_params
@@ -87,10 +85,11 @@ class DevicesController < ApplicationController
     # get the stored properties
     stored_device_property_ids = @device.device_properties.ids
 
-    # found the existing from post
+    # found the existings from post
+    existing_device_properties = secure_params.has_key?(:existing_properties) ? secure_params[:existing_properties] : nil
     existing_device_property_ids = []
-    if secure_params[:existing_properties]
-      secure_params[:existing_properties]
+    if existing_device_properties
+      existing_device_properties
           .keys
           .each { |index| existing_device_property_ids << index.to_i }
     end
@@ -106,11 +105,16 @@ class DevicesController < ApplicationController
       )
 
         # First delete the deleted ones
+        # TODO: find a clever way to include some filtering to not let someone delete others properties
         if device_property_ids_to_delete
           DeviceProperty.destroy(device_property_ids_to_delete)
         end
 
+        # Then update the remaining existing if one
+        @device.device_properties.update(existing_device_properties.keys, existing_device_properties.values) if existing_device_properties
+
         # Now its time to save the new properties
+        # TODO: make it better
         if secure_params[:new_properties]
           secure_params[:new_properties].each do |new_prop|
             @device.device_properties.create(new_prop)

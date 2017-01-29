@@ -1,5 +1,10 @@
-<h1>Editing Device</h1>
+<!-- This provides the title for the page-->
+<% provide(:title, "Device Edit") %>
+<!-- Dont remove the previous -->
 
+<div class="well">
+  <h1>Editing Device</h1>
+</div>
 <%= render partial: 'device', object: @device, locals: { device_form_template: @device_form_template} %>
 
 <hr>
