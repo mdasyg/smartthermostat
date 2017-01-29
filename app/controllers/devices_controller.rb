@@ -160,15 +160,6 @@ class DevicesController < ApplicationController
                   .find(params[:uid])
   end
 
-  # def set_device_form
-  #   @device = Device
-  #                 .select( 'uid, name, location, description' )
-  #                 .where( user_id: current_user.id )
-  #                 .find(params[:uid])
-  #   @device_form = DeviceForm.new(@device)
-  #   @device_form.properties = DevicePropertyAttribute.new(@device.device_properties)
-  # end
-
   # Never trust parameters from the scary internet, only allow the white list through.
   def device_params
     params
@@ -189,5 +180,14 @@ class DevicesController < ApplicationController
                             ],
         )
   end
+
+  # def set_device_form
+  #   @device = Device
+  #                 .select( 'uid, name, location, description' )
+  #                 .where( user_id: current_user.id )
+  #                 .find(params[:uid])
+  #   @device_form = DeviceForm.new(@device)
+  #   @device_form.properties = DevicePropertyAttribute.new(@device.device_properties)
+  # end
 
 end
