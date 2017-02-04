@@ -1,21 +1,21 @@
-<div class="device-property"  id="<%= device_property_counter %>" >
+<div class='device-property'  id='<%= device_property_counter %>' >
 
   <% record_state = device_property.new_record? ? 'new' : 'existing' %>
   <% prefix = "device[#{record_state}_properties]" %>
 
   <%= fields_for prefix, device_property, index: device_property.id do |pf| %>
 
-      <div class="row">
+      <div class='row'>
 
-        <div class="col-xs-7">
-          <div class="field form-group">
+        <div class='col-xs-7'>
+          <div class='field form-group'>
             <%= pf.label :name, 'Prop Name' %>
             <%= pf.text_field :name, class: 'form-control' %>
           </div>
         </div>
 
-        <div class="col-xs-2">
-          <div class="field form-group">
+        <div class='col-xs-2'>
+          <div class='field form-group'>
             <%= pf.label :auto %>
             <%= pf.select(:auto, {}, {},  { class: 'form-control' } ) do %>
                 <% [['ON', 1], ['OFF', 0] ].each do |c| -%>
@@ -25,8 +25,8 @@
           </div>
         </div>
 
-        <div class="col-xs-3">
-          <div class="field form-group">
+        <div class='col-xs-3'>
+          <div class='field form-group'>
             <%= pf.label :property_value %>
             <%= pf.text_field :property_value, class: 'form-control' %>
           </div>
@@ -34,10 +34,10 @@
 
       </div>
 
-      <div class="row">
+      <div class='row'>
 
-        <div class="col-xs-3">
-          <div class="field form-group">
+        <div class='col-xs-3'>
+          <div class='field form-group'>
             <%= pf.label :property_type_id, 'Prop Type' %>
             <%= pf.select(:property_type_id, {}, {},  { class: 'form-control' } ) do %>
                 <% @prop_types.each do |c| -%>
@@ -47,8 +47,8 @@
           </div>
         </div>
 
-        <div class="col-xs-3">
-          <div class="field form-group">
+        <div class='col-xs-3'>
+          <div class='field form-group'>
             <%= pf.label :value_type_id %>
             <%= pf.select(:value_type_id, {}, {},  { class: 'form-control' } ) do %>
                 <% @value_types.each do |c| -%>
@@ -58,15 +58,15 @@
           </div>
         </div>
 
-        <div class="col-xs-3">
-          <div class="field form-group">
+        <div class='col-xs-3'>
+          <div class='field form-group'>
             <%= pf.label :value_min %>
             <%= pf.number_field :value_min, class: 'form-control' %>
           </div>
         </div>
 
-        <div class="col-xs-3">
-          <div class="field form-group">
+        <div class='col-xs-3'>
+          <div class='field form-group'>
             <%= pf.label :value_max %>
             <%= pf.number_field :value_max, class: 'form-control' %>
           </div>
@@ -74,11 +74,11 @@
 
       </div>
 
-      <div class="row">
+      <div class='row'>
 
-        <div class="col-xs-12">
-          <div class="field form-group">
-            <button type="button" id="<%= device_property_counter %>" class="remove-new-property form-control">Remove Property</button>
+        <div class='col-xs-12'>
+          <div class='field form-group'>
+            <button type='button' class='remove-device-property form-control' id='<%= device_property_counter %>'>Remove This Property</button>
           </div>
         </div>
 

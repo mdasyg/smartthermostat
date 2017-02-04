@@ -1,8 +1,8 @@
 <%= form_for device do |df| -%>
 
     <% if device.errors.any? %>
-        <div id="error_explanation">
-          <h2><%= pluralize(device.errors.count, "error") %> prohibited this device from being saved:</h2>
+        <div id='error-explanation'>
+          <h2><%= pluralize(device.errors.count, 'error') %> prohibited this device from being saved:</h2>
 
           <ul>
             <% device.errors.full_messages.each do |message| %>
@@ -12,35 +12,35 @@
         </div>
     <% end %>
 
-    <div class="field form-group">
+    <div class='field form-group'>
       <%= df.label :name %>
-      <%= df.text_field :name, class: "form-control" %>
+      <%= df.text_field :name, class: 'form-control' %>
     </div>
 
-    <div class="field form-group">
+    <div class='field form-group'>
       <%= df.label :location %>
-      <%= df.text_field :location, class: "form-control" %>
+      <%= df.text_field :location, class: 'form-control' %>
     </div>
 
-    <div class="field form-group">
+    <div class='field form-group'>
       <%= df.label :description %>
-      <%= df.text_area :description, class: "form-control" %>
+      <%= df.text_area :description, class: 'form-control' %>
     </div>
 
-    <div class="field form-group">
-      <button type="button" id="add_new_property" class="form-control">Add New Property</button>
+    <div class='field form-group'>
+      <button type='button' id='add-new-property' class='form-control'>Add New Property</button>
     </div>
 
-    <div id="device-properties">
+    <div id='device-properties'>
       <%= render partial: 'device_property', collection: device.device_properties %>
     </div>
 
-    <div class="actions">
+    <div class='actions'>
       <%= df.submit %>
     </div>
 
 <% end -%>
 
-<div id="new-device-property-template" style="display: none;">
+<div id='new-device-property-template' style='display: none;'>
   <%= render partial: 'device_property', collection: device_form_template.device_properties %>
 </div>
