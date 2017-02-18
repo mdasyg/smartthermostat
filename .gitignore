@@ -2,7 +2,6 @@
 /config/secrets.yml
 
 # custom project ignore
-my-thesis-thoughts-questions-notes
 to-do.list
 
 # rails sqlite db

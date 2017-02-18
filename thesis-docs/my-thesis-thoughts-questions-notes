@@ -1,0 +1,159 @@
+##### NOTES ####################################################################
+
+##### DISCUSSION ###############################################################
+-> Πως θα κάνουμε το login/user table στην βαση δεδομενων?
+	+ απο οσο ειδα κατι με redirects παιζει, πως το δουλευουμε αυτο?
+	+ εγγραφη θα υλοποιηθει για νεους χρηστες?
+-> pass revocery?
+-> remember me?
+-----
+-> αυτο με το 'one time pass' τι ειναι και τι κανω?
+-----
+-> devices, multiple entries for proprties
+-> maybe json its good, but where:
+	* property and value types where?
+	* property and value types will be checked if its correct?
+-> propose properties json structure
+-----
+-> Οσον αναφορα την ασφαλεια της προσβασης στον server απο συσκευες, πως θα κάνουν login?
+	* Ισως ενα access_name και ενα access_token?  οπου θα ειναι μεγαλα και τυχαια strings?
+	* το device_id ειναι ικανοποιητικο για access_name?
+	* μηπως ενα uuid?
+-----
+-> keep intermidiate table for connections.
+	* eg: schedule -> devices, schedule -> groups... <<<<<<<<<<<<<<<<<<<<<<<<<<<
+	* ή 2 στηλες, shcelulable_id & schedulable_type ... <<<<<<<<<<<<<<<<<<<<<<<<
+	* το schedule πρεπει να συνδεθει με διαφορετικου τυπου οντοτητες(devices, groups).
+	* καθε οντοτητα ποσα schedule μπορει να έχει? καθε schedule ανηκει ΜΟΝΟ σε μια οντοτητα.
+	* Γι αυτο θα υπαρχουν οι ομαδες για να μπορουμε να ανααθεσουμε ενα schedule σε περισσοτερες συσκευες.
+	* Ομως απο την οπτικη γωνια του schedule βλεπουμε οτι ΕΝΑ schedule ΜΟΝΟ σε μια οντοτητα.
+-----
+-> what about groups?
+	* when someone broswe a group, 
+		+ then click to see a device,
+		+ after what happens with the back link?
+		+ goes back to group overview?
+		+ OR nothing?
+
+-----
+-> what about logging?
+
+
+-----
+-> συζητηση επι του scheduling. (DB related things)
+-> προγραμμα(schedule), τη κάνουμε κατα την εναρξη και τη στην ληξη του? οταν έχουμε ομαδα?
+
+
+-----
+-> πως θα αποθηκευουμε την ωρα, πως θα εκτελειτε? cron sto arduino?
+-> τι εννοει με το handle miss events???
+
+
+-----
+-> επικοινωνια συστημα<->συσκευη, βλεπε παρακατω. push(eg: mqtt), poll. feedback?
+-> επικοινωνια συσκευής<->συσκευης?? να ζηταει μια συσκευη δεδομενα απο μια αλλη συσκευη στο συστημα Ή να στελνει μια συσκευη δεδομενα σε μια αλλη. ??SECURITY ISSUES??
+
+
+-----
+-> what about stats???
+	* rrd tool
+	* ενα cron job ανα τακτα χρονικα διαστηματα, απλως κανει μια καταγραφη σε εναν πινακα ολες τις τρεχουσες τιμες των συσκευων.
+
+-----
+-> τα βελάκια στο 'my-thesis-requirements-list'
+-> τα βελάκια στο 'my-thesis-title-info'
+
+-----
+-> ξεκινωντας απο τον θερμοστατη, μπορει να μην θέλουμε plugins, βλεπε 'ρυθμίσεις συσκευών', ομως που θα υπολιγίζουμε το πότε πρεπει να ανοιξει ο θερμοστάτης? που θα είναι αποθηκευμένη η γνωση και ποιος θα κάνει τον υπολογισμο?
+
+-----
+-> στο valve opener σιγουρα η τοπικη συσκευή γιατι θέλουμε αμεση αποκριση και δεν απαιτει η γνωση, αν και αυτο ισως να μην ειναι πληρως αληθες, γτ θα μποσουσε με τον καιρο να χτύζετε ενα pattern για το πως συμπεριφερετε η συγκεκριμένη βάνα.
+-> μηπως πρεπει να υπαρχει η δυνατότητα για κάθε συσκευή να τρέχει καποιος κωδικας υπολογισμου πανω σε δεδομενα? ασφαλεια αν ο καθε ενας βαζει την συναρτηση του?
+
+##### DEVICES ##################################################################
+-> An enviroment control device/thermostat
+	* Sensors for temp,humidity, e.t.c
+	* Control of the heating source based on a set temperature for the room
+	
+-> A garden device
+	* Get info about weather [net]
+	* Sensors for ground wet
+	* Decide to open or close the sprinkler
+		- e.g control some manifolds
+		
+-> Control FANS
+	* on/off
+	* Some speed levels OR analog 0%-100%
+	
+-> Control LIGHTS
+	* on/off
+	* Dimmer 0%-100%
+
+-> Control PLUGS
+	* on/off
+
+##### MQTT #####################################################################
+-> Οταν ενας client κανα sub για πρωτη φορα, δημιουργειται ενα νεο TCP socket, αν ο ιδιος θελει να κάνει και αλλο sub, το socket επαναχρησιμοποιητε, δλδ παρα πολλα subs μεσω ενος socket.
+
+-> Απο την άλλη τα pub δημιουργουν πάντα ενα νεο socket, ακομα και αν ο ιδιος client εχει ήδη ενα ενεργο για τα sub του, κανουν το pub και το κλεινουν. σε αυτη την περιπτωση δεν υπάρχει καποια επαναχρησιμοποιησει socket.
+
+##### GENERAL THOUGHTS #########################################################
+-> use mqtt in conjuction with regular polling as fallback
+	- mqtt client keeps a tcp connection open to the server
+		* maybe make the mqtt server to close old connections
+		* make clients to fallback in polling after some failed attempts to connect from mqtt
+		* set a hard(and slightly big limit) after that the client make a mandatory poll to the server to check if all is good
+
+##### SERVER THOUGHTS/QUESTIONS ################################################
+-> Υπαρξη εικονικων συσκευων?
+	* Κυριως για ληψη γενικων πληροφοριων οπως "προγνωση καιρου".
+
+-> [Device Setup]:
+	Q: πως θα αποθυηκευουμε τις τιμες στην βαση δεδομενων?
+		* έχουμε διαφορετικο ειδος χαρακτηριστικων(πχ config/setting)
+		* και το κάθε ειδος εχει πολλαπλους τυπους μεταβλητων/δεδομένων.
+	Q: how the settings will go to devices? <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		* RESTful access απο GET request και επιστροφη JSON string?
+		* like a settings file? what?
+	Q: How the schedule will go to the devices? <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		* THE SAME RESTfull access?
+	Q: How to set temp? <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	Q: In AC, σε αυτο έχουμε, θερμοκρασία, ενταση ανεμηστηρα, θέση αερα(swing),
+	πως θα θέσουμε το swing?
+	Q: feedback απο τις συσκευές?
+		* πχ: ενδειξη της τρέχουσας θερμοκρασίας στον χωρο απο το θερμοστάτη.
+		* πχ: τρέχουσα πίεση και άνοιγμα βάνας.
+	Q: συγχρονισμος τιμών που έχουν τεθεί?
+
+
+	T: για παραδειγμα για ενα θερμοστάτη μπορουμε να βάλουμε 1) ον/οφφ για να λεμε αν θελουμε να ανοιξει ή να κλείσει 2) μια αναλογικη τιμη για να ρυθμίσουμε τον ανεμηστηρα που μπορει να υπαρχει σε καποιο θερμαντικο σώμα και 3) μια τιμή(float) για την ρύθμιση της επιθυμητής θερμοκρασίας.
+	
+	T: Για τον ρυθμιστη νέρου, μπορουμε να πούμε με float, θέλουμε τόσο πίεση, οποτε να βάλουμε την αναλογικη τιμη(ανοιγμα της βάνας δλδ) στο αυτόματο.
+	
+	T: Αν θέλουμε να ενσωματώσουμε μια συσκευη που έχει μονο αισθητηρες? Στην ουσια μιλαμε για feedback?
+	
+##### NODES THOUGHTS ###########################################################
+-> OTA for the node( eg: arduino ) code
+someone said: "When I last did this, the digitally-signed firmware update gets streamed to an external EEPROM or flash device. The bootloader contains a public key and uses that to verify the update; if it’s both valid and newer than the one on the device, it installs it. If it fails to boot properly a few times, it will revert to the previous firmware image."
+
+
+##### TECHNOLOGIES WILL BE USED ################################################
+-> bootstrap
+-> font-awesome
+-> yii / ruby on rails
+-> RRD graphs
+-> sidekiq / redis
+-> python / ruby / C / php / CSS / SASS / javascript / AJAX
+-> bower / composer / npm / etc
+-> GitLab / gitlab CI
+-> Latex
+-> Vagrant [VB] / koding
+-> Sentry
+-> RethinkDB
+-> mockflow.com / pidoco.com / moqups.com / invisionapp.com / gomockingbird.com / gliffy.com
+-> PUB/SUB: zeroMQ, RabbitMQ, MQTT, faye
+-> TexMaker
+-> captcha / google reCAPTCHA
+
+-> mysqlslap : performance test
+-> loadimpact.com
