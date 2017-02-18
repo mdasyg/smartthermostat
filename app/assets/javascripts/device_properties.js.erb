@@ -15,8 +15,8 @@ function add_device_property() {
 }
 
 function remove_device_property() {
-//    console.log('REMOVE:', parseInt($(this).attr('id'))); // TODO: delete
-    $('#device-properties .device-property#' + $(this).attr('id')).remove();
+//    console.log('REMOVE:', $(this).closest('.device-property')); // TODO: delete
+    $(this).closest('.device-property').remove();
 }
 
 function document_ready() {
