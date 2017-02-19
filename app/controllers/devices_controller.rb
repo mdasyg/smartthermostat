@@ -24,7 +24,6 @@ class DevicesController < ApplicationController
     @device = Device.new
     @device.device_properties.build
     @prop_types = PropertyType.all
-    @value_types = ValueType.all
 
     # @device_form = DeviceForm.new
     # @device_form.properties = DevicePropertyAttribute.new(record_state: DevicePropertyAttribute::RECORD_NEW )
@@ -35,7 +34,7 @@ class DevicesController < ApplicationController
   def edit
 
     @prop_types = PropertyType.all
-    @value_types = ValueType.all
+    # @value_types = ValueType.all
 
   end
 

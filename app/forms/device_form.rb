@@ -6,7 +6,7 @@ class DevicePropertyAttribute
   RECORD_EXISTING = :existing
 
   attribute :id, Integer
-  attribute :device_id, Integer
+  attribute :device_uid, Integer
   attribute :name, String
   attribute :auto, Integer
   attribute :property_type_id, Integer

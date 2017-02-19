@@ -1,4 +1,4 @@
-<%= form_for device do |df| -%>
+<%= form_for device do |device_form| -%>
 
     <% if device.errors.any? %>
         <div id='error-explanation'>
@@ -13,18 +13,18 @@
     <% end %>
 
     <div class='field form-group'>
-      <%= df.label :name %>
-      <%= df.text_field :name, class: 'form-control' %>
+      <%= device_form.label :name %>
+      <%= device_form.text_field :name, class: 'form-control' %>
     </div>
 
     <div class='field form-group'>
-      <%= df.label :location %>
-      <%= df.text_field :location, class: 'form-control' %>
+      <%= device_form.label :location %>
+      <%= device_form.text_field :location, class: 'form-control' %>
     </div>
 
     <div class='field form-group'>
-      <%= df.label :description %>
-      <%= df.text_area :description, class: 'form-control' %>
+      <%= device_form.label :description %>
+      <%= device_form.text_area :description, class: 'form-control' %>
     </div>
 
     <div class='field form-group'>
@@ -36,7 +36,7 @@
     </div>
 
     <div class='actions'>
-      <%= df.submit %>
+      <%= device_form.submit %>
     </div>
 
 <% end -%>

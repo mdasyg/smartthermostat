@@ -1,5 +1,5 @@
 class ValueType < ApplicationRecord
 
-	has_many :device_properties, inverse_of: :value_type
+	belongs_to :property_type, inverse_of: :value_types
 
 end

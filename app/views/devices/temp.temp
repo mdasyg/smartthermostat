@@ -1,0 +1,19 @@
+<%= property_form.label :value_type_id %>
+            <%= property_form.select(:value_type_id, {}, {},  { class: 'form-control' } ) do %>
+                <% @value_types.each do |c| -%>
+                    <%= content_tag(:option, c.name, value: c.id) %>
+                <% end %>
+            <% end %>
+
+
+
+
+
+
+
+
+            <%= property_form.select(:property_type_id, {}, {},  { class: 'form-control' } ) do %>
+                <% @prop_types.each do |c| -%>
+                    <%= content_tag(:option, c.name, value: c.id) %>
+                <% end %>
+            <% end %>
