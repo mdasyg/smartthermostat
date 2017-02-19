@@ -28,8 +28,11 @@ THE SERVER
 	
 -> Θα πρεπει να υπαρχει μηχανισμος διαχείρισης προσβασης των συσκευων για την ληψη ρυθμισεων κ.τ.λ
 	- device API, maybe the same device controller, call and ask for json?...
-	- mqtt access
 	- device access token <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	
+	- mqtt access (this goes to the system side, where the system after 
+	save/update setting will publish the updated settings of the devices into 
+	the appropriate topic)
 
 -> Θα πρεπει να υπαρχει δυντατότητα για 'One time password' ώστε να μπορεί κάποιος επισκέπτης να χειριστεί μια συσκευή για ένα συγκεκριμένο χρονικό διάστημα. <<<<<
 
