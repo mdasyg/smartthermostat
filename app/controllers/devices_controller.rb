@@ -22,7 +22,7 @@ class DevicesController < ApplicationController
   def new
 
     @device = Device.new
-    @device.device_properties.build
+    # @device.device_properties.build
     @prop_types = PropertyType.all
 
     # @device_form = DeviceForm.new
@@ -173,13 +173,13 @@ class DevicesController < ApplicationController
                                 :name, :auto,
                                 :property_type_id, :value_type_id,
                                 :value_min, :value_max,
-                                :property_value,
+                                :value,
                             ],
             existing_properties: [
                                 :name, :auto,
                                 :property_type_id, :value_type_id,
                                 :value_min, :value_max,
-                                :property_value,
+                                :value,
                             ],
         )
   end

@@ -1,22 +1,22 @@
-<div class='device-property'  id='<%= device_property_counter %>' >
+<% property_index = (defined? device_property_counter) ? device_property_counter : 0 %>
 
-  <% record_state = device_property.new_record? ? 'new' : 'existing' %>
+<div class="device-property"  data-index="<%= property_index %>" >
+
+  <% record_state =  device_property.new_record? ? 'new' : 'existing' %>
   <% prefix = "device[#{record_state}_properties]" %>
 
   <%= fields_for prefix, device_property, index: device_property.id do |property_form| %>
 
-    <div class='row'>
+    <div class="row">
 
-      <div class='col-xs-3'>
-        <div class='field form-group'>
-          <%= property_form.label :name, 'Prop Name' %>
+      <div class="col-xs-3">
+        <div class="field form-group">
           <%= property_form.text_field :name, class: 'form-control' %>
         </div>
       </div>
 
-      <div class='col-xs-2'>
-        <div class='field form-group'>
-          <%= property_form.label :auto %>
+      <div class="col-xs-2">
+        <div class="field form-group">
           <%= property_form.select(:auto, {}, {},  { class: 'form-control' } ) do %>
             <% [['ON', 1], ['OFF', 0] ].each do |c| -%>
               <%= content_tag(:option, c.first, value: c.last) %>
@@ -25,39 +25,32 @@
         </div>
       </div>
 
-			<div class='col-xs-2'>
-        <div class='field form-group'>
-          <%= property_form.label :value_min %>
+      <div class="col-xs-2">
+        <div class="field form-group">
           <%= property_form.number_field :value_min, class: 'form-control' %>
         </div>
       </div>
 
-      <div class='col-xs-2'>
-        <div class='field form-group'>
-          <%= property_form.label :value_max %>
+      <div class="col-xs-2">
+        <div class="field form-group">
           <%= property_form.number_field :value_max, class: 'form-control' %>
         </div>
       </div>
 
-
-      <div class='col-xs-2'>
-        <div class='field form-group'>
-          <%= property_form.label :property_value %>
-          <%= property_form.text_field :property_value, class: 'form-control' %>
+      <div class="col-xs-2">
+        <div class="field form-group">
+          <%= property_form.text_field :value, class: 'form-control' %>
         </div>
       </div>
 
-
-      <div class='col-xs-1'>
-        <div class='field form-group'>
-          <button type='button' class='remove-device-property form-control' id='<%= device_property_counter %>'>X</button>
+      <div class="col-xs-1">
+        <div class="field form-group">
+          <input type="button" class="remove-device-property-button form-control" value="X"></input>
         </div>
       </div>
 
     </div>
 
   <% end %>
-
-  <hr/>
 
 </div>

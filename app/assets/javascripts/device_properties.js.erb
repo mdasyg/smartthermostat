@@ -1,28 +1,27 @@
-function add_device_property() {
-    // find the current id into the dom
-    var current_device_dom_id = parseInt($('#device-properties .device-property').last().attr('id'));
-    if (!current_device_dom_id) { current_device_dom_id = 0; }
-//    console.log('ADD:', current_device_dom_id); // TODO: delete
-    var next_device_dom_id = current_device_dom_id + 1;
-    // prepare the template with the ids
-    var new_device_property_template = $('#new-device-property-template');
-    new_device_property_template.find('.device-property').attr('id', next_device_dom_id);
-    new_device_property_template.find('.remove-device-property').attr('id', next_device_dom_id);
-    // and now create the new entry
-    var device_properties = $('#device-properties');
-    device_properties.append(new_device_property_template.html());
-    device_properties.find('.device-property#' + next_device_dom_id + ' button').on('click', remove_device_property);
+var $deviceProperties = null;
+var $thisForm = null;
+var $devicePropertyTemplate = null;
+
+function addNewDeviceProperty() {
+    var lastDevicePropertyDomId = parseInt($deviceProperties.find('.device-property').last().attr('data-index'));
+    if (!lastDevicePropertyDomId) { lastDevicePropertyDomId = 0; }
+    var nextDevicePropertyDomId = lastDevicePropertyDomId + 1;
+    $devicePropertyTemplate.find('.device-property').attr('data-index', nextDevicePropertyDomId);
+    $devicePropertyTemplate.find('.remove-device-property').attr('data-index', nextDevicePropertyDomId);
+    $deviceProperties.append($devicePropertyTemplate.html());
 }
 
-function remove_device_property() {
-//    console.log('REMOVE:', $(this).closest('.device-property')); // TODO: delete
+function removeDeviceProperty() {
     $(this).closest('.device-property').remove();
 }
 
 function document_ready() {
-//    alert('The Document is Ready!!!');
-    $('#add-new-property').on('click', add_device_property);
-    $('#device-properties .device-property button').on('click', remove_device_property);
+    $devicePropertyTemplate = $('#device-property-template');
+    $thisForm = $('#new_device');
+    $deviceProperties = $thisForm.find('#device-properties-wrapper');
+
+    $thisForm.on('click', '#add-new-device-property-button', addNewDeviceProperty);
+    $thisForm.on('click', '.remove-device-property-button', removeDeviceProperty);
 }
 
 //$(document).ready( call-to-function ); // classic jQuery way but we use turbolinks
