@@ -1,40 +1,47 @@
-<div id='device-properties-header'>
+<div class="device-properties-header">
 
-  <div class='row'>
+  <div class="row">
 
-    <div class='col-xs-3'>
-      <div class='field form-group'>
+    <div class="col-xs-2">
+      <div class="field form-group">
         <%= label DeviceProperty, :name, 'Prop Name' %>
       </div>
     </div>
 
-    <div class='col-xs-2'>
-      <div class='field form-group'>
-        <%= label DeviceProperty, :auto %>
+    <div class="col-xs-2">
+      <div class="field form-group">
+        <%= label DeviceProperty, :value_type_id %>
       </div>
     </div>
 
-    <div class='col-xs-2'>
-      <div class='field form-group'>
+    <div class="col-xs-2">
+      <div class="field form-group">
         <%= label DeviceProperty, :value_min %>
       </div>
     </div>
 
-    <div class='col-xs-2'>
-      <div class='field form-group'>
+    <div class="col-xs-2">
+      <div class="field form-group">
         <%= label DeviceProperty, :value_max %>
       </div>
     </div>
 
 
-    <div class='col-xs-2'>
-      <div class='field form-group'>
+    <div class="col-xs-2">
+      <div class="field form-group">
         <%= label DeviceProperty, :value %>
       </div>
     </div>
 
-    <div class='col-xs-1'>
-      <div class='field form-group'>
+    <div class="col-xs-1">
+      <div class="field form-group">
+        <%= label DeviceProperty, :auto %>
+      </div>
+    </div>
+
+
+    <div class="col-xs-1">
+      <div class="field form-group">
         <label>Action</label>
       </div>
     </div>
@@ -43,6 +50,6 @@
 
 </div>
 
-<div id='device-properties-wrapper'>
+<div class="device-properties-wrapper">
   <%= render partial: 'device_property', collection: device_properties %>
 </div>

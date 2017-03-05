@@ -7,7 +7,6 @@ class User < ApplicationRecord
 
 	has_many :devices, inverse_of: :user
 
-
 #	def id
 #		return 4
 #	end

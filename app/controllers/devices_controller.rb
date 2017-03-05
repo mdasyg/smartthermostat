@@ -1,15 +1,13 @@
 class DevicesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_device, only: [:show, :edit, :update, :destroy]
-  before_action :set_device_form_template, only: [:new, :edit]
-  # before_action :set_device_form, only: [ :edit ]
 
   # GET /devices
   # GET /devices.json
   def index
     @devices = Device
-                   .select( 'uid, name, location' )
-                   .where( user_id: current_user.id )
+                   .select('uid, name, location')
+                   .where(user_id: current_user.id)
                    .find_each
   end
 
@@ -22,19 +20,14 @@ class DevicesController < ApplicationController
   def new
 
     @device = Device.new
-    # @device.device_properties.build
-    @prop_types = PropertyType.all
-
-    # @device_form = DeviceForm.new
-    # @device_form.properties = DevicePropertyAttribute.new(record_state: DevicePropertyAttribute::RECORD_NEW )
+    @value_types = ValueType.all
 
   end
 
   # GET /devices/1/edit
   def edit
 
-    @prop_types = PropertyType.all
-    # @value_types = ValueType.all
+    @value_types = ValueType.all
 
   end
 
@@ -43,12 +36,12 @@ class DevicesController < ApplicationController
   def create
 
     # clear out the params
-    secure_params = device_params
+    secure_params   = device_params
 
     # and after that pass the values to the ActiveRecord models
-    @device = Device.new(
-        name: secure_params[:name],
-        location: secure_params[:location],
+    @device         = Device.new(
+        name:        secure_params[:name],
+        location:    secure_params[:location],
         description: secure_params[:description],
     )
     @device.user_id = current_user.id
@@ -57,8 +50,12 @@ class DevicesController < ApplicationController
       if @device.save
 
         # Now its time to save the properties
-        secure_params[:new_properties].each do |new_prop|
-          @device.device_properties.create(new_prop)
+        secure_params[:new_properties].each do |key, new_prop|
+          puts new_prop.inspect
+          @device.device_properties.create!(new_prop)
+
+          puts @device.device_properties.inspect
+
         end
 
         # and then respond to request
@@ -79,13 +76,13 @@ class DevicesController < ApplicationController
     # CHECKLATER: check if we need some validations on existing ids.
 
     # clear out the params
-    secure_params = device_params
+    secure_params                = device_params
 
     # get the stored properties
-    stored_device_property_ids = @device.device_properties.ids
+    stored_device_property_ids   = @device.device_properties.ids
 
     # found the existings from post
-    existing_device_properties = secure_params.has_key?(:existing_properties) ? secure_params[:existing_properties] : nil
+    existing_device_properties   = secure_params.has_key?(:existing_properties) ? secure_params[:existing_properties] : nil
     existing_device_property_ids = []
     if existing_device_properties
       existing_device_properties
@@ -98,8 +95,8 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       if @device.update(
-          name: secure_params[:name],
-          location: secure_params[:location],
+          name:        secure_params[:name],
+          location:    secure_params[:location],
           description: secure_params[:description],
       )
 
@@ -115,7 +112,7 @@ class DevicesController < ApplicationController
         # Now its time to save the new properties
         # TODO: make it better
         if secure_params[:new_properties]
-          secure_params[:new_properties].each do |new_prop|
+          secure_params[:new_properties].each do |key, new_prop|
             @device.device_properties.create(new_prop)
           end
         end
@@ -148,18 +145,14 @@ class DevicesController < ApplicationController
     end
   end
 
-  private
-
-  # Set a new DeviceForm object for use in the device-property-template in "NEW" and "EDIT" actions
-  def set_device_form_template
-    @device_form_template = Device.new
-    @device_form_template.device_properties.build
-  end
+  ##############################################################################
+  private ######################################################################
+  ##############################################################################
 
   # Use callbacks to share common setup or constraints between actions.
   def set_device
     @device = Device
-                  .where( user_id: current_user.id )
+                  .where(user_id: current_user.id)
                   .find(params[:uid])
   end
 
@@ -169,28 +162,19 @@ class DevicesController < ApplicationController
         .require(:device)
         .permit(
             :name, :location, :description,
-            new_properties: [
-                                :name, :auto,
-                                :property_type_id, :value_type_id,
-                                :value_min, :value_max,
-                                :value,
-                            ],
+            new_properties:      [
+                                     :name, :auto,
+                                     :property_type_id, :value_type_id,
+                                     :value_min, :value_max,
+                                     :value,
+                                 ],
             existing_properties: [
-                                :name, :auto,
-                                :property_type_id, :value_type_id,
-                                :value_min, :value_max,
-                                :value,
-                            ],
+                                     :name, :auto,
+                                     :property_type_id, :value_type_id,
+                                     :value_min, :value_max,
+                                     :value,
+                                 ],
         )
   end
-
-  # def set_device_form
-  #   @device = Device
-  #                 .select( 'uid, name, location, description' )
-  #                 .where( user_id: current_user.id )
-  #                 .find(params[:uid])
-  #   @device_form = DeviceForm.new(@device)
-  #   @device_form.properties = DevicePropertyAttribute.new(@device.device_properties)
-  # end
 
 end

@@ -1,62 +1,67 @@
-<%= form_for device do |device_form| -%>
+<div id="device-form">
+  <%= form_for device do |device_form| -%>
 
-  <% if device.errors.any? %>
-    <div id="error-explanation">
-      <h2><%= pluralize(device.errors.count, 'error') %> prohibited this device from being saved:</h2>
+    <% if device.errors.any? %>
+      <div id="error-explanation">
+        <h2><%= pluralize(device.errors.count, 'error') %> prohibited this
+          device from being saved:</h2>
 
-      <ul>
-        <% device.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="row">
-
-    <div class="col-xs-6">
-      <div class="field form-group">
-        <%= device_form.label :name %>
-        <%= device_form.text_field :name, class: 'form-control' %>
+        <ul>
+          <% device.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
       </div>
-    </div>
+    <% end %>
 
-    <div class="col-xs-6">
-      <div class="field form-group">
-        <%= device_form.label :location %>
-        <%= device_form.text_field :location, class: 'form-control' %>
+    <div class="row">
+
+      <div class="col-xs-6">
+        <div class="field form-group">
+          <%= device_form.label :name %>
+          <%= device_form.text_field :name, class: 'form-control' %>
+        </div>
       </div>
-    </div>
 
-  </div>
-
-  <div class="row">
-
-    <div class="col-xs-12">
-      <div class="field form-group">
-        <%= device_form.label :description %>
-        <%= device_form.text_area :description, class: 'form-control' %>
+      <div class="col-xs-6">
+        <div class="field form-group">
+          <%= device_form.label :location %>
+          <%= device_form.text_field :location, class: 'form-control' %>
+        </div>
       </div>
+
     </div>
 
+    <div class="row">
+
+      <div class="col-xs-12">
+        <div class="field form-group">
+          <%= device_form.label :description %>
+          <%= device_form.text_area :description, class: 'form-control' %>
+        </div>
+      </div>
+
+    </div>
+
+    <hr/>
+
+    <div class="field form-group">
+      <button type="button" class="add-new-device-property-button form-control">Add
+        New Device Property
+      </button>
+    </div>
+
+    <%= render partial: 'device_property_form', locals: { device_properties: device.device_properties } %>
+
+    <hr/>
+
+    <div class="actions">
+      <%= device_form.submit %>
+    </div>
+
+  <% end -%>
+
+  <div id="device-property-template" class="hidden">
+    <%= render partial: 'device_property', locals: { device_property: DeviceProperty.new } %>
   </div>
-
-  <hr/>
-
-  <div class="field form-group">
-    <button type="button" id="add-new-device-property-button" class="form-control">Add New Device Property</button>
-  </div>
-
-  <%= render partial: 'device_property_form', locals: { device_properties: device.device_properties }  %>
-
-  <hr/>
-
-  <div class="actions">
-    <%= device_form.submit %>
-  </div>
-
-<% end -%>
-
-<div id="device-property-template" class="hidden">
-  <%= render partial: 'device_property', locals: {device_property: DeviceProperty.new } %>
 </div>

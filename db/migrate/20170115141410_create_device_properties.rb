@@ -10,18 +10,17 @@ class CreateDeviceProperties < ActiveRecord::Migration[5.0]
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.bigint  :device_uid, null: false, unsigned: true
       t.string  :name, null: false
-      t.boolean :auto, null: false, default: 0
       t.integer :value_type_id, null: false, unsigned: true, limit: 1
       t.string  :value_min
       t.string  :value_max
       t.string  :value
+      t.boolean :auto, null: false, default: 0
 
       t.timestamps
     end
 
-		#add_reference :device_properties, :device, index: true # this will create the reference column
 		add_foreign_key :device_properties, :devices, column: 'device_uid', primary_key: 'uid'
-		add_foreign_key :value_types, :property_types
+		add_foreign_key :device_properties, :value_types
 
   end
 end
