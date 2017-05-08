@@ -18,23 +18,18 @@ class DevicesController < ApplicationController
 
   # GET /devices/new
   def new
-
     @device = Device.new
     @value_types = ValueType.all
-
   end
 
   # GET /devices/1/edit
   def edit
-
     @value_types = ValueType.all
-
   end
 
   # POST /devices
   # POST /devices.json
   def create
-
     # clear out the params
     secure_params   = device_params
 
@@ -55,7 +50,6 @@ class DevicesController < ApplicationController
           @device.device_properties.create!(new_prop)
 
           puts @device.device_properties.inspect
-
         end
 
         # and then respond to request
@@ -94,11 +88,7 @@ class DevicesController < ApplicationController
     device_property_ids_to_delete = stored_device_property_ids - existing_device_property_ids
 
     respond_to do |format|
-      if @device.update(
-          name:        secure_params[:name],
-          location:    secure_params[:location],
-          description: secure_params[:description],
-      )
+      if @device.update( name:secure_params[:name], location: secure_params[:location], description: secure_params[:description] )
 
         # First delete the deleted ones
         # TODO: find a clever way to include some filtering to not let someone delete others properties
