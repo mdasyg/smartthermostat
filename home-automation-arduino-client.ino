@@ -7,6 +7,9 @@ byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 IPAddress ip(10, 168, 10, 100);
 IPAddress server(10, 168, 10, 50);
 
+EthernetClient ethClient;
+PubSubClient mqttClient(ethClient);
+
 int relayPin = 7;
 long millisecs = 0;
 
@@ -38,10 +41,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
     digitalWrite(relayPin, LOW);
   }
 
-}
 
-EthernetClient ethClient;
-PubSubClient mqttClient(ethClient);
+  mqttClient.publish("outTopic", "XAXAXAXA");
+
+}
 
 void reconnect() {
   // Loop until we're reconnected
