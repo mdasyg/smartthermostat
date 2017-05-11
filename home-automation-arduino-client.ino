@@ -2,6 +2,8 @@
 #include <Ethernet.h>
 #include <PubSubClient.h>
 
+#include "home-automation-arduino-client.h"
+
 // Update these with values suitable for your network.
 byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 IPAddress deviceIp(10, 168, 10, 100); // client address
@@ -64,12 +66,18 @@ void mqttConnectionCallback() {
 }
 
 void setup() {
-  Serial.begin(57600);
-
   pinMode(relayPin, OUTPUT);
 
   mqttClient.setServer(mqttServerIp, 1883);
   mqttClient.setCallback(mqttReceiveMsgCallback);
+
+  Serial.begin(57600);
+
+  Serial.print(F("Device S/N: "));
+  Serial.println(DEVICE_SERIAL_NUMBER);
+
+  Serial.print(F("Device Firmware: "));
+  Serial.println(DEVICE_FIRMWARE_VERSION);
 
   Serial.println(F("Trying to get IP from DHCP..."));
   if (Ethernet.begin(mac) == 0) {
