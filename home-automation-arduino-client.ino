@@ -2,7 +2,7 @@
 #include <Ethernet.h>
 #include <PubSubClient.h>
 
-#include "home-automation-arduino-client.h"
+#include "device_configs.h"
 
 // Update these with values suitable for your network.
 byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
