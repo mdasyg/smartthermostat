@@ -30,8 +30,6 @@ void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
     digitalWrite(relayPin, LOW);
   }
 
-  mqttClient.publish("outTopic", "XAXAXAXA");
-
 }
 
 void mqttConnectionCallback() {
@@ -43,17 +41,19 @@ void mqttConnectionCallback() {
   Serial.println(millis());
 
   Serial.println(F("Attempting connection to MQTT server..."));
-  if (mqttClient.connect("arduinoClient")) {
+  if (mqttClient.connect(DEVICE_FRIENDLY_NAME, MQTT_USERNAME, MQTT_PASSWORD)) {
     Serial.println("Connected");
-    reqRes = mqttClient.publish("outTopic", "hello world");
+    reqRes = mqttClient.publish("outTopic", DEVICE_FRIENDLY_NAME);
     Serial.print("Publish request result: ");
     Serial.println(reqRes);
     Serial.println(mqttClient.state());
-    mqttClient.subscribe("inTopic");
+    mqttClient.subscribe(DEVICE_SERIAL_NUMBER);
     Serial.print("Subscribe request result: ");
     Serial.println(reqRes);
     Serial.println(mqttClient.state());
-    Serial.println(F("Subscribed to [inTopic]"));
+    Serial.print(F("Subscribed to ["));
+    Serial.print(DEVICE_SERIAL_NUMBER);
+    Serial.println(F("] topic"));
   } else {
     Serial.print("Failed, rc=");
     Serial.println(mqttClient.state());
