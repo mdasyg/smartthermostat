@@ -9,6 +9,12 @@ class DevicesController < ApplicationController
                    .select('uid, name, location')
                    .where(user_id: current_user.id)
                    .find_each
+
+    respond_to do |format|
+      format.html { render :index }
+      format.json { render json: @devices, status: :created }
+    end
+
   end
 
   # GET /devices/1
