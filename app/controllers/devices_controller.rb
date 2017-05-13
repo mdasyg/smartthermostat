@@ -12,7 +12,7 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       format.html { render :index }
-      format.json { render json: @devices, status: :created }
+      format.json { render json: @devices }
     end
 
   end
