@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title><%= full_title(yield(:title)) %></title>
-  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
-  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
-  <%= csrf_meta_tags %>
-  <%= render 'layouts/shim' %>
-</head>
-<body>
-<%= render 'layouts/header' %>
-<div class="container">
-  <% flash.each do |key, value| %>
-    <%= content_tag(:div, value, class: "alert alert-#{key}") %>
-  <% end %>
-  <%= yield %>
-  <%= render 'layouts/footer' %>
+  <head>
+    <title><%= full_title(yield(:title)) %></title>
+    <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
+    <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+    <%= csrf_meta_tags %>
+    <%= render 'layouts/shim' %>
+  </head>
+  <body>
+    <%= render 'layouts/header' %>
+    <div class="container">
+      <% flash.each do |key, value| %>
+        <%= content_tag(:div, value, class: "alert alert-#{key}") %>
+      <% end %>
+      <%= yield %>
+      <%= render 'layouts/footer' %>
 
-  <%=
-    time = Time.new
-    debug( Time.zone  )
-  %>
+      <%=
+        time = Time.new
+        debug(Time.zone)
+      %>
 
-  <%= debug( RUBY_VERSION ) if Rails.env.development? %>
-  <%= debug( user_signed_in?.inspect ) if Rails.env.development? %>
-  <%= debug( current_user.id  ) if user_signed_in? if Rails.env.development? %>
-  <%= debug(user_session.inspect) if Rails.env.development? %>
-  <%= debug(instance_variables) if Rails.env.development? %>
-  <%= debug(local_variables) if Rails.env.development? %>
-  <%= debug(params) if Rails.env.development? %>
-</div>
-</body>
+      <%= debug(RUBY_VERSION) if Rails.env.development? %>
+      <%= debug(user_signed_in?.inspect) if Rails.env.development? %>
+      <%= debug(current_user.id) if user_signed_in? if Rails.env.development? %>
+      <%= debug(user_session.inspect) if Rails.env.development? %>
+      <%= debug(instance_variables) if Rails.env.development? %>
+      <%= debug(local_variables) if Rails.env.development? %>
+      <%= debug(params) if Rails.env.development? %>
+    </div>
+  </body>
 </html>

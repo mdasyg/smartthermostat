@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   get 'mqtt', to: 'mqtt#index'
 
+  post 'test', to: 'static_pages#test'
+
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
