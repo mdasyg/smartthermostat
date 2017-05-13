@@ -16,18 +16,10 @@
   <%= yield %>
   <%= render 'layouts/footer' %>
 
-
   <%=
-
     time = Time.new
-
-
     debug( Time.zone  )
-
-
   %>
-
-
 
   <%= debug( RUBY_VERSION ) if Rails.env.development? %>
   <%= debug( user_signed_in?.inspect ) if Rails.env.development? %>

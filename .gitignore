@@ -16,7 +16,7 @@ to-do.list
 *.bak
 *~
 *autosave
-/tmp/
+/tmp/*
 /log/*.log*
 *.log
 *.swp
