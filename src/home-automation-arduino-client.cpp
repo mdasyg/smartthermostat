@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
@@ -71,7 +73,7 @@ void setup() {
   mqttClient.setServer(mqttServerIp, 1883);
   mqttClient.setCallback(mqttReceiveMsgCallback);
 
-  Serial.begin(57600);
+  Serial.begin(115200);
 
   Serial.print(F("Device S/N: "));
   Serial.println(DEVICE_SERIAL_NUMBER);
