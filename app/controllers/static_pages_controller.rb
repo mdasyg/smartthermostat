@@ -8,11 +8,9 @@ class StaticPagesController < ApplicationController
 
   def test
 
-    puts("sdfsdf")
+    puts("/" + params.except(:controller, :action).keys.to_s + "/")
 
-
-
-    render json: request.inspect
+    render json: params.except(:controller, :action).keys.to_s
   end
 
 end
