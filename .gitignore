@@ -1,8 +1,5 @@
-# project private files
+# Project private files
 /config/secrets.yml
-
-# custom project ignore
-to-do.list
 
 # rails sqlite db
 /db/*.sqlite3
@@ -12,11 +9,11 @@ to-do.list
 /.idea
 /nbproject
 
-#tmp files
+# Temporary files
 *.bak
 *~
 *autosave
-/tmp/
+/tmp/*
 /log/*.log*
 *.log
 *.swp
