@@ -10,20 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170115141410) do
+ActiveRecord::Schema.define(version: 20170521070516) do
 
   create_table "device_properties", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint  "device_id",                                  null: false, unsigned: true
-    t.string  "name",                                       null: false
-    t.boolean "auto",                       default: false, null: false
-    t.integer "property_type_id", limit: 1,                 null: false, unsigned: true
-    t.integer "value_type_id",    limit: 1,                 null: false, unsigned: true
-    t.string  "value_min"
-    t.string  "value_max"
-    t.string  "property_value"
-    t.index ["device_id"], name: "fk_rails_f31d09a8fc", using: :btree
-    t.index ["property_type_id"], name: "fk_rails_a5964b2a4f", using: :btree
+    t.bigint   "device_uid",                              null: false, unsigned: true
+    t.string   "name",                                    null: false
+    t.integer  "value_type_id", limit: 1,                 null: false, unsigned: true
+    t.string   "value_min"
+    t.string   "value_max"
+    t.string   "value"
+    t.boolean  "auto",                    default: false, null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+    t.index ["device_uid"], name: "fk_rails_2903da87e3", using: :btree
     t.index ["value_type_id"], name: "fk_rails_56f2035299", using: :btree
+  end
+
+  create_table "device_stats", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint   "device_uid",     null: false, unsigned: true
+    t.integer  "stat_id",        null: false
+    t.string   "label",          null: false
+    t.string   "value"
+    t.datetime "last_update_at"
+    t.index ["device_uid", "stat_id"], name: "index_device_stats_on_device_uid_and_stat_id", unique: true, using: :btree
   end
 
   create_table "devices", primary_key: "uid", id: :bigint, default: nil, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -37,10 +46,6 @@ ActiveRecord::Schema.define(version: 20170115141410) do
     t.datetime "updated_at",                    null: false
     t.index ["access_token"], name: "index_devices_on_access_token", unique: true, using: :btree
     t.index ["user_id"], name: "fk_rails_410b63ef65", using: :btree
-  end
-
-  create_table "property_types", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "name"
   end
 
   create_table "users", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -73,8 +78,8 @@ ActiveRecord::Schema.define(version: 20170115141410) do
     t.string "name"
   end
 
-  add_foreign_key "device_properties", "devices", primary_key: "uid"
-  add_foreign_key "device_properties", "property_types"
+  add_foreign_key "device_properties", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "device_properties", "value_types"
+  add_foreign_key "device_stats", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "devices", "users"
 end

@@ -8,5 +8,6 @@ class Device < ApplicationRecord
 
 	belongs_to :user, inverse_of: :devices
 	has_many :device_properties, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
+	has_many :device_stats, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
 
 end

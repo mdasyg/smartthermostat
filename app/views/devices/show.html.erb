@@ -53,7 +53,7 @@
 <!-- INFO -->
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">Info</h3>
+    <h3 class="panel-title">System info for device</h3>
   </div>
   <div class="panel-body">
 
@@ -71,6 +71,36 @@
       <strong>Access token:</strong>
       <%= @device.access_token %>
     </div>
+
+  </div>
+</div>
+
+<!-- INFO FROM DEVICE -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Device info</h3>
+  </div>
+  <div class="panel-body">
+
+    <% @device.device_stats.each do |stat| %>
+
+      <div class="row">
+
+        <div class="col-xs-4">
+          <%= stat.label %>:
+        </div>
+
+        <div class="col-xs-4">
+          <%= stat.value %>
+        </div>
+
+        <div class="col-xs-4">
+          (<%= stat.last_update_at %>)
+        </div>
+
+      </div>
+
+    <% end %>
 
   </div>
 </div>

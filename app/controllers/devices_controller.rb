@@ -1,6 +1,9 @@
 class DevicesController < ApplicationController
-  before_action :authenticate_user!
+  skip_before_action :verify_authenticity_token, :only => [:statusUpdate] # TODO: DONT FORGET TO FIX THIS
+
+  # before_action :authenticate_user! # TODO: AND THISSSSS
   before_action :set_device, only: [:show, :edit, :update, :destroy]
+
 
   # GET /devices
   # GET /devices.json
@@ -11,8 +14,8 @@ class DevicesController < ApplicationController
                    .find_each
 
     respond_to do |format|
-      format.html { render :index }
-      format.json { render json: @devices }
+      format.html {render :index}
+      format.json {render json: @devices}
     end
 
   end
@@ -24,7 +27,7 @@ class DevicesController < ApplicationController
 
   # GET /devices/new
   def new
-    @device = Device.new
+    @device      = Device.new
     @value_types = ValueType.all
   end
 
@@ -59,11 +62,11 @@ class DevicesController < ApplicationController
         end
 
         # and then respond to request
-        format.html { redirect_to @device, notice: 'Device was successfully created.' }
-        format.json { render :show, status: :created, location: @device }
+        format.html {redirect_to @device, notice: 'Device was successfully created.'}
+        format.json {render :show, status: :created, location: @device}
       else
-        format.html { render :new }
-        format.json { render json: @device.errors, status: :unprocessable_entity }
+        format.html {render :new}
+        format.json {render json: @device.errors, status: :unprocessable_entity}
       end
     end
 
@@ -87,14 +90,14 @@ class DevicesController < ApplicationController
     if existing_device_properties
       existing_device_properties
           .keys
-          .each { |index| existing_device_property_ids << index.to_i }
+          .each {|index| existing_device_property_ids << index.to_i}
     end
 
     # and compute which of them we need to delete
     device_property_ids_to_delete = stored_device_property_ids - existing_device_property_ids
 
     respond_to do |format|
-      if @device.update( name:secure_params[:name], location: secure_params[:location], description: secure_params[:description] )
+      if @device.update(name: secure_params[:name], location: secure_params[:location], description: secure_params[:description])
 
         # First delete the deleted ones
         # TODO: find a clever way to include some filtering to not let someone delete others properties
@@ -113,11 +116,11 @@ class DevicesController < ApplicationController
           end
         end
 
-        format.html { redirect_to @device, notice: 'Device was successfully updated.' }
-        format.json { render :show, status: :ok, location: @device }
+        format.html {redirect_to @device, notice: 'Device was successfully updated.'}
+        format.json {render :show, status: :ok, location: @device}
       else
-        format.html { render :edit }
-        format.json { render json: @device.errors, status: :unprocessable_entity }
+        format.html {render :edit}
+        format.json {render json: @device.errors, status: :unprocessable_entity}
       end
     end
   end
@@ -136,9 +139,33 @@ class DevicesController < ApplicationController
     @device.destroy
 
     respond_to do |format|
-      format.html { redirect_to devices_url, notice: 'Device was successfully destroyed.' }
-      format.json { head :no_content }
+      format.html {redirect_to devices_url, notice: 'Device was successfully destroyed.'}
+      format.json {head :no_content}
     end
+  end
+
+  def statusUpdate
+
+    device_uid = params[:device_uid].to_i
+    info = params.except(:controller, :action, :device_uid)
+
+    info.each do |key, value|
+      statId = key.to_i
+      if ( statId > 0)
+        deviceStat = DeviceStat.where(device_uid: device_uid, stat_id: statId).take
+
+        if(!deviceStat.nil?)
+          puts(deviceStat.inspect)
+          deviceStat.value = value
+          deviceStat.last_update_at = Time.now # TODO correct the time is inserted to db
+          deviceStat.save()
+          puts(deviceStat.inspect)
+        end
+
+      end
+    end
+
+    render json: info.inspect.to_s
   end
 
   ##############################################################################
