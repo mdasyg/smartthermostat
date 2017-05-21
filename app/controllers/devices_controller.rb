@@ -150,16 +150,16 @@ class DevicesController < ApplicationController
     info = params.except(:controller, :action, :device_uid)
 
     info.each do |key, value|
-      statId = key.to_i
-      if ( statId > 0)
-        deviceStat = DeviceStat.where(device_uid: device_uid, stat_id: statId).take
+      stat_id = key.to_i
+      if ( stat_id > 0)
+        device_stat = DeviceStat.where(device_uid: device_uid, stat_id: stat_id).take
 
-        if(!deviceStat.nil?)
-          puts(deviceStat.inspect)
-          deviceStat.value = value
-          deviceStat.last_update_at = Time.now # TODO correct the time is inserted to db
-          deviceStat.save()
-          puts(deviceStat.inspect)
+        if(!device_stat.nil?)
+          puts(device_stat.inspect)
+          device_stat.value = value
+          device_stat.last_update_at = Time.now # TODO correct the time is inserted to db
+          device_stat.save()
+          puts(device_stat.inspect)
         end
 
       end
