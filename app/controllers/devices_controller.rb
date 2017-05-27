@@ -30,6 +30,7 @@ class DevicesController < ApplicationController
   # POST /devices
   # POST /devices.json
   def create
+    @value_types = ValueType.all
     # clear out the params
     secure_params   = device_params
 
