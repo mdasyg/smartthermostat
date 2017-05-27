@@ -20,6 +20,9 @@ gem 'sass-rails', '>= 3.2' # Use SCSS for stylesheets
 #gem 'sprockets', '2.11.0'
 #gem 'sprockets-rails', '~> 3.2'
 
+gem 'momentjs-rails', '~> 2.17', '>= 2.17.1'
+gem 'bootstrap3-datetimepicker-rails', '~> 4.17', '>= 4.17.47'
+
 gem 'uglifier', '>= 1.3.0' # Use Uglifier as compressor for JavaScript assets
 gem 'coffee-rails', '~> 4.2' # Use CoffeeScript for .coffee assets and views
 gem 'jquery-rails' # Use jquery as the JavaScript library
