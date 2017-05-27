@@ -21,6 +21,7 @@ gem 'sass-rails', '>= 3.2' # Use SCSS for stylesheets
 #gem 'sprockets-rails', '~> 3.2'
 
 gem 'momentjs-rails', '~> 2.17', '>= 2.17.1'
+gem 'moment_timezone-rails', '~> 0.5.0'
 gem 'bootstrap3-datetimepicker-rails', '~> 4.17', '>= 4.17.47'
 
 gem 'uglifier', '>= 1.3.0' # Use Uglifier as compressor for JavaScript assets

@@ -2,10 +2,11 @@ $(document).on("turbolinks:load", function(){
 
     $('#schedule_datetime').datetimepicker({
         locale: 'en',
-        // format:"dd/MM/yyyy",
-        // extraFormats: ['YYYY-MM-DD'],
+        format: "DD/MM/YYYY HH:mm:ss",
+        extraFormats: ['YYYY-MM-DD HH:mm:ss'],
         showClear: true,
-        useCurrent: true
+        sideBySide: true,
+        defaultDate: moment()
     });
     $('#schedule_datetime').data('DateTimePicker').format("DD/MM/YYYY HH:mm:ss")
 

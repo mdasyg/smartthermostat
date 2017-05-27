@@ -21,6 +21,9 @@ class SchedulesController < ApplicationController
 
   # GET /schedules/1/edit
   def edit
+
+    # abort
+
   end
 
   # POST /schedules

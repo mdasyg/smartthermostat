@@ -8,6 +8,17 @@
 
 <% prefix = "device[#{record_state}_properties]" %>
 
+<% if device_property.errors.any? %>
+  <div id="error-explanation">
+    <h2><%= pluralize(device_property.errors.count, 'error') %> prohibited this device property from being valid:</h2>
+    <ul>
+      <% device_property.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <div class="device-property"  data-index="<%= device_property_index %>" >
 
   <%= fields_for prefix, device_property, index: device_property_index do |property_form| %>

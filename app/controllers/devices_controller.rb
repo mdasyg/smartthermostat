@@ -30,30 +30,24 @@ class DevicesController < ApplicationController
   # POST /devices
   # POST /devices.json
   def create
-    @value_types = ValueType.all
+    @value_types    = ValueType.all
+
     # clear out the params
     secure_params   = device_params
 
     # and after that pass the values to the ActiveRecord models
-    @device         = Device.new(
-        name:        secure_params[:name],
-        location:    secure_params[:location],
-        description: secure_params[:description],
-    )
+    @device         = Device.new(name: secure_params[:name], location: secure_params[:location], description: secure_params[:description])
     @device.user_id = current_user.id
+
+    if secure_params.has_key?(:new_properties)
+      secure_params[:new_properties].each do |key, new_prop|
+        @device.device_properties.build(new_prop)
+      end
+    end
 
     respond_to do |format|
       if @device.save
-
         # Now its time to save the properties
-        secure_params[:new_properties].each do |key, new_prop|
-          puts new_prop.inspect
-          @device.device_properties.create!(new_prop)
-
-          puts @device.device_properties.inspect
-        end
-
-        # and then respond to request
         format.html {redirect_to @device, notice: 'Device was successfully created.'}
         format.json {render :show, status: :created, location: @device}
       else
@@ -139,16 +133,16 @@ class DevicesController < ApplicationController
   def statusUpdate
 
     device_uid = params[:device_uid].to_i
-    info = params.except(:controller, :action, :device_uid)
+    info       = params.except(:controller, :action, :device_uid)
 
     info.each do |key, value|
       stat_id = key.to_i
-      if ( stat_id > 0)
+      if (stat_id > 0)
         device_stat = DeviceStat.where(device_uid: device_uid, stat_id: stat_id).take
 
-        if(!device_stat.nil?)
+        if (!device_stat.nil?)
           puts(device_stat.inspect)
-          device_stat.value = value
+          device_stat.value          = value
           device_stat.last_update_at = Time.now # TODO correct the time is inserted to db
           device_stat.save()
           puts(device_stat.inspect)
