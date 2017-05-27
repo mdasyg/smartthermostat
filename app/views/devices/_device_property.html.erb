@@ -1,12 +1,6 @@
-<% if device_property.new_record? %>
-  <% record_state =  'new' %>
-  <% device_property_index = (defined? device_property_counter) ? device_property_counter : 'INDEX' %>
-<% else %>
-  <% record_state = 'existing' %>
-  <% device_property_index = device_property.id %>
-<% end %>
+<% device_property_index = (defined? device_property_counter) ? device_property_counter : 'INDEX' %>
 
-<% prefix = "device[#{record_state}_properties]" %>
+<% prefix = "device[properties]" %>
 
 <% if device_property.errors.any? %>
   <div id="error-explanation">
@@ -22,6 +16,8 @@
 <div class="device-property"  data-index="<%= device_property_index %>" >
 
   <%= fields_for prefix, device_property, index: device_property_index do |property_form| %>
+
+    <%= property_form.hidden_field :id %>
 
     <div class="row">
 
