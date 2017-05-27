@@ -4,14 +4,16 @@ var $devicePropertyTemplate = null;
 
 function addNewDeviceProperty() {
     var lastDevicePropertyDomId = parseInt($deviceProperties.find('.device-property').last().attr('data-index'));
-    if (!lastDevicePropertyDomId) { lastDevicePropertyDomId = 0; }
+    if (!lastDevicePropertyDomId) {
+        lastDevicePropertyDomId = 0;
+    }
     var nextDevicePropertyDomId = lastDevicePropertyDomId + 1;
 
     var newDeviceProperty = $devicePropertyTemplate.clone();
 
     newDeviceProperty.attr('data-index', nextDevicePropertyDomId);
 
-    var newDevicePropertyInputs =  newDeviceProperty.find('input');
+    var newDevicePropertyInputs = newDeviceProperty.find('input');
     newDevicePropertyInputs.each(function () {
         var propertyName = $(this).attr('name');
         if (propertyName) {
@@ -23,7 +25,7 @@ function addNewDeviceProperty() {
         }
     });
 
-    var newDevicePropertySelects =  newDeviceProperty.find('select');
+    var newDevicePropertySelects = newDeviceProperty.find('select');
     newDevicePropertySelects.each(function () {
         var propertyName = $(this).attr('name');
         if (propertyName) {
@@ -42,14 +44,11 @@ function removeDeviceProperty() {
     $(this).closest('.device-property').remove();
 }
 
-function document_ready() {
+$(document).on("turbolinks:load", function () { // we need this because of turbolinks
     $devicePropertyTemplate = $('#device-property-template').find('.device-property');
     $thisForm = $(document.body).find('#device-form').find('form');
     $deviceProperties = $thisForm.find('.device-properties-wrapper');
 
     $thisForm.on('click', '.add-new-device-property-button', addNewDeviceProperty);
     $thisForm.on('click', '.remove-device-property-button', removeDeviceProperty);
-}
-
-//$(document).ready( call-to-function ); // classic jQuery way but we use turbolinks
-$(document).on("turbolinks:load", document_ready); // we need this because of turbolinks
+});

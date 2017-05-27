@@ -1,6 +1,7 @@
 class SchedulesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_schedule, only: [:show, :edit, :update, :destroy]
-  before_action :set_available_devices, only: [:new, :edit]
+  before_action :set_available_devices, only: [:new, :edit, :create]
 
   # GET /schedules
   # GET /schedules.json
@@ -26,6 +27,10 @@ class SchedulesController < ApplicationController
   # POST /schedules.json
   def create
     @schedule = Schedule.new(schedule_params)
+
+    @schedule.inspect
+
+    abort
 
     respond_to do |format|
       if @schedule.save
@@ -74,6 +79,6 @@ class SchedulesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def schedule_params
-      params.fetch(:schedule, {})
+      params.require(:schedule).permit(:device_uid, :datetime)
     end
 end
