@@ -1,5 +1,5 @@
 class DevicesController < ApplicationController
-  skip_before_action :verify_authenticity_token, :only => [:statusUpdate] # TODO: DONT FORGET TO FIX THIS
+  # skip_before_action :verify_authenticity_token, :only => [:statusUpdate] # TODO: DONT FORGET TO FIX THIS
 
   before_action :authenticate_user! # TODO: AND THISSSSS
   before_action :set_device, only: [:show, :edit, :update, :destroy]
@@ -8,16 +8,7 @@ class DevicesController < ApplicationController
   # GET /devices
   # GET /devices.json
   def index
-    @devices = Device
-                   .select('uid, name, location')
-                   .where(user_id: current_user.id)
-                   .find_each
-
-    respond_to do |format|
-      format.html {render :index}
-      format.json {render json: @devices}
-    end
-
+    @devices = Device.select('uid, name, location').where(user_id: current_user.id).find_each
   end
 
   # GET /devices/1

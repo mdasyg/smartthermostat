@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :schedules
   resources :devices, param: :uid
   root to: 'static_pages#home'
 
