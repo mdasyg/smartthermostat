@@ -143,6 +143,13 @@ class DevicesController < ApplicationController
       end
     end
 
+    # then delete the schedules
+    if !@device.schedules.empty?
+      @device.schedules.each do |device_schedule|
+        device_schedule.destroy
+      end
+    end
+
     # finally destroy the device
     @device.destroy
 

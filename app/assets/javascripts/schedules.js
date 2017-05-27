@@ -8,7 +8,7 @@ $(document).on("turbolinks:load", function(){
         sideBySide: true,
         defaultDate: moment()
     });
-    $('#schedule_datetime').data('DateTimePicker').format("DD/MM/YYYY HH:mm:ss")
+    // $('#schedule_datetime').data('DateTimePicker').format("DD/MM/YYYY HH:mm:ss")
 
 });
 
