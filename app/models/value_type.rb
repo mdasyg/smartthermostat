@@ -8,6 +8,6 @@ class ValueType < ApplicationRecord
 
   validates :name, :primitive_type_id, :unsigned, presence: true
 
-  has_many :device_properties, inverse_of: :value_type
+  has_many :properties, inverse_of: :value_type
 
 end

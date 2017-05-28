@@ -50,8 +50,8 @@ class DeviceForm
   #   @name = attributes.has_attribute?(:name) ? attributes.name : nil
   #   @location = attributes.has_attribute?(:location) ? attributes.location : nil
   #   @description = attributes.has_attribute?(:description) ? attributes.description : nil
-  #   if attributes.device_properties != nil
-  #     attributes.device_properties.each do |set_prop|
+  #   if attributes.properties != nil
+  #     attributes.properties.each do |set_prop|
   #       @properties = DevicePropertyAttribute.new(set_prop)
   #     end
   #   end

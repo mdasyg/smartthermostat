@@ -51,7 +51,7 @@
       </button>
     </div>
 
-    <%= render partial: 'device_property_form', locals: { device_properties: device.device_properties } %>
+    <%= render partial: 'device_property_form', locals: { properties: device.properties } %>
 
     <hr/>
 
@@ -62,6 +62,6 @@
   <% end -%>
 
   <div id="device-property-template" class="hidden">
-    <%= render partial: 'device_property', locals: { device_property: DeviceProperty.new } %>
+    <%= render partial: 'device_property', locals: { device_property: Property.new } %>
   </div>
 </div>

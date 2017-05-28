@@ -39,7 +39,7 @@ class DevicesController < ApplicationController
 
     if secure_params.has_key?(:properties)
       secure_params[:properties].each do |key, new_prop|
-        @device.device_properties.build(new_prop)
+        @device.properties.build(new_prop)
       end
     end
 
@@ -66,7 +66,7 @@ class DevicesController < ApplicationController
     secure_params = device_params
 
     # get the stored properties
-    stored_device_property_ids = @device.device_properties.ids
+    stored_device_property_ids = @device.properties.ids
 
     posted_device_property_ids = []
     if params.require(:device).include?(:properties)
@@ -74,7 +74,7 @@ class DevicesController < ApplicationController
         if !prop[:id].empty?
           posted_device_property_ids << prop[:id].to_i
         else
-          @device.device_properties.build(prop.permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value))
+          @device.properties.build(prop.permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value))
         end
       end
     end
@@ -88,14 +88,14 @@ class DevicesController < ApplicationController
 
     # First delete the deleted ones
     if device_property_ids_to_delete
-      DeviceProperty.destroy(device_property_ids_to_delete)
+      Property.destroy(device_property_ids_to_delete)
     end
 
     if posted_device_property_ids
       device_property_post = params.require(:device).fetch(:properties)
       puts device_property_post.inspect
-      if !@device.device_properties.empty?
-        @device.device_properties.each do |property|
+      if !@device.properties.empty?
+        @device.properties.each do |property|
           puts property[:id].inspect
           if stored_device_property_ids.include?(property[:id])
             puts "NAIII"
@@ -118,7 +118,7 @@ class DevicesController < ApplicationController
       end
     end
 
-    puts @device.device_properties.inspect
+    puts @device.properties.inspect
 
     respond_to do |format|
       if @device.update(name: secure_params[:name], location: secure_params[:location], description: secure_params[:description])
@@ -137,8 +137,8 @@ class DevicesController < ApplicationController
   # DELETE /devices/1.json
   def destroy
     # first we need to delete all properties
-    if !@device.device_properties.empty?
-      @device.device_properties.each do |device_property|
+    if !@device.properties.empty?
+      @device.properties.each do |device_property|
         device_property.destroy
       end
     end
