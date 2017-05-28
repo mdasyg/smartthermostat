@@ -9,7 +9,7 @@ class User < ApplicationRecord
   has_many :schedules, inverse_of: :user
 
   #	def id
-#		return 4
-#	end
+  #		return 4
+  #	end
 
 end

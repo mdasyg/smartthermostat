@@ -4,7 +4,9 @@
 
 <div class="well">
   <h1>Overview</h1>
-  <h1><small><%= @device.name %> @  <%= @device.location %></small></h1>
+  <h1>
+    <small><%= @device.name %> @  <%= @device.location %></small>
+  </h1>
 </div>
 
 <!-- STATUS -->
@@ -29,21 +31,21 @@
 
     <% @device.device_properties.each do |property| %>
 
-        <div class="row">
+      <div class="row">
 
-          <div class="col-xs-4">
-            <%= property.name %>
-          </div>
-
-          <div class="col-xs-4">
-            <%= property.value %>
-          </div>
-
-          <div class="col-xs-4">
-            <%= property.auto %>
-          </div>
-
+        <div class="col-xs-4">
+          <%= property.name %>
         </div>
+
+        <div class="col-xs-4">
+          <%= property.value %>
+        </div>
+
+        <div class="col-xs-4">
+          <%= property.auto %>
+        </div>
+
+      </div>
 
     <% end %>
 

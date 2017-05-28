@@ -31,7 +31,7 @@ class DevicesController < ApplicationController
   # POST /devices.json
   def create
     # clear out the params
-    secure_params   = device_params
+    secure_params = device_params
 
     # and after that pass the values to the ActiveRecord models
     @device         = Device.new(name: secure_params[:name], location: secure_params[:location], description: secure_params[:description])
@@ -63,7 +63,7 @@ class DevicesController < ApplicationController
     # CHECKLATER: check if we need some validations on existing ids.
 
     # clear out the params
-    secure_params              = device_params
+    secure_params = device_params
 
     # get the stored properties
     stored_device_property_ids = @device.device_properties.ids

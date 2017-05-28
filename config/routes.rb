@@ -3,13 +3,13 @@ Rails.application.routes.draw do
   resources :devices, param: :uid
   root to: 'static_pages#home'
 
-  get 'mqtt', to: 'mqtt#index'
+  # get 'mqtt', to: 'mqtt#index'
 
-  post 'devices/statusUpdate', to: 'devices#statusUpdate'
+  # post 'devices/statusUpdate', to: 'devices#statusUpdate'
 
-  post 'test', to: 'static_pages#test'
+  # post 'test', to: 'static_pages#test'
 
-
+  get '/admin', to: 'admin#index'
 
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

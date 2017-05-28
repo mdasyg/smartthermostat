@@ -1,0 +1,36 @@
+<!-- This provides the title for the page-->
+<% provide(:title, "Admin Panel") %>
+<!-- Dont remove the previous -->
+
+<h1>Value Types</h1>
+
+<div class="row">
+
+  <div class="col-xs-2">
+    <div class="field form-group">
+      <%= label ValueType, :id %>
+    </div>
+  </div>
+
+  <div class="col-xs-2">
+    <div class="field form-group">
+      <%= label ValueType, :name %>
+    </div>
+  </div>
+
+</div>
+
+<div class="value-types-form-container">
+  <%= form_tag(admin_path) do %>
+
+    <%= render partial: 'value_type_form', collection: @value_types, as: :value_type %>
+
+    <div class="actions">
+      <button type="submit">Update</button>
+    </div>
+
+  <% end %>
+
+</div>
+
+<hr>

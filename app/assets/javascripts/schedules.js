@@ -1,4 +1,4 @@
-$(document).on("turbolinks:load", function(){
+$(document).on("turbolinks:load", function () {
 
     $('#schedule_datetime').datetimepicker({
         locale: 'en',

@@ -16,23 +16,23 @@
 
 <% @devices.each do |device| %>
 
-    <div class="row">
-      <div class="col-xs-5"><%= device.name %></div>
-      <div class="col-xs-5"><%= device.location %></div>
-      <div class="col-xs-2">
-        <%= link_to(device) do %>
-            <span class="glyphicon glyphicon-zoom-in"></span>
-        <% end %> |
-        <%= link_to edit_device_path(device) do%>
-            <span class="glyphicon glyphicon-pencil"></span>
-        <% end %>  |
-        <%= link_to device, method: :delete, data: { confirm: 'Are you sure?' } do %>
-            <span class="glyphicon glyphicon-remove"></span>
-        <% end %>
-      </div>
+  <div class="row">
+    <div class="col-xs-5"><%= device.name %></div>
+    <div class="col-xs-5"><%= device.location %></div>
+    <div class="col-xs-2">
+      <%= link_to(device) do %>
+        <span class="glyphicon glyphicon-zoom-in"></span>
+      <% end %> |
+      <%= link_to edit_device_path(device) do %>
+        <span class="glyphicon glyphicon-pencil"></span>
+      <% end %>  |
+      <%= link_to device, method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <span class="glyphicon glyphicon-remove"></span>
+      <% end %>
     </div>
+  </div>
 
-    <hr/>
+  <hr/>
 <% end %>
 
 <%= link_to 'New Device', new_device_path %>
