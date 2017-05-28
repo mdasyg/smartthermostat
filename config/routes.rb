@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   # post 'test', to: 'static_pages#test'
 
   get '/admin', to: 'admin#index'
+  post '/admin/valueTypes', to: 'admin#updateValueTypes'
 
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
