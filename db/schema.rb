@@ -99,7 +99,9 @@ ActiveRecord::Schema.define(version: 20170527080931) do
   end
 
   create_table "value_types", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "name"
+    t.string  "name",                        null: false
+    t.integer "primitive_type_id", limit: 1, null: false, unsigned: true
+    t.boolean "unsigned",                    null: false
   end
 
   add_foreign_key "actions", "device_properties", column: "property_id"

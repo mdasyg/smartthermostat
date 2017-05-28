@@ -13,8 +13,8 @@ class CreateProperties < ActiveRecord::Migration[5.0]
       t.timestamps
     end
 
-    add_foreign_key :device_properties, :devices, column: 'device_uid', primary_key: 'uid'
-    add_foreign_key :device_properties, :value_types
+    add_foreign_key :properties, :devices, column: 'device_uid', primary_key: 'uid'
+    add_foreign_key :properties, :value_types
 
   end
 end

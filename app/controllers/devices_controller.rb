@@ -3,7 +3,7 @@ class DevicesController < ApplicationController
 
   before_action :authenticate_user! # TODO: AND THISSSSS
   before_action :set_device, only: [:show, :edit, :update, :destroy]
-
+  before_action :set_value_types, only: [:new, :edit]
 
   # GET /devices
   # GET /devices.json
@@ -18,20 +18,18 @@ class DevicesController < ApplicationController
 
   # GET /devices/new
   def new
-    @device      = Device.new
-    @value_types = ValueType.all
+    @device = Device.new
   end
 
   # GET /devices/1/edit
   def edit
-    @value_types = ValueType.all
   end
 
   # POST /devices
   # POST /devices.json
   def create
     # clear out the params
-    secure_params = device_params
+    secure_params = device_safe_params
 
     # and after that pass the values to the ActiveRecord models
     @device         = Device.new(name: secure_params[:name], location: secure_params[:location], description: secure_params[:description])
@@ -49,7 +47,7 @@ class DevicesController < ApplicationController
         format.html {redirect_to @device, notice: 'Device was successfully created.'}
         format.json {render :show, status: :created, location: @device}
       else
-        @value_types = ValueType.all
+        set_value_types
         format.html {render :new}
         format.json {render json: @device.errors, status: :unprocessable_entity}
       end
@@ -63,7 +61,7 @@ class DevicesController < ApplicationController
     # CHECKLATER: check if we need some validations on existing ids.
 
     # clear out the params
-    secure_params = device_params
+    secure_params = device_safe_params
 
     # get the stored properties
     stored_device_property_ids = @device.properties.ids
@@ -95,18 +93,17 @@ class DevicesController < ApplicationController
       device_property_post = params.require(:device).fetch(:properties)
       puts device_property_post.inspect
       if !@device.properties.empty?
-        @device.properties.each do |property|
-          puts property[:id].inspect
-          if stored_device_property_ids.include?(property[:id])
+        @device.properties.each do |stored_property|
+          puts stored_property[:id].inspect
+          if stored_device_property_ids.include?(stored_property[:id])
             puts "NAIII"
-            device_property_post.each do |key, value|
-              if property[:id].to_i == value[:id].to_i
+            device_property_post.each do |key, posted_property|
+              if stored_property[:id].to_i == posted_property[:id].to_i
                 puts "FOUND"
-                puts property.inspect
-                puts value.permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value).inspect
-                property.attributes = value.permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value) # TODO remove the redundant permit, make it function
-                property.valid?
-                puts property.inspect
+                puts stored_property.inspect
+                stored_property.attributes = device_property_safe_params(posted_property)
+                stored_property.valid?
+                puts stored_property.inspect
               end
             end
 
@@ -125,7 +122,7 @@ class DevicesController < ApplicationController
         format.html {redirect_to @device, notice: 'Device was successfully updated.'}
         format.json {render :show, status: :ok, location: @device}
       else
-        @value_types = ValueType.all
+        set_value_types
         format.html {render :edit}
         format.json {render json: @device.errors, status: :unprocessable_entity}
       end
@@ -192,13 +189,20 @@ class DevicesController < ApplicationController
     @device = Device.where(user_id: current_user.id).find(params[:uid])
   end
 
+  def set_value_types
+    @value_types = ValueType.all
+    if @value_types.empty?
+      redirect_to admin_path
+    end
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
-  def device_params
+  def device_safe_params
     params.require(:device).permit(:name, :location, :description, properties: [:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value])
   end
-  #
-  # def device_property_safe_params
-  #   params.require(:device).fetch(:properties).permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value)
-  # end
+
+  def device_property_safe_params(unsafe_property)
+    unsafe_property.permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value)
+  end
 
 end
