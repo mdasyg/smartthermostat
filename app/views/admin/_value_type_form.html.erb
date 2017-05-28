@@ -1,41 +1,39 @@
-<%= fields_for :prefix, value_type do |value_type_form| %>
+<div class="value-type">
+  <%= fields_for :prefix, value_type do |value_type_form| %>
 
-  <div class="row">
+    <%= value_type_form.hidden_field :id %>
 
-    <div class="col-xs-3">
-      <div class="field form-group">
-        <%= value_type_form.text_field :id, class: 'form-control' %>
+    <div class="row form-row">
+
+      <div class="col-xs-3">
+        <div class="form-group">
+          <%= value_type_form.text_field :name, class: 'form-control' %>
+        </div>
       </div>
-    </div>
 
-    <div class="col-xs-3">
-      <div class="field form-group">
-        <%= value_type_form.text_field :name, class: 'form-control' %>
-      </div>
-    </div>
-
-    <div class="col-xs-3">
-      <div class="field form-group">
-        <%= value_type_form.select(:primitive_type_id, {}, {}, { class: 'form-control' }) do %>
-          <% ValueType::PRIMITIVE_TYPES.each do |key, p_type| %>
-            <%= content_tag(:option, p_type[:LABEL], value: p_type[:ID]) %>
+      <div class="col-xs-3">
+        <div class="form-group">
+          <%= value_type_form.select(:primitive_type_id, {}, {}, { class: 'form-control' }) do %>
+            <% ValueType::PRIMITIVE_TYPES.each do |key, p_type| %>
+              <%= content_tag(:option, p_type[:LABEL], value: p_type[:ID]) %>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
       </div>
+
+      <div class="col-xs-3">
+        <div class="form-group">
+          <%= value_type_form.check_box :unsigned, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-3">
+        <div class="form-group">
+          <button type="button" class="action-button active remove-form-row form-control">X</button>
+        </div>
+      </div>
+
     </div>
 
-    <div class="col-xs-2">
-      <div class="form-group">
-        <%= value_type_form.check_box :unsigned, class: 'form-control' %>
-      </div>
-    </div>
-
-    <div class="col-xs-1">
-      <div class="form-group">
-        <button type="button" class="remove-form-row form-control">X</button>
-      </div>
-    </div>
-
-  </div>
-
-<% end %>
+  <% end %>
+</div>

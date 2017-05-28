@@ -40,15 +40,10 @@ function addNewDeviceProperty() {
     $deviceProperties.append(newDeviceProperty);
 }
 
-function removeDeviceProperty() {
-    $(this).closest('.device-property').remove();
-}
-
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
     $devicePropertyTemplate = $('#device-property-template').find('.device-property');
     $thisForm = $(document.body).find('#device-form').find('form');
     $deviceProperties = $thisForm.find('.device-properties-wrapper');
 
     $thisForm.on('click', '.add-new-device-property-button', addNewDeviceProperty);
-    $thisForm.on('click', '.remove-device-property-button', removeDeviceProperty);
 });

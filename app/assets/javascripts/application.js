@@ -18,3 +18,18 @@
 //= require moment-timezone-with-data
 //= require bootstrap-datetimepicker
 //= require_tree .
+
+$(document).on("turbolinks:load", function () { // we need this because of turbolinks
+
+    $(document.body).on('click', '.action-button', function (event) {
+        event.stopPropagation();
+        var $thisClick = $(this);
+        // var thisRowId = ($thisClick.closest('.grid-row').data('id')) ? $thisClick.closest('.grid-row').data('id') : null;
+        if ($thisClick.hasClass('active')) {
+            if ($thisClick.hasClass('remove-form-row')) {
+                $thisClick.closest('.form-row').empty().remove();
+            }
+        }
+    });
+
+});
