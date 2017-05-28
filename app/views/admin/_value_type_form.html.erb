@@ -2,15 +2,37 @@
 
   <div class="row">
 
-    <div class="col-xs-2">
+    <div class="col-xs-3">
       <div class="field form-group">
         <%= value_type_form.text_field :id, class: 'form-control' %>
       </div>
     </div>
 
-    <div class="col-xs-2">
+    <div class="col-xs-3">
       <div class="field form-group">
         <%= value_type_form.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-xs-3">
+      <div class="field form-group">
+        <%= value_type_form.select(:primitive_type_id, {}, {}, { class: 'form-control' }) do %>
+          <% ValueType::PRIMITIVE_TYPES.each do |key, p_type| %>
+            <%= content_tag(:option, p_type[:LABEL], value: p_type[:ID]) %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-xs-2">
+      <div class="form-group">
+        <%= value_type_form.check_box :unsigned, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-xs-1">
+      <div class="form-group">
+        <button type="button" class="remove-form-row form-control">X</button>
       </div>
     </div>
 
