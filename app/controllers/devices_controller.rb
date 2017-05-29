@@ -32,12 +32,12 @@ class DevicesController < ApplicationController
     secure_params = device_safe_params
 
     # and after that pass the values to the ActiveRecord models
-    @device         = Device.new(name: secure_params[:name], location: secure_params[:location], description: secure_params[:description])
+    @device         = Device.new(device_safe_params)
     @device.user_id = current_user.id
 
-    if secure_params.has_key?(:properties)
-      secure_params[:properties].each do |key, new_prop|
-        @device.properties.build(new_prop)
+    if device_safe_params.has_key?(:properties)
+      device_safe_params[:properties].each do |key, new_property|
+        @device.properties.build(device_property_safe_params(new_property))
       end
     end
 
@@ -68,11 +68,11 @@ class DevicesController < ApplicationController
 
     posted_device_property_ids = []
     if params.require(:device).include?(:properties)
-      params.require(:device).fetch(:properties).each do |key, prop|
-        if !prop[:id].empty?
-          posted_device_property_ids << prop[:id].to_i
+      params.require(:device).fetch(:properties).each do |key, property|
+        if !property[:id].empty?
+          posted_device_property_ids << property[:id].to_i
         else
-          @device.properties.build(prop.permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value))
+          @device.properties.build(device_property_safe_params(property))
         end
       end
     end
@@ -118,7 +118,7 @@ class DevicesController < ApplicationController
     puts @device.properties.inspect
 
     respond_to do |format|
-      if @device.update(name: secure_params[:name], location: secure_params[:location], description: secure_params[:description])
+      if @device.update(device_safe_params)
         format.html {redirect_to @device, notice: 'Device was successfully updated.'}
         format.json {render :show, status: :ok, location: @device}
       else
@@ -156,29 +156,29 @@ class DevicesController < ApplicationController
     end
   end
 
-  def statusUpdate
-
-    device_uid = params[:device_uid].to_i
-    info       = params.except(:controller, :action, :device_uid)
-
-    info.each do |key, value|
-      stat_id = key.to_i
-      if (stat_id > 0)
-        device_stat = DeviceStat.where(device_uid: device_uid, stat_id: stat_id).take
-
-        if (!device_stat.nil?)
-          puts(device_stat.inspect)
-          device_stat.value          = value
-          device_stat.last_update_at = Time.now # TODO correct the time is inserted to db
-          device_stat.save()
-          puts(device_stat.inspect)
-        end
-
-      end
-    end
-
-    render json: info.inspect.to_s
-  end
+  # def statusUpdate
+  #
+  #   device_uid = params[:device_uid].to_i
+  #   info       = params.except(:controller, :action, :device_uid)
+  #
+  #   info.each do |key, value|
+  #     stat_id = key.to_i
+  #     if (stat_id > 0)
+  #       device_stat = DeviceStat.where(device_uid: device_uid, stat_id: stat_id).take
+  #
+  #       if (!device_stat.nil?)
+  #         puts(device_stat.inspect)
+  #         device_stat.value          = value
+  #         device_stat.last_update_at = Time.now # TODO correct the time is inserted to db
+  #         device_stat.save()
+  #         puts(device_stat.inspect)
+  #       end
+  #
+  #     end
+  #   end
+  #
+  #   render json: info.inspect.to_s
+  # end
 
   ##############################################################################
   private ######################################################################
@@ -198,7 +198,7 @@ class DevicesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def device_safe_params
-    params.require(:device).permit(:name, :location, :description, properties: [:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value])
+    params.require(:device).permit(:name, :location, :description)
   end
 
   def device_property_safe_params(unsafe_property)
