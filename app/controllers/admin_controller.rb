@@ -5,12 +5,7 @@ class AdminController < ApplicationController
     @value_types = ValueType.all
   end
 
-  def updateValueTypes
-
-
-    puts 'HIII'
-
-
+  def manage_value_types
     respond_to do |format|
       format.html {redirect_to admin_url, notice: 'Value Types was successfully updated.'}
       # format.json {render :show, status: :created, location: @device}
