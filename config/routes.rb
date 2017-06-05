@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   resources :schedules
   resources :devices, param: :uid
 
+  get '/devices/:uid/get_properties_list', to: 'devices#get_properties_list'
+
   get '/admin', to: 'admin#index'
 
   get '/admin/manage_value_types', to: redirect('/admin')

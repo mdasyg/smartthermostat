@@ -1,6 +1,6 @@
 <div id="device-form-container">
 
-  <%= form_for(device, html: { id: 'device-from' }) do |device_form| -%>
+  <%= form_for(device, html: { id: 'device-form' }) do |device_form| %>
 
     <% if device.errors.any? %>
       <div id="error-explanation">
@@ -47,7 +47,7 @@
     <div class="row">
       <div class="col-xs-12">
         <div class="form-group">
-          <button type="button" class="add-new-device-property-button form-control">
+          <button type="button" class="action-button active add-new-device-property form-control">
             <span>Add New Device Property</span>
           </button>
         </div>
