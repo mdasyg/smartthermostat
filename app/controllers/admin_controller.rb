@@ -2,11 +2,8 @@ class AdminController < ApplicationController
   before_action :authenticate_user!
 
   def index
-
     set_primitive_types
-
     @value_types = ValueType.all
-
   end
 
   def manage_value_types

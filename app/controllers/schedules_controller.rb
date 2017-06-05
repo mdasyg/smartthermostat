@@ -17,6 +17,9 @@ class SchedulesController < ApplicationController
   # GET /schedules/new
   def new
     @schedule = Schedule.new
+    if @devices.empty?
+      redirect_to new_device_path
+    end
   end
 
   # GET /schedules/1/edit
