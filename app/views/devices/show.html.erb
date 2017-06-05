@@ -23,34 +23,37 @@
 </div>
 
 <!-- PROPERTIES -->
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Properties</h3>
+<% if !@device.properties.empty? %>
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">Properties</h3>
+    </div>
+
+    <div class="panel-body">
+
+      <% @device.properties.each do |property| %>
+        <div class="row">
+
+          <div class="col-xs-4">
+            <%= property.name %>
+          </div>
+
+          <div class="col-xs-4">
+            <%= property.value %>
+          </div>
+
+          <div class="col-xs-4">
+            <%= property.auto %>
+          </div>
+
+        </div>
+      <% end %>
+
+    </div>
+    
   </div>
-  <div class="panel-body">
-
-    <% @device.properties.each do |property| %>
-
-      <div class="row">
-
-        <div class="col-xs-4">
-          <%= property.name %>
-        </div>
-
-        <div class="col-xs-4">
-          <%= property.value %>
-        </div>
-
-        <div class="col-xs-4">
-          <%= property.auto %>
-        </div>
-
-      </div>
-
-    <% end %>
-
-  </div>
-</div>
+<% end %>
 
 <!-- INFO -->
 <div class="panel panel-default">
