@@ -1,7 +1,8 @@
 class SchedulesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_schedule, only: [:show, :edit, :update, :destroy]
-  before_action :set_available_devices, only: [:new, :edit, :create]
+  before_action :set_available_devices, only: [:new, :edit]
+  before_action :set_repeat_every_list, only: [:new, :edit]
 
   # GET /schedules
   # GET /schedules.json
@@ -16,7 +17,7 @@ class SchedulesController < ApplicationController
 
   # GET /schedules/new
   def new
-    if @devices.empty?
+    if @availiable_devices.empty?
       redirect_to new_device_path
     end
     @schedule = Schedule.new
@@ -37,6 +38,8 @@ class SchedulesController < ApplicationController
         format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
         format.json {render :show, status: :created, location: @schedule}
       else
+        set_available_devices
+        set_repeat_every_list
         format.html {render :new}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -51,6 +54,8 @@ class SchedulesController < ApplicationController
         format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
         format.json {render :show, status: :ok, location: @schedule}
       else
+        set_available_devices
+        set_repeat_every_list
         format.html {render :edit}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -67,18 +72,30 @@ class SchedulesController < ApplicationController
     end
   end
 
-  private
   # Use callbacks to share common setup or constraints between actions.
-  def set_schedule
+  private def set_schedule
     @schedule = Schedule.find(params[:id])
   end
 
-  def set_available_devices
-    @devices = current_user.devices
+  private def set_available_devices
+    devices             = current_user.devices
+    @availiable_devices = []
+    if !devices.empty?
+      devices.each do |device|
+        @availiable_devices << [device.name, device.uid]
+      end
+    end
+  end
+
+  private def set_repeat_every_list
+    @repeat_every_list = []
+    Schedule::REPAT_EVERY.each do |key, value|
+      @repeat_every_list << [value[:LABEL], value[:ID]]
+    end
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
-  def safe_schedule_params
+  private def safe_schedule_params
     params.require(:schedule).permit(:device_uid, :datetime)
   end
 end
