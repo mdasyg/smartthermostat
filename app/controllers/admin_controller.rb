@@ -3,10 +3,7 @@ class AdminController < ApplicationController
 
   def index
 
-    @value_types_primitive_types = []
-    ValueType::PRIMITIVE_TYPES.each do |key, p_type|
-      @value_types_primitive_types << [p_type[:LABEL], p_type[:ID]]
-    end
+    set_primitive_types
 
     @value_types = ValueType.all
 
@@ -46,7 +43,8 @@ class AdminController < ApplicationController
         format.html {redirect_to admin_url, notice: 'Value Types was successfully updated.'}
         # format.json {render :show, status: :created, location: @device}
       else
-        format.html render :index
+        set_primitive_types
+        format.html {render :index}
         # format.json {render json: @device.errors, status: :unprocessable_entity}
       end
     end
@@ -54,6 +52,13 @@ class AdminController < ApplicationController
   end
 
   private
+
+  def set_primitive_types
+    @primitive_types = []
+    ValueType::PRIMITIVE_TYPES.each do |key, p_type|
+      @primitive_types << [p_type[:LABEL], p_type[:ID]]
+    end
+  end
 
   def safe_value_type_params(unsafe_value_type)
     unsafe_value_type.permit(:name, :primitive_type_id, :unsigned)
