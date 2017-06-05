@@ -1,0 +1,79 @@
+<% device_property_index = (defined? device_property_counter) ? device_property_counter : 'INDEX' %>
+<% prefix = 'device[properties]' %>
+
+<div class="form-row">
+
+  <% if device_property.errors.any? %>
+    <div id="error-explanation">
+      <h2><%= pluralize(device_property.errors.count, 'error') %> prohibited
+        this
+        device property from being valid:</h2>
+      <ul>
+        <% device_property.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="device-property" data-index="<%= device_property_index %>">
+
+    <%= fields_for prefix, device_property, index: device_property_index do |property_form| %>
+
+      <%= property_form.hidden_field :id %>
+
+      <div class="row">
+
+        <div class="col-xs-2">
+          <div class="field form-group">
+            <%= property_form.text_field :name, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-2">
+          <div class="field form-group">
+            <%= property_form.select(:value_type_id, {}, {}, { class: 'form-control' }) do %>
+              <% options_for_select(@value_types, device_property.value_type_id) %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="col-xs-2">
+          <div class="field form-group">
+            <%= property_form.number_field :value_min, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-2">
+          <div class="field form-group">
+            <%= property_form.number_field :value_max, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-2">
+          <div class="field form-group">
+            <%= property_form.text_field :value, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-1">
+          <div class="field form-group">
+            <%= property_form.select(:auto, {}, {}, { class: 'form-control' }) do %>
+              <% options_for_select([['ON', 1], ['OFF', 0]], device_property.auto) %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="col-xs-1">
+          <div class="field form-group">
+            <input type="button" class="action-button active remove-form-row  form-control" value="X"/>
+          </div>
+        </div>
+
+      </div>
+
+    <% end %>
+
+  </div>
+
+</div>

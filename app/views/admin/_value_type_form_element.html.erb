@@ -1,54 +1,58 @@
 <% value_type_index = (defined? value_type_counter) ? value_type_counter : 'INDEX' %>
 <% prefix = "value_types" %>
 
-<% if value_type.errors.any? %>
-  <div id="error-explanation">
-    <h2><%= pluralize(value_type.errors.count, 'error') %> prohibited this
-      value type from being valid:</h2>
-    <ul>
-      <% value_type.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
+<div class="form-row">
 
-<div class="value-type form-row" data-index="<%= value_type_index %>">
-
-  <%= fields_for prefix, value_type, index: value_type_index do |value_type_form| %>
-
-    <%= value_type_form.hidden_field :id %>
-
-    <div class="row">
-
-      <div class="col-xs-3">
-        <div class="form-group">
-          <%= value_type_form.text_field :name, class: 'form-control' %>
-        </div>
-      </div>
-
-      <div class="col-xs-3">
-        <div class="form-group">
-          <%= value_type_form.select(:primitive_type_id, {}, {}, { class: 'form-control' }) do %>
-            <% options_for_select(@primitive_types, value_type.primitive_type_id) %>
-          <% end %>
-        </div>
-      </div>
-
-      <div class="col-xs-3">
-        <div class="form-group">
-          <%= value_type_form.check_box :unsigned, class: 'form-control' %>
-        </div>
-      </div>
-
-      <div class="col-xs-3">
-        <div class="form-group">
-          <button type="button" class="action-button active remove-form-row form-control">X</button>
-        </div>
-      </div>
-
+  <% if value_type.errors.any? %>
+    <div id="error-explanation">
+      <h2><%= pluralize(value_type.errors.count, 'error') %> prohibited this
+        value type from being valid:</h2>
+      <ul>
+        <% value_type.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
     </div>
-
   <% end %>
+
+  <div class="value-type" data-index="<%= value_type_index %>">
+
+    <%= fields_for prefix, value_type, index: value_type_index do |value_type_form| %>
+
+      <%= value_type_form.hidden_field :id %>
+
+      <div class="row">
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <%= value_type_form.text_field :name, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <%= value_type_form.select(:primitive_type_id, {}, {}, { class: 'form-control' }) do %>
+              <% options_for_select(@primitive_types, value_type.primitive_type_id) %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <%= value_type_form.check_box :unsigned, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <button type="button" class="action-button active remove-form-row form-control">X</button>
+          </div>
+        </div>
+
+      </div>
+
+    <% end %>
+
+  </div>
 
 </div>

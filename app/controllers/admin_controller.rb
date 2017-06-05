@@ -51,16 +51,18 @@ class AdminController < ApplicationController
 
   end
 
-  private
+  ##############################################################################
+  ##### PRIVATE METHODS ########################################################
+  ##############################################################################
 
-  def set_primitive_types
+  private def set_primitive_types
     @primitive_types = []
     ValueType::PRIMITIVE_TYPES.each do |key, p_type|
       @primitive_types << [p_type[:LABEL], p_type[:ID]]
     end
   end
 
-  def safe_value_type_params(unsafe_value_type)
+  private def safe_value_type_params(unsafe_value_type)
     unsafe_value_type.permit(:name, :primitive_type_id, :unsigned)
   end
 

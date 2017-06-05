@@ -28,16 +28,12 @@ class DevicesController < ApplicationController
   # POST /devices
   # POST /devices.json
   def create
-    # clear out the params
-    secure_params = device_safe_params
-
-    # and after that pass the values to the ActiveRecord models
-    @device         = Device.new(device_safe_params)
+    @device         = Device.new(safe_device_params)
     @device.user_id = current_user.id
 
-    if device_safe_params.has_key?(:properties)
-      device_safe_params[:properties].each do |key, new_property|
-        @device.properties.build(device_property_safe_params(new_property))
+    if params.require(:device).include?(:properties)
+      params.require(:device).fetch(:properties).each do |key, new_property|
+        @device.properties.build(safe_device_property_params(new_property))
       end
     end
 
@@ -58,21 +54,17 @@ class DevicesController < ApplicationController
   # PATCH/PUT /devices/1
   # PATCH/PUT /devices/1.json
   def update
-    # CHECKLATER: check if we need some validations on existing ids.
-
-    # clear out the params
-    secure_params = device_safe_params
-
-    # get the stored properties
     stored_device_property_ids = @device.properties.ids
 
     posted_device_property_ids = []
+    device_property_post       = nil
     if params.require(:device).include?(:properties)
-      params.require(:device).fetch(:properties).each do |key, property|
+      device_property_post = params.require(:device).fetch(:properties)
+      device_property_post.each do |key, property|
         if !property[:id].empty?
           posted_device_property_ids << property[:id].to_i
         else
-          @device.properties.build(device_property_safe_params(property))
+          @device.properties.build(safe_device_property_params(property))
         end
       end
     end
@@ -80,45 +72,31 @@ class DevicesController < ApplicationController
     # and compute which of them we need to delete
     device_property_ids_to_delete = stored_device_property_ids - posted_device_property_ids
 
-    puts "STORED: #{stored_device_property_ids}"
-    puts "POSTED: #{posted_device_property_ids}"
-    puts "TO DELETE: #{device_property_ids_to_delete}"
+    # puts "STORED: #{stored_device_property_ids}"
+    # puts "POSTED: #{posted_device_property_ids}"
+    # puts "TO DELETE: #{device_property_ids_to_delete}"
 
     # First delete the deleted ones
     if device_property_ids_to_delete
       Property.destroy(device_property_ids_to_delete)
     end
 
-    if posted_device_property_ids
-      device_property_post = params.require(:device).fetch(:properties)
-      puts device_property_post.inspect
-      if !@device.properties.empty?
+    # second loop exists, in order to not make multiple select queries
+    # this code block is for update existing properties
+    if !posted_device_property_ids.empty? # This mean, that someone make an update request where there are remaining property ids
+      if !@device.properties.empty? # It's a double-check that device some device properties exists on DB
         @device.properties.each do |stored_property|
-          puts stored_property[:id].inspect
-          if stored_device_property_ids.include?(stored_property[:id])
-            puts "NAIII"
-            device_property_post.each do |key, posted_property|
-              if stored_property[:id].to_i == posted_property[:id].to_i
-                puts "FOUND"
-                puts stored_property.inspect
-                stored_property.attributes = device_property_safe_params(posted_property)
-                stored_property.valid?
-                puts stored_property.inspect
-              end
+          device_property_post.each do |key, posted_property|
+            if stored_property[:id].to_i == posted_property[:id].to_i
+              stored_property.attributes = safe_device_property_params(posted_property)
             end
-
-          else
-            puts "OXIIIIIII"
-            # se ayti ti periptwsi den kanoyme tpt
           end
         end
       end
     end
 
-    puts @device.properties.inspect
-
     respond_to do |format|
-      if @device.update(device_safe_params)
+      if @device.update(safe_device_params)
         format.html {redirect_to @device, notice: 'Device was successfully updated.'}
         format.json {render :show, status: :ok, location: @device}
       else
@@ -127,7 +105,6 @@ class DevicesController < ApplicationController
         format.json {render json: @device.errors, status: :unprocessable_entity}
       end
     end
-
   end
 
   # DELETE /devices/1
@@ -181,27 +158,30 @@ class DevicesController < ApplicationController
   # end
 
   ##############################################################################
-  private ######################################################################
+  ##### PRIVATE METHODS ########################################################
   ##############################################################################
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_device
+  private def set_device
     @device = Device.where(user_id: current_user.id).find(params[:uid])
   end
 
-  def set_value_types
-    @value_types = ValueType.all
+  private def set_value_types
+    @value_types = []
+    ValueType.all.each do |value|
+      @value_types << [value.name, value.id]
+    end
     if @value_types.empty?
       redirect_to admin_path
     end
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
-  def device_safe_params
+  private def safe_device_params
     params.require(:device).permit(:name, :location, :description)
   end
 
-  def device_property_safe_params(unsafe_property)
+  private def safe_device_property_params(unsafe_property)
     unsafe_property.permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value)
   end
 
