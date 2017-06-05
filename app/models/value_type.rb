@@ -6,7 +6,9 @@ class ValueType < ApplicationRecord
       TEXT:    { ID: 4, LABEL: 'Text' },
   }
 
-  validates :name, :primitive_type_id, :unsigned, presence: true
+  validates :name, presence: true
+  validates :unsigned, inclusion: { in: [true, false], message: "%{value} is not a valid state" }
+  validates :primitive_type_id, inclusion: { in: [1, 2, 3, 4], message: "'%{value}' is not a valid primitive value" }
 
   has_many :properties, inverse_of: :value_type
 

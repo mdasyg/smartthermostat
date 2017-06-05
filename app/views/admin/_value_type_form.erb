@@ -1,0 +1,61 @@
+<h1>Value Types</h1>
+
+<div id="value-types-form-container">
+  <%= form_tag(admin_manage_value_types_path) do %>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="form-group">
+          <button type="button" class="action-button active add-new-value-type form-control">
+            <span>New Value Type</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="value-types-header">
+      <div class="row">
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <%= label ValueType, :name %>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <%= label ValueType, :primitive_type_id %>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <%= label ValueType, :unsigned %>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label>Actions</label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="value-types-container">
+      <%= render partial: 'value_type_form_element', collection: @value_types, as: :value_type %>
+    </div>
+
+    <div class="actions">
+      <button type="submit">Update</button>
+    </div>
+
+  <% end %>
+</div>
+
+<div id="value-type-template" class="hidden">
+  <%= render partial: 'value_type_form_element', locals: { value_type: ValueType.new } %>
+</div>
+
+<hr>
