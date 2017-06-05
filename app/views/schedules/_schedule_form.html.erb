@@ -1,0 +1,66 @@
+<div id="schedule-form-container">
+
+  <%= form_for(schedule, html: { id: 'schedule-form' }) do |schedule_form| %>
+
+    <% if schedule.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(schedule.errors.count, "error") %> prohibited this
+          schedule from being saved:</h2>
+        <ul>
+          <% schedule.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="row">
+
+      <div class="col-xs-3">
+        <div class="form-group">
+          <%= schedule_form.label :device_uid %>
+          <%= schedule_form.select(:device_uid, {}, {}, { class: 'form-control' }) do %>
+            <% if @devices.any? %>
+              <% @devices.each do |c| %>
+                <%= content_tag(:option, c.name, value: c.uid) %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-xs-3">
+        <div class="form-group">
+          <%= schedule_form.label :datetime %>
+          <%= schedule_form.datetime_select :datetime, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-3">
+        <div class="form-group">
+          <%= schedule_form.label :is_recurrent %>
+          <%= schedule_form.check_box :is_recurrent, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-3">
+        <div class="form-group">
+          <%= schedule_form.label :recurrence_period %>
+          <%= schedule_form.text_field :recurrence_period, class: 'form-control' %>
+        </div>
+      </div>
+
+    </div>
+
+    <hr/>
+
+    <%= render partial: '/actions/action_form', locals: { event: schedule.event } %>
+
+    <hr/>
+
+    <div class="actions">
+      <%= schedule_form.submit %>
+    </div>
+  <% end %>
+
+</div>

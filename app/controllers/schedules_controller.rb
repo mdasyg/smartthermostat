@@ -16,27 +16,21 @@ class SchedulesController < ApplicationController
 
   # GET /schedules/new
   def new
-    @schedule = Schedule.new
     if @devices.empty?
       redirect_to new_device_path
     end
+    @schedule = Schedule.new
   end
 
   # GET /schedules/1/edit
   def edit
-
-    # abort
-
   end
 
   # POST /schedules
   # POST /schedules.json
   def create
-    @schedule = Schedule.new(schedule_params)
-
-    @schedule.inspect
-
-    abort
+    @schedule         = Schedule.new(safe_schedule_params)
+    @schedule.user_id = current_user.id
 
     respond_to do |format|
       if @schedule.save
@@ -53,7 +47,7 @@ class SchedulesController < ApplicationController
   # PATCH/PUT /schedules/1.json
   def update
     respond_to do |format|
-      if @schedule.update(schedule_params)
+      if @schedule.update(safe_schedule_params)
         format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
         format.json {render :show, status: :ok, location: @schedule}
       else
@@ -84,7 +78,7 @@ class SchedulesController < ApplicationController
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
-  def schedule_params
+  def safe_schedule_params
     params.require(:schedule).permit(:device_uid, :datetime)
   end
 end

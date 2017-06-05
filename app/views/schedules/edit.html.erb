@@ -4,7 +4,9 @@
   <h1>Editing Schedule</h1>
 </div>
 
-<%= render 'form', schedule: @schedule %>
+<%= render 'schedule_form', schedule: @schedule %>
+
+<hr/>
 
 <%= link_to 'Show', @schedule %> |
 <%= link_to 'Back', schedules_path %>
