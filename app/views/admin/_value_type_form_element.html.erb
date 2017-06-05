@@ -1,5 +1,21 @@
-<div class="value-type">
-  <%= fields_for :prefix, value_type do |value_type_form| %>
+<% value_type_index = (defined? value_type_counter) ? value_type_counter : 'INDEX' %>
+<% prefix = "value_types" %>
+
+<% if value_type.errors.any? %>
+  <div id="error-explanation">
+    <h2><%= pluralize(value_type.errors.count, 'error') %> prohibited this
+      value type from being valid:</h2>
+    <ul>
+      <% value_type.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="value-type" data-index="<%= value_type_index %>">
+
+  <%= fields_for prefix, value_type, index: value_type_index do |value_type_form| %>
 
     <%= value_type_form.hidden_field :id %>
 
@@ -14,9 +30,7 @@
       <div class="col-xs-3">
         <div class="form-group">
           <%= value_type_form.select(:primitive_type_id, {}, {}, { class: 'form-control' }) do %>
-            <% ValueType::PRIMITIVE_TYPES.each do |key, p_type| %>
-              <%= content_tag(:option, p_type[:LABEL], value: p_type[:ID]) %>
-            <% end %>
+            <% options_for_select(@value_types_primitive_types, value_type.primitive_type_id) %>
           <% end %>
         </div>
       </div>
@@ -36,4 +50,5 @@
     </div>
 
   <% end %>
+
 </div>
