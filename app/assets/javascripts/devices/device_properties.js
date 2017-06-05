@@ -1,49 +1,60 @@
-var $deviceProperties = null;
-var $thisForm = null;
 var $devicePropertyTemplate = null;
+var $devicePropertiesContainer = null;
 
-function addNewDeviceProperty() {
-    var lastDevicePropertyDomId = parseInt($deviceProperties.find('.device-property').last().attr('data-index'));
+function addNewDeviceProperty($thisClick) {
+    var lastDevicePropertyDomId = parseInt($devicePropertiesContainer.find('.device-property').last().attr('data-index'));
     if (!lastDevicePropertyDomId) {
         lastDevicePropertyDomId = 0;
     }
     var nextDevicePropertyDomId = lastDevicePropertyDomId + 1;
 
-    var newDeviceProperty = $devicePropertyTemplate.clone();
+    var $newDeviceProperty = $devicePropertyTemplate.clone();
 
-    newDeviceProperty.attr('data-index', nextDevicePropertyDomId);
+    $newDeviceProperty.attr('data-index', nextDevicePropertyDomId);
 
-    var newDevicePropertyInputs = newDeviceProperty.find('input');
-    newDevicePropertyInputs.each(function () {
-        var propertyName = $(this).attr('name');
+    var propertyName = null;
+    var propertyId = null;
+
+    var $newDevicePropertyInputs = $newDeviceProperty.find('input');
+    $newDevicePropertyInputs.each(function () {
+        propertyName = $(this).attr('name');
         if (propertyName) {
             $(this).attr('name', propertyName.replace('INDEX', nextDevicePropertyDomId));
         }
-        var propertyId = $(this).attr('id');
+        propertyId = $(this).attr('id');
         if (propertyId) {
             $(this).attr('id', propertyId.replace('INDEX', nextDevicePropertyDomId));
         }
     });
 
-    var newDevicePropertySelects = newDeviceProperty.find('select');
-    newDevicePropertySelects.each(function () {
-        var propertyName = $(this).attr('name');
+    var $newDevicePropertySelects = $newDeviceProperty.find('select');
+    $newDevicePropertySelects.each(function () {
+        propertyName = $(this).attr('name');
         if (propertyName) {
             $(this).attr('name', propertyName.replace('INDEX', nextDevicePropertyDomId));
         }
-        var propertyId = $(this).attr('id');
+        propertyId = $(this).attr('id');
         if (propertyId) {
             $(this).attr('id', propertyId.replace('INDEX', nextDevicePropertyDomId));
         }
     });
 
-    $deviceProperties.append(newDeviceProperty);
+    $devicePropertiesContainer.append($newDeviceProperty);
 }
 
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
     $devicePropertyTemplate = $('#device-property-template').find('.device-property');
-    $thisForm = $(document.body).find('#device-form').find('form');
-    $deviceProperties = $thisForm.find('.device-properties-wrapper');
+    $devicePropertiesContainer = $(document.body).find('#device-form').find('.device-properties-container');
 
-    $thisForm.on('click', '.add-new-device-property-button', addNewDeviceProperty);
+    $(document.body).on('click', '.action-button', function (event) {
+        event.stopPropagation();
+        var $thisClick = $(this);
+        // var thisRowId = ($thisClick.closest('.grid-row').data('id')) ? $thisClick.closest('.grid-row').data('id') : null;
+        if ($thisClick.hasClass('active')) {
+            if ($thisClick.hasClass('add-new-device-property')) {
+                addNewDeviceProperty($thisClick);
+            }
+        }
+    });
+
 });

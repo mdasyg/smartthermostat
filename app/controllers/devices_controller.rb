@@ -2,13 +2,18 @@ class DevicesController < ApplicationController
   # skip_before_action :verify_authenticity_token, :only => [:statusUpdate] # TODO: DONT FORGET TO FIX THIS
 
   before_action :authenticate_user! # TODO: AND THISSSSS
-  before_action :set_device, only: [:show, :edit, :update, :destroy]
+  before_action :set_device, only: [:show, :edit, :update, :destroy, :get_properties_list]
   before_action :set_value_types, only: [:new, :edit]
 
   # GET /devices
   # GET /devices.json
   def index
     @devices = Device.select('uid, name, location').where(user_id: current_user.id).find_each
+  end
+
+  # GET /devices/1/get_properties_list
+  def get_properties_list
+    render json: @device.properties
   end
 
   # GET /devices/1
