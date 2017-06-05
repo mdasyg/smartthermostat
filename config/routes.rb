@@ -1,18 +1,18 @@
 Rails.application.routes.draw do
-  resources :schedules
-  resources :devices, param: :uid
   root to: 'static_pages#home'
 
-  # get 'mqtt', to: 'mqtt#index'
-
-  # post 'devices/statusUpdate', to: 'devices#statusUpdate'
-
-  # post 'test', to: 'static_pages#test'
+  resources :schedules
+  resources :devices, param: :uid
 
   get '/admin', to: 'admin#index'
+
+  get '/admin/manage_value_types', to: redirect('/admin')
   post '/admin/manage_value_types', to: 'admin#manage_value_types'
 
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
+  # get 'mqtt', to: 'mqtt#index'
+  # post 'devices/statusUpdate', to: 'devices#statusUpdate'
+  # post 'test', to: 'static_pages#test'
 end
