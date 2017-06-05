@@ -25,13 +25,13 @@
       <div class="row">
 
         <div class="col-xs-2">
-          <div class="field form-group">
+          <div class="form-group">
             <%= property_form.text_field :name, class: 'form-control' %>
           </div>
         </div>
 
         <div class="col-xs-2">
-          <div class="field form-group">
+          <div class="form-group">
             <%= property_form.select(:value_type_id, {}, {}, { class: 'form-control' }) do %>
               <% options_for_select(@value_types, device_property.value_type_id) %>
             <% end %>
@@ -39,25 +39,25 @@
         </div>
 
         <div class="col-xs-2">
-          <div class="field form-group">
+          <div class="form-group">
             <%= property_form.number_field :value_min, class: 'form-control' %>
           </div>
         </div>
 
         <div class="col-xs-2">
-          <div class="field form-group">
+          <div class="form-group">
             <%= property_form.number_field :value_max, class: 'form-control' %>
           </div>
         </div>
 
         <div class="col-xs-2">
-          <div class="field form-group">
+          <div class="form-group">
             <%= property_form.text_field :value, class: 'form-control' %>
           </div>
         </div>
 
         <div class="col-xs-1">
-          <div class="field form-group">
+          <div class="form-group">
             <%= property_form.select(:auto, {}, {}, { class: 'form-control' }) do %>
               <% options_for_select([['ON', 1], ['OFF', 0]], device_property.auto) %>
             <% end %>
@@ -65,7 +65,7 @@
         </div>
 
         <div class="col-xs-1">
-          <div class="field form-group">
+          <div class="form-group">
             <input type="button" class="action-button active remove-form-row  form-control" value="X"/>
           </div>
         </div>

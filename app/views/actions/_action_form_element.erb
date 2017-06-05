@@ -1,0 +1,24 @@
+<% device_property_index = (defined? action_counter) ? action_counter : 'INDEX' %>
+<% prefix = 'action' %>
+
+<div class="form-row">
+
+  <div class="action" data-index="<%= device_property_index %>">
+    <%= fields_for prefix, action, index: device_property_index do |action_form| %>
+
+      <%= action_form.hidden_field :id %>
+
+      <div class="row">
+
+        <div class="col-xs-1">
+          <div class="form-group">
+            <input type="button" class="action-button active remove-form-row  form-control" value="X"/>
+          </div>
+        </div>
+
+      </div>
+
+    <% end %>
+  </div>
+
+</div>

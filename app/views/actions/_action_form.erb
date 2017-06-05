@@ -1,0 +1,28 @@
+<div class="action-form-container">
+
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="form-group">
+        <button type="button" class="action-button active add-new-action form-control">
+          <span>Add New Action</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="actions-header">
+
+  </div>
+
+  <div class="actions-container">
+    <% if !event.nil? %>
+      <%= render partial: '/actions/action_form_element', collection: event.actions %>
+    <% end %>
+  </div>
+
+</div>
+
+<div id="action-template" class="hidden">
+  <%= render partial: '/actions/action_form_element', locals: { action: Action.new } %>
+</div>

@@ -1,5 +1,6 @@
-<div id="device-form">
-  <%= form_for device do |device_form| -%>
+<div id="device-form-container">
+
+  <%= form_for(device, html: { id: 'device-from' }) do |device_form| -%>
 
     <% if device.errors.any? %>
       <div id="error-explanation">
@@ -17,14 +18,14 @@
     <div class="row">
 
       <div class="col-xs-6">
-        <div class="field form-group">
+        <div class="form-group">
           <%= device_form.label :name %>
           <%= device_form.text_field :name, class: 'form-control' %>
         </div>
       </div>
 
       <div class="col-xs-6">
-        <div class="field form-group">
+        <div class="form-group">
           <%= device_form.label :location %>
           <%= device_form.text_field :location, class: 'form-control' %>
         </div>
@@ -33,22 +34,24 @@
     </div>
 
     <div class="row">
-
       <div class="col-xs-12">
-        <div class="field form-group">
+        <div class="form-group">
           <%= device_form.label :description %>
           <%= device_form.text_area :description, class: 'form-control' %>
         </div>
       </div>
-
     </div>
 
     <hr/>
 
-    <div class="field form-group">
-      <button type="button" class="add-new-device-property-button form-control">
-        <span>Add New Device Property</span>
-      </button>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="form-group">
+          <button type="button" class="add-new-device-property-button form-control">
+            <span>Add New Device Property</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <%= render partial: 'device_property_form', locals: { properties: device.properties } %>
@@ -59,9 +62,10 @@
       <%= device_form.submit %>
     </div>
 
-  <% end -%>
+  <% end %>
 
-  <div id="device-property-template" class="hidden">
-    <%= render partial: 'device_property_form_element', locals: { device_property: Property.new } %>
-  </div>
+</div>
+
+<div id="device-property-template" class="hidden">
+  <%= render partial: 'device_property_form_element', locals: { device_property: Property.new } %>
 </div>

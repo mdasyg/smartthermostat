@@ -8,7 +8,7 @@ class CreateProperties < ActiveRecord::Migration[5.0]
       t.string :value_min
       t.string :value_max
       t.string :value
-      t.boolean :auto, null: false, default: 0
+      t.integer :auto, null: false, unsigned: true, default: 0, limit: 1
 
       t.timestamps
     end
