@@ -34,15 +34,16 @@
 ```
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = {
-    address:              'smtp.gmail.com',
-    port:                 587,
-    domain:               'tasloum.eu',
-    user_name:            Rails.application.secrets.mail_username,
-    password:             Rails.application.secrets.mail_pass,
-    authentication:       'plain',
-    enable_starttls_auto: true
+  address:              'smtp.gmail.com',
+  port:                 587,
+  domain:               Rails.application.secrets.mail['domain'],
+  user_name:            Rails.application.secrets.mail['username'],
+  password:             Rails.application.secrets.mail['pass'],
+  authentication:       'plain',
+  enable_starttls_auto: true
 }
 ```
+1. Be sure to set a domain, otherwise email failing to send
 
 1. change accordingly the from adress where needed
 	+ eg: app/mailers/application_mailer.rb
