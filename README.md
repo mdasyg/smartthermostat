@@ -2,31 +2,36 @@
 
 # Requirements
 
-+ ruby
-+ rails
-+ passenger gem for apache (phuion passenger module)
-+ device gem
+1. ruby 2.3 or later
+1. ruby-gems manager
+1. bundler
+1. [libmosquitto](https://github.com/xively/mosquitto)
+1. mysql server
+1. web server with phusion passenger module (e.g install passenger gem)
 
 # Installation
 
 ## Initial setup
 
-+ rails configs keys,e.t.c
-+ devise
-+ secrets.yml
+1. after all requirements met, run 'bundle install'
+1. copy 'secrets.yml.sample' to 'secrets.yml' and change the appropriate values
 
 ## Database
 
-set the following configurations on the general application file(config/application.rb) or in the environment specifiec files(config/environments/...)
+1. set the following configurations on the general application file(config/application.rb) or in the environment specifiec files(config/environments/...)
 
-+ config.active_record.table_name_prefix
-+ config.active_record.table_name_suffix
+	+ config.active_record.table_name_prefix
+	+ config.active_record.table_name_suffix
+
+1. setup a database on your DB
+1. setup a user and give him access
+1. run 'rails db:migrate'
 
 ## Mailer
 
-set the following to config/environments/<enviroment>.rd 
-and set the appropriate secrets on config/secrets.yml
+1. set the following to config/environments/{enviroment_name}.rb
 
+```
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = {
     address:              'smtp.gmail.com',
@@ -37,16 +42,17 @@ config.action_mailer.smtp_settings = {
     authentication:       'plain',
     enable_starttls_auto: true
 }
+```
 
-change accordingly the from adress where needed.
-eg: app/mailers/application_mailer.rb
+1. change accordingly the from adress where needed
+	+ eg: app/mailers/application_mailer.rb
 
 Test emails with:
 ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com", subject: "Test", body: "Test").deliver
 
 ## Web-console whitelist
 
-config.web_console.whitelisted_ips = '10.168.10.40'
+1. config.web_console.whitelisted_ips = '10.168.10.40'
 
 # Notes
 
