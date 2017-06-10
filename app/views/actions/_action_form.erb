@@ -39,8 +39,8 @@
   </div>
 
   <div class="actions-container">
-    <% if !event.nil? %>
-      <%= render partial: '/actions/action_form_element', collection: event.actions, as: :action %>
+    <% if actions.any? %>
+      <%= render partial: '/actions/action_form_element', collection: actions, as: :action %>
     <% end %>
   </div>
 

@@ -11,6 +11,7 @@ class Schedule < ApplicationRecord
 
   belongs_to :user, inverse_of: :schedules
   belongs_to :device, foreign_key: :device_uid, primary_key: :uid, inverse_of: :schedules
-  belongs_to :event, inverse_of: :schedule, autosave: true
+  has_one :event, autosave: true
+  has_many :actions, through: :event, autosave: true
 
 end
