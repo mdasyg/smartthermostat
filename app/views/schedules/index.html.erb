@@ -1,29 +1,39 @@
 <% provide(:title, 'Schedules List') %>
 
-<p id="notice"><%= notice %></p>
-
 <div class="well">
   <h1>Schedules</h1>
 </div>
 
 
-<table>
-  <thead>
-  <tr>
-    <th colspan="3"></th>
-  </tr>
-  </thead>
+<div class="row">
+  <div class="col-xs-5"><b>Device</b></div>
+  <div class="col-xs-5"><b>Datetime</b></div>
+  <div class="col-xs-2"><b>Actions</b></div>
+</div>
 
-  <tbody>
-  <% @schedules.each do |schedule| %>
-    <tr>
-      <td><%= link_to 'Show', schedule %></td>
-      <td><%= link_to 'Edit', edit_schedule_path(schedule) %></td>
-      <td><%= link_to 'Destroy', schedule, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<hr/>
+
+<% @schedules.each do |schedule| %>
+
+  <div class="row">
+    <div class="col-xs-5"><%= schedule.device.name %></div>
+    <div class="col-xs-5"><%= schedule.datetime %></div>
+    <div class="col-xs-2">
+      <%= link_to(schedule) do %>
+        <span class="glyphicon glyphicon-zoom-in"></span>
+      <% end %> |
+      <%= link_to edit_schedule_path(schedule) do %>
+        <span class="glyphicon glyphicon-pencil"></span>
+      <% end %>  |
+      <%= link_to schedule, method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <span class="glyphicon glyphicon-remove"></span>
+      <% end %>
+    </div>
+  </div>
+
+  <hr/>
+
+<% end %>
 
 <br>
 

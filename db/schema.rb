@@ -13,10 +13,8 @@
 ActiveRecord::Schema.define(version: 20170527080931) do
 
   create_table "actions", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "event_id",       null: false, unsigned: true
     t.integer "property_id",    null: false, unsigned: true
     t.string  "property_value", null: false
-    t.index ["event_id"], name: "fk_rails_ff814373b0", using: :btree
     t.index ["property_id"], name: "fk_rails_5473e09386", using: :btree
   end
 
@@ -43,7 +41,9 @@ ActiveRecord::Schema.define(version: 20170527080931) do
   end
 
   create_table "events", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.text "description", limit: 65535
+    t.integer "schedule_id",               null: false, unsigned: true
+    t.integer "action_id",                 null: false, unsigned: true
+    t.text    "description", limit: 65535
   end
 
   create_table "properties", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -61,15 +61,13 @@ ActiveRecord::Schema.define(version: 20170527080931) do
   end
 
   create_table "schedules", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "user_id",                     null: false,                                                     unsigned: true
-    t.bigint   "device_uid",                  null: false,                                                     unsigned: true
-    t.integer  "event_id",                    null: false,                                                     unsigned: true
+    t.integer  "user_id",                     null: false,                                                        unsigned: true
+    t.bigint   "device_uid",                  null: false,                                                        unsigned: true
     t.datetime "datetime"
-    t.integer  "is_recurrent",      limit: 1, null: false,                                                     unsigned: true
-    t.integer  "repeat_every",      limit: 1, null: false,                                                     unsigned: true
-    t.integer  "recurrence_period",                        comment: "Measured in what the :repeat_every says", unsigned: true
+    t.integer  "is_recurrent",      limit: 1, null: false,                                                        unsigned: true
+    t.integer  "repeat_every",      limit: 1,                                                                     unsigned: true
+    t.integer  "recurrence_period",                        comment: "Measured in what the \"repeat_every\" says", unsigned: true
     t.index ["device_uid"], name: "fk_rails_df1268bd4e", using: :btree
-    t.index ["event_id"], name: "fk_rails_965f2422fe", using: :btree
     t.index ["user_id"], name: "fk_rails_3c900465fa", using: :btree
   end
 
@@ -105,13 +103,11 @@ ActiveRecord::Schema.define(version: 20170527080931) do
     t.boolean "unsigned",                    null: false
   end
 
-  add_foreign_key "actions", "events"
   add_foreign_key "actions", "properties"
   add_foreign_key "device_stats", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "devices", "users"
   add_foreign_key "properties", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "properties", "value_types"
   add_foreign_key "schedules", "devices", column: "device_uid", primary_key: "uid"
-  add_foreign_key "schedules", "events"
   add_foreign_key "schedules", "users"
 end
