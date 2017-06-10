@@ -21,29 +21,56 @@ class SchedulesController < ApplicationController
       redirect_to new_device_path
     end
     @schedule = Schedule.new
+    set_selected_device_properties
   end
 
   # GET /schedules/1/edit
   def edit
+    set_selected_device_properties
   end
 
   # POST /schedules
   # POST /schedules.json
   def create
-    @schedule         = Schedule.new(safe_schedule_params)
+
+    event = Event.new
+
+    @schedule         = event.build_schedule(safe_schedule_params)
     @schedule.user_id = current_user.id
 
-    respond_to do |format|
-      if @schedule.save
-        format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
-        format.json {render :show, status: :created, location: @schedule}
-      else
+    if !params.include?(:actions)
+      @schedule.errors[:base] << "Actions must exists"
+      respond_to do |format|
         set_available_devices
         set_repeat_every_list
+        set_selected_device_properties
         format.html {render :new}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
+      return
     end
+    #
+    # @schedule.build_event()
+    # @schedule.valid?
+    # @schedule.event.valid?
+
+    params[:actions].each do |key, action|
+      @schedule.event.actions.build(action.permit(:property_id, :property_value)).valid?
+    end
+
+    respond_to do |format|
+      if event.save
+        format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
+        format.json {render :show, status: :created, location: @schedule}
+      else
+      set_available_devices
+      set_repeat_every_list
+      set_selected_device_properties
+      format.html {render :new}
+      format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end
+    end
+
   end
 
   # PATCH/PUT /schedules/1
@@ -87,6 +114,15 @@ class SchedulesController < ApplicationController
     end
   end
 
+  private def set_selected_device_properties
+    @selected_device_properties = []
+    if @schedule.device_uid
+      @schedule.device.properties.each do |property|
+        @selected_device_properties << [property.name, property.id]
+      end
+    end
+  end
+
   private def set_repeat_every_list
     @repeat_every_list = []
     Schedule::REPAT_EVERY.each do |key, value|
@@ -96,6 +132,6 @@ class SchedulesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   private def safe_schedule_params
-    params.require(:schedule).permit(:device_uid, :datetime)
+    params.require(:schedule).permit(:device_uid, :datetime, :is_recurrent, :repeat_every, :recurrence_period)
   end
 end

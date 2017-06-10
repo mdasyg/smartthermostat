@@ -40,12 +40,8 @@
 
   <div class="actions-container">
     <% if !event.nil? %>
-      <%= render partial: '/actions/action_form_element', collection: event.actions %>
+      <%= render partial: '/actions/action_form_element', collection: event.actions, as: :action %>
     <% end %>
   </div>
 
-</div>
-
-<div id="action-template" class="hidden">
-  <%= render partial: '/actions/action_form_element', locals: { action: Action.new } %>
 </div>
