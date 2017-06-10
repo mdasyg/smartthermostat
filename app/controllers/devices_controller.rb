@@ -88,8 +88,8 @@ class DevicesController < ApplicationController
 
     # second loop exists, in order to not make multiple select queries
     # this code block is for update existing properties
-    if !posted_device_property_ids.empty? # This mean, that someone make an update request where there are remaining property ids
-      if !@device.properties.empty? # It's a double-check that device some device properties exists on DB
+    if !posted_device_property_ids.empty? # This mean, that someone made an update request, where there are some properties
+      if !@device.properties.empty? # It's a double-check that the device has device properties on DB
         @device.properties.each do |stored_property|
           device_property_post.each do |key, posted_property|
             if stored_property[:id].to_i == posted_property[:id].to_i

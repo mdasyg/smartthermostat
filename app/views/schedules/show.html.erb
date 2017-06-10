@@ -1,6 +1,41 @@
 <% provide(:title, 'Schedule Preview') %>
 
-<p id="notice"><%= notice %></p>
+<div class="well">
+  <h1>Overview</h1>
+  <h1>
+    <small><%= @schedule.device.name %></small>
+  </h1>
+</div>
+
+<!-- ACTIONS -->
+<% if !@schedule.event.nil? && @schedule.event.actions.any? %>
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">Actions</h3>
+    </div>
+
+    <div class="panel-body">
+
+      <% @schedule.event.actions.each do |action| %>
+        <div class="row">
+
+          <div class="col-xs-4">
+            <%= action.property.name %>
+          </div>
+
+          <div class="col-xs-4">
+            <%= action.property_value %>
+          </div>
+
+        </div>
+      <% end %>
+
+    </div>
+
+  </div>
+<% end %>
+
 
 <%= link_to 'Edit', edit_schedule_path(@schedule) %> |
 <%= link_to 'Back', schedules_path %>

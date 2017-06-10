@@ -32,14 +32,12 @@ class SchedulesController < ApplicationController
   # POST /schedules
   # POST /schedules.json
   def create
-
-    event = Event.new
-
+    event             = Event.new
     @schedule         = event.build_schedule(safe_schedule_params)
     @schedule.user_id = current_user.id
 
     if !params.include?(:actions)
-      @schedule.errors[:base] << "Actions must exists"
+      @schedule.errors[:base] << "At leat one action must exists"
       respond_to do |format|
         set_available_devices
         set_repeat_every_list
@@ -49,25 +47,21 @@ class SchedulesController < ApplicationController
       end
       return
     end
-    #
-    # @schedule.build_event()
-    # @schedule.valid?
-    # @schedule.event.valid?
 
     params[:actions].each do |key, action|
-      @schedule.event.actions.build(action.permit(:property_id, :property_value)).valid?
+      @schedule.event.actions.build(safe_schedule_action_params(action))
     end
 
     respond_to do |format|
-      if event.save
+      if event.save # this will also save the schedule and event actions
         format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
         format.json {render :show, status: :created, location: @schedule}
       else
-      set_available_devices
-      set_repeat_every_list
-      set_selected_device_properties
-      format.html {render :new}
-      format.json {render json: @schedule.errors, status: :unprocessable_entity}
+        set_available_devices
+        set_repeat_every_list
+        set_selected_device_properties
+        format.html {render :new}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
     end
 
@@ -76,15 +70,75 @@ class SchedulesController < ApplicationController
   # PATCH/PUT /schedules/1
   # PATCH/PUT /schedules/1.json
   def update
-    respond_to do |format|
-      if @schedule.update(safe_schedule_params)
-        format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
-        format.json {render :show, status: :ok, location: @schedule}
-      else
+    if !params.include?(:actions)
+      @schedule.errors[:base] << 'At least one action must exist'
+      respond_to do |format|
         set_available_devices
         set_repeat_every_list
+        set_selected_device_properties
         format.html {render :edit}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end
+      return
+    end
+
+    stored_schedule_actions_ids = @schedule.event.actions.ids
+
+    posted_schedule_actions_ids = []
+    schedule_actions_post       = params[:actions]
+    schedule_actions_post.each do |key, action|
+
+      puts action.inspect
+      puts action[:id].inspect
+      puts safe_schedule_action_params(action).inspect
+
+      if action[:id].empty?
+        @schedule.event.actions.build(safe_schedule_action_params(action))
+      else
+        posted_schedule_actions_ids << action[:id].to_i
+      end
+    end
+
+    puts @schedule.event.actions.inspect
+
+    # schedule action ids to delete
+    schedule_action_ids_to_delete = stored_schedule_actions_ids - posted_schedule_actions_ids
+
+    puts "STORED: #{stored_schedule_actions_ids}"
+    puts "POSTED: #{posted_schedule_actions_ids}"
+    puts "TO DELETE: #{schedule_action_ids_to_delete}"
+
+    # First delete the deleted ones
+    if schedule_action_ids_to_delete
+      Action.destroy(schedule_action_ids_to_delete)
+    end
+
+    # this code block is for update existing schedule actions
+    if !posted_schedule_actions_ids.empty? # This mean, that someone made an update request, where there are some action
+      if !@schedule.event.actions.empty? # It's a double-check that the schedule has actions on DB
+        @schedule.event.actions.each do |stored_action|
+          schedule_actions_post.each do |key, posted_action|
+            if stored_action[:id].to_i == posted_action[:id].to_i
+              stored_action.attributes = safe_schedule_action_params(posted_action)
+              stored_action.save
+            end
+          end
+        end
+      end
+    end
+
+    respond_to do |format|
+      if @schedule.update(safe_schedule_params)
+        if @schedule.event.save
+          format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
+          format.json {render :show, status: :ok, location: @schedule}
+        else
+          set_available_devices
+          set_repeat_every_list
+          set_selected_device_properties
+          format.html {render :edit}
+          format.json {render json: @schedule.errors, status: :unprocessable_entity}
+        end
       end
     end
   end
@@ -133,5 +187,9 @@ class SchedulesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   private def safe_schedule_params
     params.require(:schedule).permit(:device_uid, :datetime, :is_recurrent, :repeat_every, :recurrence_period)
+  end
+
+  private def safe_schedule_action_params(unsafe_action)
+    unsafe_action.permit(:property_id, :property_value)
   end
 end
