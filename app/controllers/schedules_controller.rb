@@ -108,28 +108,41 @@ class SchedulesController < ApplicationController
     puts "POSTED: #{posted_schedule_actions_ids}"
     puts "TO DELETE: #{schedule_action_ids_to_delete}"
 
-    # First delete the deleted ones
-    if schedule_action_ids_to_delete
-      Action.destroy(schedule_action_ids_to_delete)
-    end
 
-    # this code block is for update existing schedule actions
-    if !posted_schedule_actions_ids.empty? # This mean, that someone made an update request, where there are some action
+    @schedule.transaction do
+
+      # this code block is for update existing schedule actions
+      # if !posted_schedule_actions_ids.empty? # This mean, that someone made an update request, where there are some action
       if !@schedule.event.actions.empty? # It's a double-check that the schedule has actions on DB
         @schedule.event.actions.each do |stored_action|
           schedule_actions_post.each do |key, posted_action|
             if stored_action[:id].to_i == posted_action[:id].to_i
               stored_action.attributes = safe_schedule_action_params(posted_action)
-              stored_action.save
+              # stored_action.save
             end
+          end
+
+          puts schedule_action_ids_to_delete.inspect
+          puts stored_action.inspect
+
+          if schedule_action_ids_to_delete.include?(stored_action[:id].to_i)
+            puts "MUST DELETE"
+            stored_action.delete
           end
         end
       end
-    end
+      # end
 
-    respond_to do |format|
-      if @schedule.update(safe_schedule_params)
-        if @schedule.event.save
+      respond_to do |format|
+
+
+        # # First delete the deleted ones
+        # if schedule_action_ids_to_delete
+        #   Action.destroy(schedule_action_ids_to_delete)
+        # end
+
+        if @schedule.update(safe_schedule_params)
+          # if @schedule.event.save
           format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
           format.json {render :show, status: :ok, location: @schedule}
         else
@@ -139,7 +152,9 @@ class SchedulesController < ApplicationController
           format.html {render :edit}
           format.json {render json: @schedule.errors, status: :unprocessable_entity}
         end
+
       end
+
     end
   end
 
