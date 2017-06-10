@@ -1,6 +1,7 @@
 <div class="action-form-container">
 
   <div class="row">
+
     <div class="col-xs-12">
       <div class="form-group">
         <button type="button" class="action-button active add-new-action form-control">
@@ -8,10 +9,32 @@
         </button>
       </div>
     </div>
+
   </div>
 
-
   <div class="actions-header">
+
+    <div class="row">
+
+      <div class="col-xs-2">
+        <div class="field form-group">
+          <%= label(Action, :property_id, 'Property') %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="field form-group">
+          <%= label(Action, :property_value, 'Property Value') %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="field form-group">
+          <label>Action</label>
+        </div>
+      </div>
+
+    </div>
 
   </div>
 

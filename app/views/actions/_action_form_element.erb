@@ -1,24 +1,36 @@
-<% device_property_index = (defined? action_counter) ? action_counter : 'INDEX' %>
-<% prefix = 'action' %>
+<% action_index = (defined? action_counter) ? action_counter : 'INDEX' %>
+<% prefix = 'action' %> <!-- Give prefix from previous calls -->
 
-<div class="form-row">
+<div class="action form-row" data-index="<%= action_index %>">
 
-  <div class="action" data-index="<%= device_property_index %>">
-    <%= fields_for prefix, action, index: device_property_index do |action_form| %>
+  <%= fields_for prefix, action, index: action_index do |action_form| %>
 
-      <%= action_form.hidden_field :id %>
+    <%= action_form.hidden_field :id %>
 
-      <div class="row">
+    <div class="row">
 
-        <div class="col-xs-1">
-          <div class="form-group">
-            <input type="button" class="action-button active remove-form-row  form-control" value="X"/>
-          </div>
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= action_form.select(:property_id, {}, {}, { class: 'form-control', id: 'action-properties-select-box' }) do %>
+            <% options_for_select([['tas', '1']], action.property_id) %>
+          <% end %>
         </div>
-
       </div>
 
-    <% end %>
-  </div>
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= action_form.text_field :property_value, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="form-group">
+          <input type="button" class="action-button active remove-form-row form-control" value="X"/>
+        </div>
+      </div>
+
+    </div>
+
+  <% end %>
 
 </div>

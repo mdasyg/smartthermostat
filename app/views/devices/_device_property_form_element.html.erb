@@ -1,7 +1,8 @@
 <% device_property_index = (defined? device_property_counter) ? device_property_counter : 'INDEX' %>
 <% prefix = 'device[properties]' %>
 
-<div class="form-row">
+
+<div class="device-property form-row" data-index="<%= device_property_index %>">
 
   <% if device_property.errors.any? %>
     <div id="error-explanation">
@@ -16,64 +17,60 @@
     </div>
   <% end %>
 
-  <div class="device-property" data-index="<%= device_property_index %>">
+  <%= fields_for prefix, device_property, index: device_property_index do |property_form| %>
 
-    <%= fields_for prefix, device_property, index: device_property_index do |property_form| %>
+    <%= property_form.hidden_field :id %>
 
-      <%= property_form.hidden_field :id %>
+    <div class="row">
 
-      <div class="row">
-
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= property_form.text_field :name, class: 'form-control' %>
-          </div>
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= property_form.text_field :name, class: 'form-control' %>
         </div>
-
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= property_form.select(:value_type_id, {}, {}, { class: 'form-control' }) do %>
-              <% options_for_select(@value_types, device_property.value_type_id) %>
-            <% end %>
-          </div>
-        </div>
-
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= property_form.number_field :value_min, class: 'form-control' %>
-          </div>
-        </div>
-
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= property_form.number_field :value_max, class: 'form-control' %>
-          </div>
-        </div>
-
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= property_form.text_field :value, class: 'form-control' %>
-          </div>
-        </div>
-
-        <div class="col-xs-1">
-          <div class="form-group">
-            <%= property_form.select(:auto, {}, {}, { class: 'form-control' }) do %>
-              <% options_for_select([['ON', 1], ['OFF', 0]], device_property.auto) %>
-            <% end %>
-          </div>
-        </div>
-
-        <div class="col-xs-1">
-          <div class="form-group">
-            <input type="button" class="action-button active remove-form-row  form-control" value="X"/>
-          </div>
-        </div>
-
       </div>
 
-    <% end %>
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= property_form.select(:value_type_id, {}, {}, { class: 'form-control' }) do %>
+            <% options_for_select(@value_types, device_property.value_type_id) %>
+          <% end %>
+        </div>
+      </div>
 
-  </div>
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= property_form.number_field :value_min, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= property_form.number_field :value_max, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= property_form.text_field :value, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="form-group">
+          <%= property_form.select(:auto, {}, {}, { class: 'form-control' }) do %>
+            <% options_for_select([['ON', 1], ['OFF', 0]], device_property.auto) %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="form-group">
+          <input type="button" class="action-button active remove-form-row  form-control" value="X"/>
+        </div>
+      </div>
+
+    </div>
+
+  <% end %>
 
 </div>
