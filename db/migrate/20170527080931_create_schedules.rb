@@ -8,7 +8,7 @@ class CreateSchedules < ActiveRecord::Migration[5.0]
       t.integer :event_id, null: false, unsigned: true
       t.datetime :datetime
       t.integer :is_recurrent, null: false, unsigned: true, limit: 1
-      t.integer :repeat_every, null: false, unsigned: true, limit: 1
+      t.integer :repeat_every, unsigned: true, limit: 1
       t.integer :recurrence_period, unsigned: true, comment: 'Measured in what the "repeat_every" says'
     end
 

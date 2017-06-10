@@ -13,6 +13,8 @@ class CreateSystemEventsRelatedModels < ActiveRecord::Migration[5.0]
       t.text :description
     end
 
+    add_index(:actions, [:event_id, :property_id], { unique: true })
+
     add_foreign_key :actions, :events
     add_foreign_key :actions, :properties, column: 'property_id'
 
