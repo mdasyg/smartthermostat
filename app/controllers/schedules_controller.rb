@@ -32,8 +32,7 @@ class SchedulesController < ApplicationController
   # POST /schedules
   # POST /schedules.json
   def create
-    event             = Event.new
-    @schedule         = event.build_schedule(safe_schedule_params)
+    @schedule         = Schedule.new(safe_schedule_params)
     @schedule.user_id = current_user.id
 
     if !params.include?(:actions)
@@ -49,11 +48,11 @@ class SchedulesController < ApplicationController
     end
 
     params[:actions].each do |key, action|
-      @schedule.event.actions.build(safe_schedule_action_params(action))
+      @schedule.actions.build(safe_schedule_action_params(action))
     end
 
     respond_to do |format|
-      if event.save # this will also save the schedule and event actions
+      if @schedule.save # this will also save the schedule and event actions
         format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
         format.json {render :show, status: :created, location: @schedule}
       else
@@ -82,7 +81,7 @@ class SchedulesController < ApplicationController
       return
     end
 
-    stored_schedule_actions_ids = @schedule.event.actions.ids
+    stored_schedule_actions_ids = @schedule.actions.ids
 
     posted_schedule_actions_ids = []
     schedule_actions_post       = params[:actions]
@@ -93,13 +92,13 @@ class SchedulesController < ApplicationController
       puts safe_schedule_action_params(action).inspect
 
       if action[:id].empty?
-        @schedule.event.actions.build(safe_schedule_action_params(action))
+        @schedule.actions.build(safe_schedule_action_params(action))
       else
         posted_schedule_actions_ids << action[:id].to_i
       end
     end
 
-    puts @schedule.event.actions.inspect
+    # puts @schedule.event.actions.inspect
 
     # schedule action ids to delete
     schedule_action_ids_to_delete = stored_schedule_actions_ids - posted_schedule_actions_ids
@@ -113,8 +112,8 @@ class SchedulesController < ApplicationController
 
       # this code block is for update existing schedule actions
       # if !posted_schedule_actions_ids.empty? # This mean, that someone made an update request, where there are some action
-      if !@schedule.event.actions.empty? # It's a double-check that the schedule has actions on DB
-        @schedule.event.actions.each do |stored_action|
+      if !@schedule.actions.empty? # It's a double-check that the schedule has actions on DB
+        @schedule.actions.each do |stored_action|
           schedule_actions_post.each do |key, posted_action|
             if stored_action[:id].to_i == posted_action[:id].to_i
               stored_action.attributes = safe_schedule_action_params(posted_action)
