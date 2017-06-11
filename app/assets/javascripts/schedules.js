@@ -1,5 +1,12 @@
 var selectedDeviceProperties = {};
 
+function replaceUrlParams(url, deviceUid = null) {
+    if (deviceUid) {
+        url = url.replace('DEVICE_ID', deviceUid);
+    }
+    return url;
+}
+
 function updateSelectedDeviceProperties($thisElement, initActionsContainer) {
     var $thisForm = $thisElement.closest('form');
     var $actionsContainer = $thisForm.find('.actions-container');
@@ -15,8 +22,10 @@ function updateSelectedDeviceProperties($thisElement, initActionsContainer) {
     // var data = {
     //     device_uid: deviceUid
     // };
+    var url = $('#get-device-properties-list-url').data('url');
+    url = replaceUrlParams(url, deviceUid);
     var request = $.ajax({
-        url: 'http://home-auto.eu:1024/devices/' + deviceUid + '/get_properties_list',
+        url: url,
         type: 'get',
         dataType: 'json',
         // data: data
