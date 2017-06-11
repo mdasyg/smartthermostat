@@ -9,11 +9,11 @@ class CreateSchedules < ActiveRecord::Migration[5.0]
       t.integer :is_recurrent, null: false, unsigned: true, limit: 1
       t.integer :repeat_every, unsigned: true, limit: 1
       t.integer :recurrence_period, unsigned: true, comment: 'Measured in what the "repeat_every" says'
+      t.text :description
     end
 
     add_foreign_key :schedules, :users
     add_foreign_key :schedules, :devices, column: 'device_uid', primary_key: 'uid'
-
     add_foreign_key :events, :schedules
 
   end

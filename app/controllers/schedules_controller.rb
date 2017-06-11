@@ -36,7 +36,7 @@ class SchedulesController < ApplicationController
     @schedule.user_id = current_user.id
 
     if !params.include?(:actions)
-      @schedule.errors[:base] << "At leat one action must exists"
+      @schedule.errors[:base] << 'At least one action must exists'
       respond_to do |format|
         set_available_devices
         set_repeat_every_list
@@ -69,6 +69,7 @@ class SchedulesController < ApplicationController
   # PATCH/PUT /schedules/1
   # PATCH/PUT /schedules/1.json
   def update
+
     if !params.include?(:actions)
       @schedule.errors[:base] << 'At least one action must exist'
       respond_to do |format|
@@ -86,11 +87,6 @@ class SchedulesController < ApplicationController
     posted_schedule_actions_ids = []
     schedule_actions_post       = params[:actions]
     schedule_actions_post.each do |key, action|
-
-      puts action.inspect
-      puts action[:id].inspect
-      puts safe_schedule_action_params(action).inspect
-
       if action[:id].empty?
         @schedule.actions.build(safe_schedule_action_params(action))
       else
@@ -98,63 +94,51 @@ class SchedulesController < ApplicationController
       end
     end
 
-    # puts @schedule.event.actions.inspect
-
     # schedule action ids to delete
     schedule_action_ids_to_delete = stored_schedule_actions_ids - posted_schedule_actions_ids
 
-    puts "STORED: #{stored_schedule_actions_ids}"
-    puts "POSTED: #{posted_schedule_actions_ids}"
-    puts "TO DELETE: #{schedule_action_ids_to_delete}"
+    # puts "STORED: #{stored_schedule_actions_ids}"
+    # puts "POSTED: #{posted_schedule_actions_ids}"
+    # puts "TO DELETE: #{schedule_action_ids_to_delete}"
 
-
-    @schedule.transaction do
-
-      # this code block is for update existing schedule actions
-      # if !posted_schedule_actions_ids.empty? # This mean, that someone made an update request, where there are some action
-      if !@schedule.actions.empty? # It's a double-check that the schedule has actions on DB
+    # UPdate the existing objects
+    if !posted_schedule_actions_ids.empty? # This mean, that someone made an update request, where there are some actions on it
+      if @schedule.actions.any? # It's a double-check that the schedule has actions on DB
         @schedule.actions.each do |stored_action|
           schedule_actions_post.each do |key, posted_action|
             if stored_action[:id].to_i == posted_action[:id].to_i
               stored_action.attributes = safe_schedule_action_params(posted_action)
-              # stored_action.save
             end
-          end
-
-          puts schedule_action_ids_to_delete.inspect
-          puts stored_action.inspect
-
-          if schedule_action_ids_to_delete.include?(stored_action[:id].to_i)
-            puts "MUST DELETE"
-            stored_action.delete
           end
         end
       end
-      # end
+    end
 
-      respond_to do |format|
-
-
+    begin
+      @schedule.transaction do
         # # First delete the deleted ones
         # if schedule_action_ids_to_delete
         #   Action.destroy(schedule_action_ids_to_delete)
         # end
-
-        if @schedule.update(safe_schedule_params)
-          # if @schedule.event.save
+        schedule_action_ids_to_delete.each do |action_id|
+          @schedule.actions.find(action_id).destroy!
+        end
+        @schedule.update!(safe_schedule_params)
+        respond_to do |format|
           format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
           format.json {render :show, status: :ok, location: @schedule}
-        else
-          set_available_devices
-          set_repeat_every_list
-          set_selected_device_properties
-          format.html {render :edit}
-          format.json {render json: @schedule.errors, status: :unprocessable_entity}
         end
-
       end
-
+    rescue
+      respond_to do |format|
+        set_available_devices
+        set_repeat_every_list
+        set_selected_device_properties
+        format.html {render :edit}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end
     end
+
   end
 
   # DELETE /schedules/1
@@ -193,7 +177,7 @@ class SchedulesController < ApplicationController
 
   private def set_repeat_every_list
     @repeat_every_list = []
-    Schedule::REPAT_EVERY.each do |key, value|
+    Schedule::REPEAT_EVERY.each do |key, value|
       @repeat_every_list << [value[:LABEL], value[:ID]]
     end
   end

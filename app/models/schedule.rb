@@ -1,6 +1,8 @@
 class Schedule < ApplicationRecord
 
-  REPAT_EVERY = {
+  # validates :datetime, presence: true
+
+  REPEAT_EVERY = {
       MINUTE: { ID: 1, LABEL: 'Minute' },
       HOUR:   { ID: 2, LABEL: 'Hour' },
       DAY:    { ID: 3, LABEL: 'Day' },
@@ -11,7 +13,8 @@ class Schedule < ApplicationRecord
 
   belongs_to :user, inverse_of: :schedules
   belongs_to :device, foreign_key: :device_uid, primary_key: :uid, inverse_of: :schedules
-  has_one :event, autosave: true
-  has_many :actions, through: :event, autosave: true
+
+  has_many :events
+  has_many :actions, through: :events, autosave: true
 
 end
