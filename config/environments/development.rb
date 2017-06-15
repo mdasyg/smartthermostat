@@ -65,7 +65,10 @@ Rails.application.configure do
   }
 
   ##### THIS IS FOR DEVISE
-  config.action_mailer.default_url_options = { host: '10.168.10.50', port: 3000 }
+  config.action_mailer.default_url_options = {
+      host: '10.168.10.50',
+      port: 3000
+  }
 
   ##### whitelist my ip for web-console
   config.web_console.whitelisted_ips = '10.168.10.0/25'
