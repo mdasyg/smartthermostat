@@ -1,4 +1,6 @@
-#include "proccess_callbacks.h"
+#include "DeviceConfigs.h"
+
+#include "ProccessCallbacks.h"
 
 int init_device_attributes(device_attribute states[]) {
   // attribute 1 init

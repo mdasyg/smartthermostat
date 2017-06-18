@@ -4,9 +4,9 @@
 #include <Ethernet.h>
 #include <PubSubClient.h>
 
-#include "proccess_callbacks.h"
+#include "ProccessCallbacks.h"
 
-#include "device_configs.h"
+#include "DeviceConfigs.h"
 
 String postRequestStr;
 String postRequestData;
@@ -50,8 +50,14 @@ void loop() {
 
   Serial.println("Device Status");
 
-  Serial.println(state_of_attributes[0].id);
-  Serial.println(state_of_attributes[0].name);
+  for(int i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+    Serial.print(state_of_attributes[i].name);
+    Serial.print(": Current value = ");
+    Serial.print(state_of_attributes[i].current_value);
+    Serial.print(", Set value = ");
+    Serial.print(state_of_attributes[i].set_value);
+    Serial.println();
+  }
 
   delay(10000);
 
