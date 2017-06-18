@@ -3,8 +3,8 @@ class CreateSystemEventsRelatedModels < ActiveRecord::Migration[5.0]
 
     create_table :actions, id: false do |t|
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
-      t.integer :property_id, null: false, unsigned: true
-      t.string :property_value, null: false
+      t.integer :device_attribute_id, null: false, unsigned: true
+      t.string :device_attribute_value, null: false
     end
 
     create_table :events, id: false do |t|
@@ -15,7 +15,7 @@ class CreateSystemEventsRelatedModels < ActiveRecord::Migration[5.0]
 
     add_index(:events, [:schedule_id, :action_id], { unique: true })
 
-    add_foreign_key :actions, :properties
+    add_foreign_key :actions, :device_attributes
     add_foreign_key :events, :actions
 
   end

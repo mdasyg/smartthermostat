@@ -25,7 +25,7 @@ class AdminController < ApplicationController
         else
           # this is an old entry so update
           old_value_type            = ValueType.find(valueType[:id])
-          old_value_type.attributes = safe_value_type_params(valueType)
+          old_value_type.device_attributes = safe_value_type_params(valueType)
           if old_value_type.invalid?
             models_has_errors = true
           end

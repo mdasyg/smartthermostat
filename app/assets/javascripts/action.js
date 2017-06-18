@@ -1,7 +1,7 @@
 var $actionTemplate = null;
 
 function addNewAction($thisClick) {
-    if ($.isEmptyObject(selectedDeviceProperties)) {
+    if ($.isEmptyObject(selectedDeviceAttributes)) {
         alert('No device selected. Please select one first');
         return false;
     }
@@ -9,10 +9,10 @@ function addNewAction($thisClick) {
     var $thisForm = $thisClick.closest('form');
     var $actionsContainer = $thisForm.find('.actions-container');
 
-    var numberOfProperties = Object.keys(selectedDeviceProperties).length;
+    var numberOfDeviceAttributes = Object.keys(selectedDeviceAttributes).length;
     var numberOfActions = $actionsContainer.children('.action').length;
-    if (numberOfActions >= numberOfProperties) {
-        alert('Device has only (' + numberOfProperties + ') properties available.');
+    if (numberOfActions >= numberOfDeviceAttributes) {
+        alert('Device has only (' + numberOfDeviceAttributes + ') attributes available.');
         return false;
     }
 
@@ -54,10 +54,10 @@ function addNewAction($thisClick) {
     });
 
     var newSelectOptions = [];
-    $.each(selectedDeviceProperties, function (key, value) {
+    $.each(selectedDeviceAttributes, function (key, value) {
         newSelectOptions.push($('<option>').attr('value', key).text(value));
     });
-    $newAction.find('#action-properties-select-box').empty().append(newSelectOptions);
+    $newAction.find('#action-device-attributes-select-box').empty().append(newSelectOptions);
 
     $actionsContainer.append($newAction);
 

@@ -20,29 +20,25 @@
   </div>
 </div>
 
-<!-- PROPERTIES -->
-<% if !@device.properties.empty? %>
+<!-- DEVICE ATTRIBUTES -->
+<% if !@device.device_attributes.empty? %>
   <div class="panel panel-default">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Properties</h3>
+      <h3 class="panel-title">Device Attributes</h3>
     </div>
 
     <div class="panel-body">
 
-      <% @device.properties.each do |property| %>
+      <% @device.device_attributes.each do |device_attribute| %>
         <div class="row">
 
           <div class="col-xs-4">
-            <%= property.name %>
+            <%= device_attribute.name %>
           </div>
 
           <div class="col-xs-4">
-            <%= property.value %>
-          </div>
-
-          <div class="col-xs-4">
-            <%= property.auto %>
+            <%= device_attribute.set_value %>
           </div>
 
         </div>

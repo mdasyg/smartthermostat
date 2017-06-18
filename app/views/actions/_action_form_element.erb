@@ -26,15 +26,15 @@
 
       <div class="col-xs-2">
         <div class="form-group">
-          <%= action_form.select(:property_id, {}, {}, { class: 'form-control', id: 'action-properties-select-box' }) do %>
-            <% options_for_select(@selected_device_properties, action.property_id) %>
+          <%= action_form.select(:attribute_id, {}, {}, { class: 'form-control', id: 'action-device-attributes-select-box' }) do %>
+            <% options_for_select(@selected_device_attributes, action.attribute_id) %>
           <% end %>
         </div>
       </div>
 
       <div class="col-xs-2">
         <div class="form-group">
-          <%= action_form.text_field :property_value, class: 'form-control' %>
+          <%= action_form.text_field :attribute_value, class: 'form-control' %>
         </div>
       </div>
 

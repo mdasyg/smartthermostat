@@ -1,4 +1,4 @@
-var selectedDeviceProperties = {};
+var selectedDeviceAttributes = {};
 
 function replaceUrlParams(url, deviceUid = null) {
     if (deviceUid) {
@@ -7,10 +7,10 @@ function replaceUrlParams(url, deviceUid = null) {
     return url;
 }
 
-function updateSelectedDeviceProperties($thisElement, initActionsContainer) {
+function updateSelectedDeviceAttributes($thisElement, initActionsContainer) {
     var $thisForm = $thisElement.closest('form');
     var $actionsContainer = $thisForm.find('.actions-container');
-    selectedDeviceProperties = {};
+    selectedDeviceAttributes = {};
 
 
     var deviceUid = $thisElement.val();
@@ -22,7 +22,7 @@ function updateSelectedDeviceProperties($thisElement, initActionsContainer) {
     // var data = {
     //     device_uid: deviceUid
     // };
-    var url = $('#get-device-properties-list-url').data('url');
+    var url = $('#get-device-attributes-list-url').data('url');
     url = replaceUrlParams(url, deviceUid);
     var request = $.ajax({
         url: url,
@@ -31,10 +31,10 @@ function updateSelectedDeviceProperties($thisElement, initActionsContainer) {
         // data: data
     });
     request.done(function (responseData, textStatus, jqXHR) {
-        var deviceProperties = $(responseData);
-        selectedDeviceProperties = {};
-        deviceProperties.each(function () {
-            selectedDeviceProperties[this.id] = this.name;
+        var deviceAttributes = $(responseData);
+        selectedDeviceAttributes = {};
+        deviceAttributes.each(function () {
+            selectedDeviceAttributes[this.id] = this.name;
         });
         if (initActionsContainer) {
             $actionsContainer.empty();
@@ -57,12 +57,12 @@ $(document).on("turbolinks:load", function () {
 
 
     $('.schedule-device-selection').on('change', function (event) {
-        updateSelectedDeviceProperties($(this), true);
+        updateSelectedDeviceAttributes($(this), true);
     });
 
 
     if (!!$('.schedule-device-selection').val()) {
-        updateSelectedDeviceProperties($('.schedule-device-selection'), false);
+        updateSelectedDeviceAttributes($('.schedule-device-selection'), false);
     }
 
 });

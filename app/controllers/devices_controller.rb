@@ -2,7 +2,7 @@ class DevicesController < ApplicationController
   # skip_before_action :verify_authenticity_token, :only => [:statusUpdate] # TODO: DONT FORGET TO FIX THIS
 
   before_action :authenticate_user! # TODO: AND THISSSSS
-  before_action :set_device, only: [:show, :edit, :update, :destroy, :get_properties_list]
+  before_action :set_device, only: [:show, :edit, :update, :destroy, :get_device_attributes_list]
   before_action :set_value_types, only: [:new, :edit]
 
   # GET /devices
@@ -11,9 +11,9 @@ class DevicesController < ApplicationController
     @devices = Device.select('uid, name, location').where(user_id: current_user.id).find_each
   end
 
-  # GET /devices/1/get_properties_list
-  def get_properties_list
-    render json: @device.properties
+  # GET /devices/1/get_device_attributes_list
+  def get_device_attributes_list
+    render json: @device.device_attributes
   end
 
   # GET /devices/1
@@ -36,15 +36,15 @@ class DevicesController < ApplicationController
     @device         = Device.new(safe_device_params)
     @device.user_id = current_user.id
 
-    if params.require(:device).include?(:properties)
-      params.require(:device).fetch(:properties).each do |key, new_property|
-        @device.properties.build(safe_device_property_params(new_property))
+    if params.require(:device).include?(:attributes)
+      params.require(:device).fetch(:attributes).each do |key, new_attribute|
+        @device.device_attributes.build(safe_device_attribute_params(new_attribute))
       end
     end
 
     respond_to do |format|
       if @device.save
-        # Now its time to save the properties
+        # Now its time to save the device attributes
         format.html {redirect_to @device, notice: 'Device was successfully created.'}
         format.json {render :show, status: :created, location: @device}
       else
@@ -59,41 +59,41 @@ class DevicesController < ApplicationController
   # PATCH/PUT /devices/1
   # PATCH/PUT /devices/1.json
   def update
-    stored_device_property_ids = @device.properties.ids
+    stored_device_attribute_ids = @device.device_attributes.ids
 
-    posted_device_property_ids = []
-    device_property_post       = nil
-    if params.require(:device).include?(:properties)
-      device_property_post = params.require(:device).fetch(:properties)
-      device_property_post.each do |key, property|
-        if !property[:id].empty?
-          posted_device_property_ids << property[:id].to_i
+    posted_device_attribute_ids = []
+    device_attribute_post       = nil
+    if params.require(:device).include?(:attributes)
+      device_attribute_post = params.require(:device).fetch(:attributes)
+      device_attribute_post.each do |key, device_attribute|
+        if !device_attribute[:id].empty?
+          posted_device_attribute_ids << device_attribute[:id].to_i
         else
-          @device.properties.build(safe_device_property_params(property))
+          @device.device_attributes.build(safe_device_attribute_params(device_attribute))
         end
       end
     end
 
     # and compute which of them we need to delete
-    device_property_ids_to_delete = stored_device_property_ids - posted_device_property_ids
+    device_attribute_ids_to_delete = stored_device_attribute_ids - posted_device_attribute_ids
 
-    # puts "STORED: #{stored_device_property_ids}"
-    # puts "POSTED: #{posted_device_property_ids}"
-    # puts "TO DELETE: #{device_property_ids_to_delete}"
+    # puts "STORED: #{stored_device_attribute_ids}"
+    # puts "POSTED: #{posted_device_attribute_ids}"
+    # puts "TO DELETE: #{device_attribute_ids_to_delete}"
 
     # First delete the deleted ones
-    if device_property_ids_to_delete
-      Property.destroy(device_property_ids_to_delete)
+    if device_attribute_ids_to_delete
+      DeviceAttribute.destroy(device_attribute_ids_to_delete)
     end
 
     # second loop exists, in order to not make multiple select queries
-    # this code block is for update existing properties
-    if !posted_device_property_ids.empty? # This mean, that someone made an update request, where there are some properties
-      if !@device.properties.empty? # It's a double-check that the device has device properties on DB
-        @device.properties.each do |stored_property|
-          device_property_post.each do |key, posted_property|
-            if stored_property[:id].to_i == posted_property[:id].to_i
-              stored_property.attributes = safe_device_property_params(posted_property)
+    # this code block is for update existing device attributes
+    if !posted_device_attribute_ids.empty? # This mean, that someone made an update request, where there are some device attributes
+      if !@device.device_attributes.empty? # It's a double-check that the device has device device attributes on DB
+        @device.device_attributes.each do |stored_attribute|
+          device_attribute_post.each do |key, posted_attribute|
+            if stored_attribute[:id].to_i == posted_attribute[:id].to_i
+              stored_attribute.device_attributes = safe_device_attribute_params(posted_attribute)
             end
           end
         end
@@ -115,10 +115,10 @@ class DevicesController < ApplicationController
   # DELETE /devices/1
   # DELETE /devices/1.json
   def destroy
-    # first we need to delete all properties
-    if !@device.properties.empty?
-      @device.properties.each do |device_property|
-        device_property.destroy
+    # first we need to delete all device attributes
+    if !@device.device_attributes.empty?
+      @device.device_attributes.each do |device_attribute|
+        device_attribute.destroy
       end
     end
 
@@ -186,8 +186,8 @@ class DevicesController < ApplicationController
     params.require(:device).permit(:name, :location, :description)
   end
 
-  private def safe_device_property_params(unsafe_property)
-    unsafe_property.permit(:name, :auto, :property_type_id, :value_type_id, :value_min, :value_max, :value)
+  private def safe_device_attribute_params(unsafe_attribute)
+    unsafe_attribute.permit(:name, :value_type_id, :value_min, :value_max, :set_value)
   end
 
 end

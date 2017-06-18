@@ -1,0 +1,73 @@
+<% device_attribute_index = (defined? device_attribute_counter) ? device_attribute_counter : 'INDEX' %>
+<% prefix = 'device[attributes]' %>
+
+<div class="device-attribute form-row" data-index="<%= device_attribute_index %>">
+
+  <% if device_attribute.errors.any? %>
+    <div id="error-explanation">
+      <h2><%= pluralize(device_attribute.errors.count, 'error') %> prohibited
+        this
+        device attribute from being valid:</h2>
+      <ul>
+        <% device_attribute.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= fields_for prefix, device_attribute, index: device_attribute_index do |attribute_form| %>
+
+    <%= attribute_form.hidden_field :id %>
+
+    <div class="row">
+
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= attribute_form.text_field :name, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= attribute_form.select(:value_type_id, {}, {}, { class: 'form-control' }) do %>
+            <% options_for_select(@value_types, device_attribute.value_type_id) %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= attribute_form.number_field :min_value, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= attribute_form.number_field :max_value, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-2">
+        <div class="form-group">
+          <%= attribute_form.text_field :set_value, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="form-group">
+          <%= attribute_form.text_field :current_value, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="form-group">
+          <input type="button" class="action-button active remove-form-row form-control" value="X"/>
+        </div>
+      </div>
+
+    </div>
+
+  <% end %>
+
+</div>
