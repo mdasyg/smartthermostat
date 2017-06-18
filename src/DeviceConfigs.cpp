@@ -1,5 +1,5 @@
+#include "DataStructures.h"
 #include "DeviceConfigs.h"
-
 #include "ProccessCallbacks.h"
 
 int initDeviceAttributes(deviceAttribute states[]) {

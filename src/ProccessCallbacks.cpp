@@ -1,11 +1,11 @@
 #include "DeviceConfigs.h"
-
+#include "DataStructures.h"
 #include "ProccessCallbacks.h"
 
 double tempSensorVoltage;
 double temperatureCelsius;
 
-void attribute1ProccessCallback(deviceAttribute &attributeState) {
+int attribute1ProccessCallback(deviceAttribute &attributeState) {
   Serial.print("Proccess for attribute: ");
   Serial.println(attributeState.name);
 
@@ -25,5 +25,5 @@ void attribute1ProccessCallback(deviceAttribute &attributeState) {
 
   attributeState.currentValue = temperatureCelsius;
 
-  return;
+  return 0;
 }

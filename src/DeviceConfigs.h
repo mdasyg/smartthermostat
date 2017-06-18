@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "ProccessCallbacks.h"
+#include "DataStructures.h"
 
 #ifndef DEVICE_CONFIGS_H
 #define DEVICE_CONFIGS_H
@@ -13,8 +13,6 @@ const char NUMBER_OF_ATTRIBUTES = 2;
 
 const char MQTT_USERNAME[] = { "asdf" };
 const char MQTT_PASSWORD[] = { "foobar" };
-
-const byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 
 const char applicationServerUrl[] = "home-auto.eu";
 const int applicationServerPort = 1024;
