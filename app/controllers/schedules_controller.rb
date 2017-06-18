@@ -21,12 +21,12 @@ class SchedulesController < ApplicationController
       redirect_to new_device_path
     end
     @schedule = Schedule.new
-    set_selected_device_properties
+    set_selected_device_attributes
   end
 
   # GET /schedules/1/edit
   def edit
-    set_selected_device_properties
+    set_selected_device_attributes
   end
 
   # POST /schedules
@@ -40,7 +40,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_available_devices
         set_repeat_every_list
-        set_selected_device_properties
+        set_selected_device_attributes
         format.html {render :new}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -58,7 +58,7 @@ class SchedulesController < ApplicationController
       else
         set_available_devices
         set_repeat_every_list
-        set_selected_device_properties
+        set_selected_device_attributes
         format.html {render :new}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -75,7 +75,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_available_devices
         set_repeat_every_list
-        set_selected_device_properties
+        set_selected_device_attributes
         format.html {render :edit}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -107,7 +107,7 @@ class SchedulesController < ApplicationController
         @schedule.actions.each do |stored_action|
           schedule_actions_post.each do |key, posted_action|
             if stored_action[:id].to_i == posted_action[:id].to_i
-              stored_action.attributes = safe_schedule_action_params(posted_action)
+              stored_action.device_attributes = safe_schedule_action_params(posted_action)
             end
           end
         end
@@ -133,7 +133,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_available_devices
         set_repeat_every_list
-        set_selected_device_properties
+        set_selected_device_attributes
         format.html {render :edit}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -166,11 +166,11 @@ class SchedulesController < ApplicationController
     end
   end
 
-  private def set_selected_device_properties
-    @selected_device_properties = []
+  private def set_selected_device_attributes
+    @selected_device_attributes = []
     if @schedule.device_uid
-      @schedule.device.properties.each do |property|
-        @selected_device_properties << [property.name, property.id]
+      @schedule.device.device_attributes.each do |device_attribute|
+        @selected_device_attributes << [device_attribute.name, device_attribute.id]
       end
     end
   end
@@ -188,6 +188,6 @@ class SchedulesController < ApplicationController
   end
 
   private def safe_schedule_action_params(unsafe_action)
-    unsafe_action.permit(:property_id, :property_value)
+    unsafe_action.permit(:attribute_id, :attribute_value)
   end
 end

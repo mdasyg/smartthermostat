@@ -6,7 +6,6 @@
       <div id="error-explanation">
         <h2><%= pluralize(device.errors.count, 'error') %> prohibited this
           device from being saved:</h2>
-
         <ul>
           <% device.errors.full_messages.each do |message| %>
             <li><%= message %></li>
@@ -47,14 +46,14 @@
     <div class="row">
       <div class="col-xs-12">
         <div class="form-group">
-          <button type="button" class="action-button active add-new-device-property form-control">
-            <span>Add New Device Property</span>
+          <button type="button" class="action-button active add-new-device-attribute form-control">
+            <span>Add New Device Attribute</span>
           </button>
         </div>
       </div>
     </div>
 
-    <%= render partial: 'device_property_form', locals: { properties: device.properties } %>
+    <%= render partial: 'device_attribute_form', locals: { device_attributes: device.device_attributes } %>
 
     <hr/>
 
@@ -66,6 +65,6 @@
 
 </div>
 
-<div id="device-property-template" class="hidden">
-  <%= render partial: 'device_property_form_element', locals: { device_property: Property.new } %>
+<div id="device-attribute-template" class="hidden">
+  <%= render partial: 'device_attribute_form_element', locals: { device_attribute: DeviceAttribute.new } %>
 </div>
