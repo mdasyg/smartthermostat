@@ -1,3 +1,14 @@
+////// TEST CODE ///////////////////////////////////////////////////////////////
+// Serial.println(stateOfAttributes[0].id);
+// Serial.println(stateOfAttributes[0].name);
+//
+// Serial.print("Relay pin address: ");
+// Serial.println((unsigned int)&stateOfAttributes, HEX);
+// Serial.println((unsigned int)&stateOfAttributes[0], HEX);
+// Serial.println((unsigned int)&stateOfAttributes[1], HEX);
+////// TEST CODE ///////////////////////////////////////////////////////////////
+
+
   //   mqttClient.setServer(mqttServerUrl, mqttServerPort);
   //   mqttClient.setCallback(mqttReceiveMsgCallback);
   //

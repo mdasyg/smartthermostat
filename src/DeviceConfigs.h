@@ -21,6 +21,10 @@ const int applicationServerPort = 1024;
 const char mqttServerUrl[] = "home-auto.eu";
 const int mqttServerPort = 1883;
 
-int init_device_attributes(device_attribute states[]);
+// system variables
+const int boilerRelayPin = 7;
+const int tempSensorPin1 = 4;
+
+int initDeviceAttributes(deviceAttribute states[]);
 
 #endif

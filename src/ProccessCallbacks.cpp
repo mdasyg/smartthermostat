@@ -1,12 +1,29 @@
+#include "DeviceConfigs.h"
+
 #include "ProccessCallbacks.h"
 
-void attribute1_proccess_callback(device_attribute &attribute_state) {
-  Serial.println("Attr 1 proccessing...");
+double tempSensorVoltage;
+double temperatureCelsius;
 
-  Serial.println(attribute_state.id);
-  Serial.println(attribute_state.name);
+void attribute1ProccessCallback(deviceAttribute &attributeState) {
+  Serial.print("Proccess for attribute: ");
+  Serial.println(attributeState.name);
 
-  attribute_state.id = 54;
+  tempSensorVoltage = analogRead(tempSensorPin1);
+
+  Serial.print("Volts: ");
+  Serial.println(tempSensorVoltage);
+  temperatureCelsius = 0.08 * tempSensorVoltage;
+  Serial.print("Celius: ");
+  Serial.println(temperatureCelsius);
+
+  if(temperatureCelsius < attributeState.setValue.toFloat()) {
+    digitalWrite(boilerRelayPin, HIGH);
+  } else {
+    digitalWrite(boilerRelayPin, LOW);
+  }
+
+  attributeState.currentValue = temperatureCelsius;
 
   return;
 }

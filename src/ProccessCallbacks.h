@@ -3,14 +3,14 @@
 
 #include <Arduino.h>
 
-struct device_attribute {
+struct deviceAttribute {
   int id;
   String name;
-  String set_value;
-  String current_value;
+  String setValue;
+  String currentValue;
 };
 
-void attribute1_proccess_callback(device_attribute &attribute_state);
-void attribute2_proccess_callback(device_attribute &attribute_state);
+void attribute1ProccessCallback(deviceAttribute &attribute_state);
+void attribute2_proccess_callback(deviceAttribute &attribute_state);
 
 #endif
