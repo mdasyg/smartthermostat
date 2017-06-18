@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :schedules
   resources :devices, param: :uid
 
-  get '/devices/:uid/get_properties_list', to: 'devices#get_properties_list'
+  get '/devices/:uid/get_device_attributes_list', to: 'devices#get_device_attributes_list'
 
   get '/admin', to: 'admin#index'
 
@@ -13,6 +13,13 @@ Rails.application.routes.draw do
 
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+  # api
+  namespace(:api) do
+    namespace(:v1) do
+      get '/devices/:uid/attributes', to: 'devices#attributes'
+    end
+  end
 
   # get 'mqtt', to: 'mqtt#index'
   # post 'devices/statusUpdate', to: 'devices#statusUpdate'
