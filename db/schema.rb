@@ -13,9 +13,23 @@
 ActiveRecord::Schema.define(version: 20170527080931) do
 
   create_table "actions", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "property_id",    null: false, unsigned: true
-    t.string  "property_value", null: false
-    t.index ["property_id"], name: "fk_rails_5473e09386", using: :btree
+    t.integer "device_attribute_id",    null: false, unsigned: true
+    t.string  "device_attribute_value", null: false
+    t.index ["device_attribute_id"], name: "fk_rails_6c4d2296a2", using: :btree
+  end
+
+  create_table "device_attributes", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint   "device_uid",              null: false, unsigned: true
+    t.string   "name",                    null: false
+    t.integer  "value_type_id", limit: 1, null: false, unsigned: true
+    t.string   "min_value"
+    t.string   "max_value"
+    t.string   "set_value"
+    t.string   "current_value"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.index ["device_uid"], name: "fk_rails_69a3134aba", using: :btree
+    t.index ["value_type_id"], name: "fk_rails_2a67338edb", using: :btree
   end
 
   create_table "device_stats", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -41,32 +55,20 @@ ActiveRecord::Schema.define(version: 20170527080931) do
   end
 
   create_table "events", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "schedule_id",               null: false, unsigned: true
-    t.integer "action_id",                 null: false, unsigned: true
-    t.text    "description", limit: 65535
-  end
-
-  create_table "properties", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint   "device_uid",                          null: false, unsigned: true
-    t.string   "name",                                null: false
-    t.integer  "value_type_id", limit: 1,             null: false, unsigned: true
-    t.string   "value_min"
-    t.string   "value_max"
-    t.string   "value"
-    t.integer  "auto",          limit: 1, default: 0, null: false, unsigned: true
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.index ["device_uid"], name: "fk_rails_b53a69fc39", using: :btree
-    t.index ["value_type_id"], name: "fk_rails_ae444046c4", using: :btree
+    t.integer "schedule_id", null: false, unsigned: true
+    t.integer "action_id",   null: false, unsigned: true
+    t.index ["action_id"], name: "fk_rails_62e0abe502", using: :btree
+    t.index ["schedule_id", "action_id"], name: "index_events_on_schedule_id_and_action_id", unique: true, using: :btree
   end
 
   create_table "schedules", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "user_id",                     null: false,                                                        unsigned: true
-    t.bigint   "device_uid",                  null: false,                                                        unsigned: true
+    t.integer  "user_id",                         null: false,                                                        unsigned: true
+    t.bigint   "device_uid",                      null: false,                                                        unsigned: true
     t.datetime "datetime"
-    t.integer  "is_recurrent",      limit: 1, null: false,                                                        unsigned: true
-    t.integer  "repeat_every",      limit: 1,                                                                     unsigned: true
-    t.integer  "recurrence_period",                        comment: "Measured in what the \"repeat_every\" says", unsigned: true
+    t.integer  "is_recurrent",      limit: 1,     null: false,                                                        unsigned: true
+    t.integer  "repeat_every",      limit: 1,                                                                         unsigned: true
+    t.integer  "recurrence_period",                            comment: "Measured in what the \"repeat_every\" says", unsigned: true
+    t.text     "description",       limit: 65535
     t.index ["device_uid"], name: "fk_rails_df1268bd4e", using: :btree
     t.index ["user_id"], name: "fk_rails_3c900465fa", using: :btree
   end
@@ -98,16 +100,20 @@ ActiveRecord::Schema.define(version: 20170527080931) do
   end
 
   create_table "value_types", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string  "name",                        null: false
     t.integer "primitive_type_id", limit: 1, null: false, unsigned: true
+    t.string  "name",                        null: false
     t.boolean "unsigned",                    null: false
+    t.integer "min_value"
+    t.integer "max_value"
   end
 
-  add_foreign_key "actions", "properties"
+  add_foreign_key "actions", "device_attributes"
+  add_foreign_key "device_attributes", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "device_attributes", "value_types"
   add_foreign_key "device_stats", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "devices", "users"
-  add_foreign_key "properties", "devices", column: "device_uid", primary_key: "uid"
-  add_foreign_key "properties", "value_types"
+  add_foreign_key "events", "actions"
+  add_foreign_key "events", "schedules"
   add_foreign_key "schedules", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "schedules", "users"
 end

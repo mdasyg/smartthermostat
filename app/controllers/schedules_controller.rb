@@ -107,7 +107,7 @@ class SchedulesController < ApplicationController
         @schedule.actions.each do |stored_action|
           schedule_actions_post.each do |key, posted_action|
             if stored_action[:id].to_i == posted_action[:id].to_i
-              stored_action.device_attributes = safe_schedule_action_params(posted_action)
+              stored_action.attributes = safe_schedule_action_params(posted_action)
             end
           end
         end

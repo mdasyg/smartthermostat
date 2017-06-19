@@ -17,6 +17,8 @@
 //= require moment
 //= require moment-timezone-with-data
 //= require bootstrap-datetimepicker
+//= require editable/bootstrap-editable
+//= require editable/rails
 //= require_tree .
 
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
