@@ -90,10 +90,10 @@ class DevicesController < ApplicationController
     # this code block is for update existing device attributes
     if !posted_device_attribute_ids.empty? # This mean, that someone made an update request, where there are some device attributes
       if !@device.device_attributes.empty? # It's a double-check that the device has device device attributes on DB
-        @device.device_attributes.each do |stored_attribute|
-          device_attribute_post.each do |key, posted_attribute|
-            if stored_attribute[:id].to_i == posted_attribute[:id].to_i
-              stored_attribute.device_attributes = safe_device_attribute_params(posted_attribute)
+        @device.device_attributes.each do |stored_device_attribute|
+          device_attribute_post.each do |key, posted_device_attribute|
+            if stored_device_attribute[:id].to_i == posted_device_attribute[:id].to_i
+              stored_device_attribute.attributes = safe_device_attribute_params(posted_device_attribute)
             end
           end
         end
@@ -137,30 +137,6 @@ class DevicesController < ApplicationController
       format.json {head :no_content}
     end
   end
-
-  # def statusUpdate
-  #
-  #   device_uid = params[:device_uid].to_i
-  #   info       = params.except(:controller, :action, :device_uid)
-  #
-  #   info.each do |key, value|
-  #     stat_id = key.to_i
-  #     if (stat_id > 0)
-  #       device_stat = DeviceStat.where(device_uid: device_uid, stat_id: stat_id).take
-  #
-  #       if (!device_stat.nil?)
-  #         puts(device_stat.inspect)
-  #         device_stat.value          = value
-  #         device_stat.last_update_at = Time.now # TODO correct the time is inserted to db
-  #         device_stat.save()
-  #         puts(device_stat.inspect)
-  #       end
-  #
-  #     end
-  #   end
-  #
-  #   render json: info.inspect.to_s
-  # end
 
   ##############################################################################
   ##### PRIVATE METHODS ########################################################

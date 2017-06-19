@@ -14,6 +14,7 @@
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
 @import 'bootstrap-datetimepicker';
+@import 'editable/bootstrap-editable';
 
 /* mixins, variables, etc. */
 
@@ -101,6 +102,11 @@ footer {
       margin-left: 15px;
     }
   }
+}
+
+/* editable */
+span.editable {
+  cursor: pointer;
 }
 
 /* miscellaneous */
