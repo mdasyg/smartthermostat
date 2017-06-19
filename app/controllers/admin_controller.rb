@@ -13,10 +13,10 @@ class AdminController < ApplicationController
     @value_types = []
 
     if params.include?(:value_types)
-      params.fetch(:value_types).each do |key, valueType|
-        if valueType[:id].empty?
+      params.fetch(:value_types).each do |key, value_type|
+        if value_type[:id].empty?
           # this is a new entry
-          new_value_type = ValueType.new(safe_value_type_params(valueType))
+          new_value_type = ValueType.new(safe_value_type_params(value_type))
           if new_value_type.invalid?
             models_has_errors = true
           end
@@ -24,8 +24,8 @@ class AdminController < ApplicationController
           @value_types << new_value_type
         else
           # this is an old entry so update
-          old_value_type            = ValueType.find(valueType[:id])
-          old_value_type.device_attributes = safe_value_type_params(valueType)
+          old_value_type            = ValueType.find(value_type[:id])
+          old_value_type.attributes = safe_value_type_params(value_type)
           if old_value_type.invalid?
             models_has_errors = true
           end
@@ -60,7 +60,7 @@ class AdminController < ApplicationController
   end
 
   private def safe_value_type_params(unsafe_value_type)
-    unsafe_value_type.permit(:name, :primitive_type_id, :unsigned)
+    unsafe_value_type.permit(:name, :primitive_type_id, :unsigned, :min_value, :max_value)
   end
 
 end
