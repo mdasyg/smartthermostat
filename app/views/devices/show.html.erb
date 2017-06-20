@@ -94,7 +94,8 @@
 
           <div class="col-xs-2">
             <div class="form-group">
-              <span class="editable-device-attribute-set-value">
+              <%  params = ActiveSupport::JSON.encode({ id: device_attribute.id }) %>
+              <span class="editable-device-attribute-set-value" data-params="<%= params %>" data-model="device_attribute" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
                 <%= device_attribute.set_value.nil? ? '-' : device_attribute.set_value %>
               </span>
             </div>
