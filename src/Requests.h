@@ -4,5 +4,7 @@
 void buildDeviceInfoSendRequest(String &postRequestData);
 void buildDeviceAttributesRequest(String &postRequestData);
 
-void sendPostRequest(EthernetClient &ethClient, const String &postRequestData);
-void sendGetRequest(EthernetClient &ethClient);
+void buildPostRequest(EthernetClient &ethClient, const String &postRequestData);
+void buildAndSendGetRequest(EthernetClient &ethClient);
+
+int httpResponseData(EthernetClient &ethClient, char *httpResponseBuffer);

@@ -15,6 +15,8 @@ String postRequestData;
 EthernetClient ethClient;
 // PubSubClient mqttClient(ethClient);
 
+char httpResponseBuffer[250];
+
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
 
 void setup() {
@@ -37,7 +39,8 @@ void setup() {
   Serial.println(F("Trying to get IP from DHCP..."));
   if (Ethernet.begin(mac) == 0) {
     while (1) {
-      Serial.println(F("Failed to configure Ethernet using DHCP"));
+      Serial.println(F("Failed to configure Ethernet using DHCP."));
+      Serial.println(F("Please reboot."));
       delay(10000);
     }
   }
@@ -48,11 +51,15 @@ void setup() {
 
   // Send device info to application server
   //buildDeviceInfoSendRequest(postRequestData);
-  //sendPostRequest(ethClient, postRequestData);
+  //buildPostRequest(ethClient, postRequestData);
 
-sendGetRequest(ethClient);
+  buildAndSendGetRequest(ethClient);
+
+  Serial.println("Going to loop....");
 
 }
+
+int respLen;
 
 void loop() {
 
@@ -60,15 +67,28 @@ void loop() {
   // buildDeviceAttributesRequest(postRequestData);
 
 
+  // respLen = httpResponseData(ethClient, httpResponseBuffer);
+  // Serial.println("OPPP");
+  // Serial.println(respLen);
+  // if (respLen) {
+  //   Serial.write(httpResponseBuffer, respLen);
+  // }
 
-  if (ethClient.available()) {
-    Serial.println("YES");
+  while (ethClient.available()) {
     char c = ethClient.read();
-    Serial.println(c);
-  } else {
-    Serial.println("NO");
-    delay(5000);
+    Serial.print(c);
   }
+
+  // if the server's disconnected, stop the client:
+  if (!ethClient.connected()) {
+    Serial.println();
+    Serial.println("disconnecting.");
+    ethClient.stop();
+    while(true);
+  } else {
+    // Serial.println("NO");
+  }
+
 
   // attribute1ProccessCallback(stateOfAttributes[0]);
   // // attribute2ProccessCallback(properties_state[1]);
@@ -85,7 +105,7 @@ void loop() {
   //
   // Serial.println();
   //
-  // delay(2000);
+  // delay(500);
 
 
   // Send statistics to app

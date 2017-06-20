@@ -1,9 +1,10 @@
 #include "DeviceConfigs.h"
 #include "Requests.h"
 
-char postRequestBuffer[250];
+char httpRequestBuffer[250];
+String httpRequestStr;
 
-String postRequestStr;
+int result;
 
 void buildDeviceInfoSendRequest(String &postRequestData) {
   postRequestData += "device_uid=";
@@ -22,69 +23,75 @@ void buildDeviceInfoSendRequest(String &postRequestData) {
   postRequestData += "xxx.xxx.xxx.xxx";
 }
 
-void buildDeviceAttributesRequest(String &postRequestStr) {
+void buildDeviceAttributesRequest(String &httpRequestStr) {
 
 }
 
-void sendPostRequest(EthernetClient &ethClient, const String &postRequestData) {
-  postRequestStr += "POST /api/v1/devices/attributes HTTP/1.1\r\n";
-  postRequestStr += "HOST: ";
-  postRequestStr += applicationServerUrl;
-  if (applicationServerPort != 80) {
-    postRequestStr += ":";
-    postRequestStr += applicationServerPort;
+void sendHttpRequest(EthernetClient &ethClient, String &httpRequestStr) {
+  Serial.println("Trying to connect to application server...");
+  result = ethClient.connect(applicationServerUrl, applicationServerPort);
+  if ( result != 1) {
+    Serial.print("Connection failed with msg: ");
+    Serial.println(result);
+    while (1) {
+      Serial.println("Please reboot your device");
+      delay(10000);
+    }
   }
-  postRequestStr += "\r\n";
-  postRequestStr += "Content-length: ";
-  postRequestStr += postRequestData.length();
-  postRequestStr += "\r\n";
-  postRequestStr += "Content-type: application/x-www-form-urlencoded\r\n\r\n";
-  postRequestStr += postRequestData;
+  if (ethClient.connected() ) {
+    Serial.println("Connected to application server");
+  }
+  httpRequestStr.toCharArray(httpRequestBuffer, httpRequestStr.length()+1);
+  ethClient.write(httpRequestBuffer, httpRequestStr.length());
+}
 
-  Serial.println(postRequestStr);
-  postRequestStr.toCharArray(postRequestBuffer, postRequestStr.length()+1);
-  Serial.println(postRequestStr.length());
-  Serial.write(postRequestBuffer, postRequestStr.length());
+void buildPostRequest(EthernetClient &ethClient, const String &postRequestData) {
+  httpRequestStr += "POST /api/v1/devices/attributes HTTP/1.1\r\n";
+  httpRequestStr += "HOST: ";
+  httpRequestStr += applicationServerUrl;
+  if (applicationServerPort != 80) {
+    httpRequestStr += ":";
+    httpRequestStr += applicationServerPort;
+  }
+  httpRequestStr += "\r\n";
+  httpRequestStr += "Content-length: ";
+  httpRequestStr += postRequestData.length();
+  httpRequestStr += "\r\n";
+  httpRequestStr += "Content-type: application/x-www-form-urlencoded\r\n\r\n";
+  httpRequestStr += postRequestData;
+
+  Serial.println(httpRequestStr);
+  httpRequestStr.toCharArray(httpRequestBuffer, httpRequestStr.length()+1);
+  Serial.println(httpRequestStr.length());
+  Serial.write(httpRequestBuffer, httpRequestStr.length());
   Serial.println();
-  ethClient.write(postRequestBuffer, postRequestStr.length());
+  ethClient.write(httpRequestBuffer, httpRequestStr.length());
 }
 
-int result;
-void sendGetRequest(EthernetClient &ethClient) {
-
-  Serial.println("Try to send get request");
-
-    Serial.println("Trying to connect to application server...");
-    result = ethClient.connect(applicationServerUrl, applicationServerPort);
-    if ( result != 1) {
-      Serial.print("Connection failed with msg: ");
-      Serial.println(result);
-      while (1) {
-        Serial.println("Please reboot your device");
-        delay(10000);
-      }
-    }
-    if (ethClient.connected() ) {
-      Serial.println("Connected to application server");
-    }
-
-  postRequestStr += "GET /api/v1/devices/721367462351557606/attributes.json HTTP/1.1\r\n";
-  postRequestStr += "HOST: ";
-  postRequestStr += applicationServerUrl;
+void buildAndSendGetRequest(EthernetClient &ethClient) {
+  httpRequestStr += "GET /api/v1/devices/721367462351557606/attributes.json HTTP/1.1\r\n";
+  httpRequestStr += "HOST: ";
+  httpRequestStr += applicationServerUrl;
   if (applicationServerPort != 80) {
-    postRequestStr += ":";
-    postRequestStr += applicationServerPort;
+    httpRequestStr += ":";
+    httpRequestStr += applicationServerPort;
   }
-  postRequestStr += "\r\n";
-  postRequestStr += "accept: application/json";
-  postRequestStr += "\r\n";
+  httpRequestStr += "\r\n\r\n";
 
-  Serial.println(postRequestStr);
-  postRequestStr.toCharArray(postRequestBuffer, postRequestStr.length()+1);
-  ethClient.write(postRequestBuffer, postRequestStr.length());
-
-  Serial.println("Send it");
+  sendHttpRequest(ethClient, httpRequestStr);
 
   return;
 
+}
+
+int httpResponseData(EthernetClient &ethClient, char *httpResponseBuffer) {
+  int readLength = 0;
+  if(ethClient.available()) {
+    while (ethClient.available()) {
+      Serial.println("ASDF");
+      httpRequestBuffer[readLength] = ethClient.read();
+      readLength++;
+    }
+  }
+  return readLength;
 }

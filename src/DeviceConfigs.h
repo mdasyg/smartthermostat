@@ -15,7 +15,7 @@ const char MQTT_USERNAME[] = { "asdf" };
 const char MQTT_PASSWORD[] = { "foobar" };
 
 const char applicationServerUrl[] = "home-auto.eu";
-const int applicationServerPort = 1024;
+const int applicationServerPort = 1025;
 const char mqttServerUrl[] = "home-auto.eu";
 const int mqttServerPort = 1883;
 
