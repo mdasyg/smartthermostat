@@ -112,6 +112,12 @@ class DevicesController < ApplicationController
     end
   end
 
+  def update_device_attribute_value
+
+    params.inspect
+
+  end
+
   # DELETE /devices/1
   # DELETE /devices/1.json
   def destroy

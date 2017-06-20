@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :devices, param: :uid
 
   get '/devices/:uid/get_device_attributes_list', to: 'devices#get_device_attributes_list'
+  put '/devices/:uid/update_device_attribute_value', to: 'devices#update_device_attribute_value'
 
   get '/admin', to: 'admin#index'
 
