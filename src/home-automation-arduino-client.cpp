@@ -1,23 +1,28 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <EthernetUdp.h>
 #include <PubSubClient.h>
+#include <TimeLib.h>
 
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
 #include "ProccessCallbacks.h"
 #include "Requests.h"
+#include "SystemTime.h"
 
 byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 
 // String postRequestStr;
 String postRequestData;
 EthernetClient ethClient;
+EthernetUDP udpClient;
 // PubSubClient mqttClient(ethClient);
 
 char httpResponseBuffer[250];
-
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
+
+unsigned int localPort = 8888;  // local port to listen for UDP packets
 
 void setup() {
 
@@ -47,13 +52,18 @@ void setup() {
   Serial.print("IP: ");
   Serial.println(Ethernet.localIP());
 
+  Serial.println("TimeNTP Example");
+  udpClient.begin(localPort);
+  Serial.println("waiting for sync");
+  setSyncProvider(getNtpTime);
+
   // Init PubSubClient
 
   // Send device info to application server
   //buildDeviceInfoSendRequest(postRequestData);
   //buildPostRequest(ethClient, postRequestData);
 
-  buildAndSendGetRequest(ethClient);
+  // buildAndSendGetRequest(ethClient);
 
   Serial.println("Going to loop....");
 
@@ -61,11 +71,19 @@ void setup() {
 
 int respLen;
 
+time_t prevDisplay = 0; // when the digital clock was displayed
+
 void loop() {
+
+  if (timeStatus() != timeNotSet) {
+    if ((now() - prevDisplay) >= 10) { //update the display only if time has changed
+      prevDisplay = now();
+      digitalClockDisplay();
+    }
+  }
 
   // ask for data from server
   // buildDeviceAttributesRequest(postRequestData);
-
 
   // respLen = httpResponseData(ethClient, httpResponseBuffer);
   // Serial.println("OPPP");
@@ -74,21 +92,20 @@ void loop() {
   //   Serial.write(httpResponseBuffer, respLen);
   // }
 
-  while (ethClient.available()) {
-    char c = ethClient.read();
-    Serial.print(c);
-  }
+  // while (ethClient.available()) {
+  //   char c = ethClient.read();
+  //   Serial.print(c);
+  // }
 
-  // if the server's disconnected, stop the client:
-  if (!ethClient.connected()) {
-    Serial.println();
-    Serial.println("disconnecting.");
-    ethClient.stop();
-    while(true);
-  } else {
-    // Serial.println("NO");
-  }
-
+  // // if the server's disconnected, stop the client:
+  // if (!ethClient.connected()) {
+  //   Serial.println();
+  //   Serial.println("disconnecting.");
+  //   ethClient.stop();
+  //   while(true);
+  // } else {
+  //   // Serial.println("NO");
+  // }
 
   // attribute1ProccessCallback(stateOfAttributes[0]);
   // // attribute2ProccessCallback(properties_state[1]);
@@ -106,7 +123,6 @@ void loop() {
   // Serial.println();
   //
   // delay(500);
-
 
   // Send statistics to app
 

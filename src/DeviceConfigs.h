@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <EthernetUdp.h>
 
 #include "DataStructures.h"
 
