@@ -19,7 +19,8 @@ Rails.application.routes.draw do
   namespace(:api) do
     namespace(:v1) do
       post '/devices/status', to: 'devices#status'
-      get '/devices/:uid/attributes', to: 'devices#attributes'
+      get '/devices/:uid/attributes_list', to: 'devices#attributes_list'
+      post '/devices/attributes_status_update', to: 'devices#attributes_status_update'
     end
   end
 

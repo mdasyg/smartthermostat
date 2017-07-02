@@ -1,11 +1,11 @@
 module Api
   module V1
     class DevicesController < ApplicationController
-      skip_before_action :verify_authenticity_token, :only => [:status]
+      skip_before_action :verify_authenticity_token, :only => [:status, :attributes_status_update]
 
       before_action :update_last_contact_time
 
-      def attributes
+      def attributes_list
         if Device.exists?(params[:uid])
           @device = Device.find(params[:uid])
         else
@@ -19,6 +19,11 @@ module Api
             format.json {render json: nil, status: :not_found}
           end
         end
+      end
+
+      def attributes_status_update
+        puts params.inspect
+        render json: params
       end
 
       def status
@@ -45,11 +50,11 @@ module Api
 
         end
 
-        render json: 'OK', status: :ok
+        render json: { status: 'OK' }, status: :ok
       end
 
       private def update_last_contact_time
-        # TODO fix, abort execution if device uid not exists OR not saved
+                # TODO fix, abort execution if device uid not exists OR not saved
         device_uid = params[:serial_number].to_i
         if Device.exists?(device_uid)
           @device = Device.find(device_uid)
