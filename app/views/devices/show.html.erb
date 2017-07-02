@@ -67,6 +67,8 @@
       </div>
 
       <% @device.device_attributes.each do |device_attribute| %>
+
+
         <div class="row">
 
           <div class="col-xs-2">
@@ -94,10 +96,10 @@
 
           <div class="col-xs-2">
             <div class="form-group">
-              <%  params = ActiveSupport::JSON.encode({ id: device_attribute.id }) %>
-              <span class="editable-device-attribute-set-value" data-params="<%= params %>" data-model="device_attribute" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
+              <% params = ActiveSupport::JSON.encode({ device_uid: device_attribute.device_uid.to_s }) %>
+              <a href="#" class="editable-device-attribute-set-value" data-params="<%= params %>" data-pk="<%= device_attribute.id %>" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
                 <%= device_attribute.set_value.nil? ? '-' : device_attribute.set_value %>
-              </span>
+              </a>
             </div>
           </div>
 
@@ -147,37 +149,42 @@
   </div>
 </div>
 
-<!-- INFO FROM DEVICE -->
-<!--<div class="panel panel-default">-->
-<!--<div class="panel-heading">-->
-<!--<h3 class="panel-title">Device info</h3>-->
-<!--</div>-->
-<!--<div class="panel-body">-->
+<!--INFO FROM DEVICE-->
+<% if @device.device_stats.any? %>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Device info</h3>
+    </div>
 
-<!--
-<% @device.device_stats.each do |stat| %>-->
+    <div class="panel-body">
 
-  <!--<div class="row">-->
+      <% @device.device_stats.each do |stat| %>
 
-  <!--<div class="col-xs-4">-->
-  <%= stat.label %>:
-  <!--</div>-->
+        <div class="row">
 
-  <!--<div class="col-xs-4">-->
-  <!--<%= stat.value %>-->
-  <!--</div>-->
+          <div class="col-xs-3">
+            <%= stat.stat_name %>:
+          </div>
 
-  <!--<div class="col-xs-4">-->
-  <!--(<%= stat.last_update_at %>)-->
-  <!--</div>-->
+          <div class="col-xs-3">
+            <%= stat.value %>
+          </div>
 
-  <!--</div>-->
+          <div class="col-xs-3">
+            <%= stat.last_update_at %>
+          </div>
 
-  <!--
-<% end %>-->
+          <div class="col-xs-3">
+            <%= stat.label %>
+          </div>
 
-<!--</div>-->
-<!--</div>-->
+        </div>
+
+      <% end %>
+
+    </div>
+  </div>
+<% end %>
 
 <!-- DEVICE'S SCHEDULES -->
 <!--<div class="panel panel-default">-->
@@ -185,7 +192,6 @@
 <!--<h3 class="panel-title">Device's schedules</h3>-->
 <!--</div>-->
 <!--<div class="panel-body">-->
-
 <!--</div>-->
 <!--</div>-->
 

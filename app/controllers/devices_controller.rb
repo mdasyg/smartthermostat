@@ -1,5 +1,5 @@
 class DevicesController < ApplicationController
-  before_action :authenticate_user! # TODO: AND THISSSSS
+  before_action :authenticate_user!
   before_action :set_device, only: [:show, :edit, :update, :destroy, :get_device_attributes_list]
   before_action :set_value_types, only: [:new, :edit]
 
@@ -111,8 +111,23 @@ class DevicesController < ApplicationController
   end
 
   def update_device_attribute_value
+    device_attribute = DeviceAttribute.joins(:device).where("devices.user_id = #{current_user.id}", device_uid: params[:device_uid]).find_by(id: params[:pk])
 
-    params.inspect
+    puts device_attribute.inspect
+
+    if (device_attribute.nil?)
+      render json: { status: 'error', msg: 'Device Attribute not exist' }, status: :not_found
+    end
+
+    device_attribute.write_attribute(params[:name], params[:value])
+
+    puts device_attribute.inspect
+
+    if device_attribute.save
+      render json: { status: 'ok', msg: 'Attribute updated successfully' }, status: :ok
+    else
+      render json: { status: 'error', msg: 'Device Attribute could not updated' }, status: :internal_server_error
+    end
 
   end
 
