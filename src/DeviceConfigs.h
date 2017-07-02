@@ -16,9 +16,11 @@ const char MQTT_USERNAME[] = { "asdf" };
 const char MQTT_PASSWORD[] = { "foobar" };
 
 const char applicationServerUrl[] = "home-auto.eu";
-const int applicationServerPort = 1025;
+const int applicationServerPort = 1026;
 const char mqttServerUrl[] = "home-auto.eu";
 const int mqttServerPort = 1883;
+
+const char deviceStatusUrl[] = "/api/v1/devices/status";
 
 // system variables
 const int boilerRelayPin = 7;

@@ -13,11 +13,10 @@
 
 byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 
-// String postRequestStr;
 String postRequestData;
 EthernetClient ethClient;
 EthernetUDP udpClient;
-// PubSubClient mqttClient(ethClient);
+PubSubClient mqttClient(ethClient);
 
 char httpResponseBuffer[250];
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
@@ -52,24 +51,19 @@ void setup() {
   Serial.print("IP: ");
   Serial.println(Ethernet.localIP());
 
-  Serial.println("TimeNTP Example");
   udpClient.begin(localPort);
-  Serial.println("waiting for sync");
   setSyncProvider(getNtpTime);
 
   // Init PubSubClient
 
   // Send device info to application server
-  //buildDeviceInfoSendRequest(postRequestData);
-  //buildPostRequest(ethClient, postRequestData);
-
-  // buildAndSendGetRequest(ethClient);
-
-  Serial.println("Going to loop....");
+  coonectToApplicationServer(ethClient);
+  prepareDeviceStatusRequestData(postRequestData);
+  sendPostRequest(ethClient, deviceStatusUrl, postRequestData);
 
 }
 
-int respLen;
+int respLen=0;
 
 time_t prevDisplay = 0; // when the digital clock was displayed
 
@@ -92,20 +86,35 @@ void loop() {
   //   Serial.write(httpResponseBuffer, respLen);
   // }
 
-  // while (ethClient.available()) {
-  //   char c = ethClient.read();
-  //   Serial.print(c);
-  // }
+  int counter = 0;
+  bool printResponse = false;
+  while (ethClient.available()) {
+    char c = ethClient.read();
+    Serial.print(c);
+    if(printResponse) {
+      respLen++;
+    }
+    if (c=='\r' || c=='\n') {
+      counter++;
+    } else {
+      counter = 0;
+    }
+    if (counter == 4) {
+      Serial.println("Molis teliwsan ta headers");
+      printResponse = true;
+      counter = 0;
+    }
+  }
 
-  // // if the server's disconnected, stop the client:
-  // if (!ethClient.connected()) {
-  //   Serial.println();
-  //   Serial.println("disconnecting.");
-  //   ethClient.stop();
-  //   while(true);
-  // } else {
-  //   // Serial.println("NO");
-  // }
+  // if the server's disconnected, stop the client:
+  if (!ethClient.connected()) {
+    Serial.println();
+    Serial.println("disconnecting.");
+    ethClient.stop();
+    while(true);
+  } else {
+    // Serial.println("NO");
+  }
 
   // attribute1ProccessCallback(stateOfAttributes[0]);
   // // attribute2ProccessCallback(properties_state[1]);
@@ -125,5 +134,7 @@ void loop() {
   // delay(500);
 
   // Send statistics to app
+
+  Ethernet.maintain();
 
 }

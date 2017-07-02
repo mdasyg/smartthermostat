@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include <Ethernet.h>
 
-void buildDeviceInfoSendRequest(String &postRequestData);
-void buildDeviceAttributesRequest(String &postRequestData);
+void coonectToApplicationServer(EthernetClient &ethClient);
 
-void buildPostRequest(EthernetClient &ethClient, const String &postRequestData);
-void buildAndSendGetRequest(EthernetClient &ethClient);
+void sendPostRequest(EthernetClient &ethClient, const char url[], const String &postRequestData);
 
-int httpResponseData(EthernetClient &ethClient, char *httpResponseBuffer);
+void prepareDeviceStatusRequestData(String &postRequestData);
+
+// void buildDeviceAttributesRequest(String &postRequestData);
+// void buildAndSendGetRequest(EthernetClient &ethClient);
+// int httpResponseData(EthernetClient &ethClient, char *httpResponseBuffer);
