@@ -18,11 +18,11 @@ Rails.application.routes.draw do
   # api
   namespace(:api) do
     namespace(:v1) do
+      post '/devices/status', to: 'devices#status'
       get '/devices/:uid/attributes', to: 'devices#attributes'
     end
   end
 
   # get 'mqtt', to: 'mqtt#index'
-  # post 'devices/statusUpdate', to: 'devices#statusUpdate'
   # post 'test', to: 'static_pages#test'
 end
