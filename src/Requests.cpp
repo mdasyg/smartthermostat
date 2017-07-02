@@ -54,9 +54,6 @@ void sendPostRequest(EthernetClient &ethClient, const char url[], const String &
 }
 
 void prepareDeviceStatusRequestData(String &postRequestData) {
-  postRequestData += "uid=";
-  postRequestData += DEVICE_SERIAL_NUMBER;
-  postRequestData += "&";
   postRequestData += "serial_number=";
   postRequestData += DEVICE_SERIAL_NUMBER;
   postRequestData += "&";
