@@ -34,11 +34,11 @@ ActiveRecord::Schema.define(version: 20170527080931) do
 
   create_table "device_stats", unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint   "device_uid",     null: false, unsigned: true
-    t.integer  "stat_id",        null: false
-    t.string   "label",          null: false
+    t.string   "stat_name",      null: false
     t.string   "value"
+    t.string   "label"
     t.datetime "last_update_at"
-    t.index ["device_uid", "stat_id"], name: "index_device_stats_on_device_uid_and_stat_id", unique: true, using: :btree
+    t.index ["device_uid"], name: "fk_rails_e93e183788", using: :btree
   end
 
   create_table "devices", primary_key: "uid", id: :bigint, default: nil, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
