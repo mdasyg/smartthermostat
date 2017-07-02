@@ -1,6 +1,4 @@
 class DevicesController < ApplicationController
-  # skip_before_action :verify_authenticity_token, :only => [:statusUpdate] # TODO: DONT FORGET TO FIX THIS
-
   before_action :authenticate_user! # TODO: AND THISSSSS
   before_action :set_device, only: [:show, :edit, :update, :destroy, :get_device_attributes_list]
   before_action :set_value_types, only: [:new, :edit]
