@@ -2,5 +2,4 @@ $(document).on("turbolinks:load", function () { // we need this because of turbo
 
     $('.editable-device-attribute-set-value').editable();
 
-
 });
