@@ -8,6 +8,7 @@ int result;
 
 void coonectToApplicationServer(EthernetClient &ethClient) {
   Serial.println("Trying to connect to application server...");
+  ethClient.stop();
   result = ethClient.connect(applicationServerUrl, applicationServerPort);
   if ( result != 1) {
     Serial.print("Connection failed with msg: ");
@@ -18,53 +19,75 @@ void coonectToApplicationServer(EthernetClient &ethClient) {
     }
   }
   if (ethClient.connected() ) {
+    isEthClientConnectedToServer = true;
     Serial.println("Connected to application server");
   }
 }
 
 void sendPostRequest(EthernetClient &ethClient, const char url[], const String &postRequestData) {
-// SET POST REQUEST
-  httpRequestStr = "POST ";
+  coonectToApplicationServer(ethClient);
+  // SET POST REQUEST
+  httpRequestStr = F("POST ");
   httpRequestStr += url;
-  httpRequestStr += " HTTP/1.1\r\n";
-  Serial.print(httpRequestStr);
+  httpRequestStr += F(" HTTP/1.1\r\n");
   ethClient.print(httpRequestStr);
   // set HOST contents
-  httpRequestStr = "HOST: ";
+  httpRequestStr = F("HOST: ");
   httpRequestStr += applicationServerUrl;
   if (applicationServerPort != 80) {
     httpRequestStr += ":";
     httpRequestStr += applicationServerPort;
   }
-  httpRequestStr += "\r\n";
-  Serial.print(httpRequestStr);
+  httpRequestStr += F("\r\n");
   ethClient.print(httpRequestStr);
   // set content length
-  httpRequestStr = "Content-length: ";
+  httpRequestStr = F("Content-length: ");
   httpRequestStr += postRequestData.length();
-  httpRequestStr += "\r\n";
-  Serial.print(httpRequestStr);
+  httpRequestStr += F("\r\n");
   ethClient.print(httpRequestStr);
+  // Connection close
+  ethClient.print(F("Connection: close\r\n"));
   // print request data header
-  Serial.print("Content-type: application/x-www-form-urlencoded\r\n\r\n");
-  ethClient.print("Content-type: application/x-www-form-urlencoded\r\n\r\n");
+  ethClient.print(F("Content-type: application/x-www-form-urlencoded\r\n\r\n"));
   // print post data
-  Serial.println(postRequestData);
   ethClient.print(postRequestData);
 }
 
 void prepareDeviceStatusRequestData(String &postRequestData) {
-  postRequestData += "serial_number=";
+  postRequestData = "";
+  postRequestData += F("serial_number=");
   postRequestData += DEVICE_SERIAL_NUMBER;
-  postRequestData += "&";
-  postRequestData += "firmware=";
+  postRequestData += AMPERSAND;
+  postRequestData += F("firmware=");
   postRequestData += DEVICE_FIRMWARE_VERSION;
-  postRequestData += "&";
-  postRequestData += "friendly_name=";
+  postRequestData += AMPERSAND;
+  postRequestData += F("friendly_name=");
   postRequestData += DEVICE_FRIENDLY_NAME;
-  postRequestData += "&";
-  postRequestData += "current_ip=";
+  postRequestData += AMPERSAND;
+  postRequestData += F("current_ip=");
   postRequestData += "XXX.YYY.ZZZ.WWW";
+}
+
+void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, deviceAttribute states[]) {
+  int i;
+  postRequestData = "";
+  for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+    if (i>0) {
+      postRequestData += AMPERSAND;
+    }
+    postRequestData += "dev_attr[";
+    postRequestData += i;
+    postRequestData += "][id]=";
+    postRequestData += states[i].id;
+    postRequestData += AMPERSAND;
+    postRequestData += "dev_attr[";
+    postRequestData += i;
+    postRequestData += "][curVal]=";
+    postRequestData += states[i].currentValue;
+  }
+
+  return;
+
 }
 
 // void buildAndSendGetRequest(EthernetClient &ethClient) {
@@ -86,12 +109,7 @@ void prepareDeviceStatusRequestData(String &postRequestData) {
 // void buildDeviceAttributesRequest(String &httpRequestStr) {
 //
 // }
-//
 
-//
-//
-
-//
 // int httpResponseData(EthernetClient &ethClient, char *httpResponseBuffer) {
 //   int readLength = 0;
 //   if(ethClient.available()) {
