@@ -1,5 +1,6 @@
 #include "DeviceConfigs.h"
 #include "Requests.h"
+#include "SystemTime.h"
 
 // char httpRequestBuffer[280];
 String httpRequestStr;
@@ -7,25 +8,31 @@ String httpRequestStr;
 int result;
 
 void coonectToApplicationServer(EthernetClient &ethClient) {
+  digitalClockDisplay(true);
   Serial.println("Trying to connect to application server...");
   ethClient.stop();
   result = ethClient.connect(applicationServerUrl, applicationServerPort);
   if ( result != 1) {
+    digitalClockDisplay(true);
     Serial.print("Connection failed with msg: ");
     Serial.println(result);
     while (1) {
+      digitalClockDisplay(true);
       Serial.println("Please reboot your device");
       delay(10000);
     }
   }
   if (ethClient.connected() ) {
     isEthClientConnectedToServer = true;
+    digitalClockDisplay(true);
     Serial.println("Connected to application server");
   }
 }
 
 void sendPostRequest(EthernetClient &ethClient, const char url[], const String &postRequestData) {
   coonectToApplicationServer(ethClient);
+  digitalClockDisplay(true);
+  Serial.println(F("Begin sending post request..."));
   // SET POST REQUEST
   httpRequestStr = F("POST ");
   httpRequestStr += url;
@@ -51,9 +58,14 @@ void sendPostRequest(EthernetClient &ethClient, const char url[], const String &
   ethClient.print(F("Content-type: application/x-www-form-urlencoded\r\n\r\n"));
   // print post data
   ethClient.print(postRequestData);
+
+  digitalClockDisplay(true);
+  Serial.println(F("Post request send"));
 }
 
 void prepareDeviceStatusRequestData(String &postRequestData) {
+  digitalClockDisplay(true);
+  Serial.println(F("Begin preparing device status request data..."));
   postRequestData = "";
   postRequestData += F("serial_number=");
   postRequestData += DEVICE_SERIAL_NUMBER;
@@ -66,9 +78,13 @@ void prepareDeviceStatusRequestData(String &postRequestData) {
   postRequestData += AMPERSAND;
   postRequestData += F("current_ip=");
   postRequestData += "XXX.YYY.ZZZ.WWW";
+  digitalClockDisplay(true);
+  Serial.println(F("Device status request data ready"));
 }
 
 void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, deviceAttribute states[]) {
+  digitalClockDisplay(true);
+  Serial.println(F("Begin preparing device attributes status update request..."));
   int i;
   postRequestData = "";
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
@@ -85,6 +101,9 @@ void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, devi
     postRequestData += "][curVal]=";
     postRequestData += states[i].currentValue;
   }
+
+  digitalClockDisplay(true);
+  Serial.println(F("Device attributes status update data ready"));
 
   return;
 

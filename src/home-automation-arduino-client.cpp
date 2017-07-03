@@ -5,7 +5,6 @@
 #include <EthernetUdp.h>
 #include <PubSubClient.h>
 #include <TimeLib.h>
-
 #include <MemoryFree.h>
 
 #include "DataStructures.h"
@@ -19,8 +18,9 @@ byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 bool isEthClientConnectedToServer = false;
 String postRequestData;
 EthernetClient ethClient;
+EthernetClient ethClientForMqtt;
 EthernetUDP udpClient;
-PubSubClient mqttClient(ethClient);
+PubSubClient mqttClient(mqttServerUrl, mqttServerPort, mqttReceiveMsgCallback, ethClientForMqtt);
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
 unsigned int localPort = 8888;  // local port to listen for UDP packets
 int respLen = 0;
@@ -30,8 +30,6 @@ time_t prevDisplay = 0; // when the digital clock was displayed
 unsigned long lastAttrUpdateTimestamp;
 unsigned long loopCycleTimer;
 
-String test;
-
 void setup() {
   // wdt_enable(WDTO_8S);
   lastAttrUpdateTimestamp = millis();
@@ -40,22 +38,6 @@ void setup() {
 
   Serial.print("Free RAM = ");
   Serial.println(freeMemory());
-
-  // test += "TASOS!&";
-  // for(counter=0; counter<120; counter++) {
-  //   if(counter%10==0) {
-  //
-  //     Serial.print("Free RAM = ");
-  //     Serial.println(freeMemory());
-  //
-  //     Serial.print("Counter=");
-  //     Serial.println(counter);
-  //     Serial.print("Len=");
-  //     Serial.println(test.length());
-  //
-  //   }
-  //   test += "TASOS!&";
-  // }
 
   pinMode(boilerRelayPin, OUTPUT);
   digitalWrite(boilerRelayPin, LOW);
@@ -70,14 +52,17 @@ void setup() {
   Serial.println(DEVICE_FIRMWARE_VERSION);
 
   // Init EthernetClient
+  digitalClockDisplay(true);
   Serial.println(F("Trying to get IP from DHCP..."));
   if (Ethernet.begin(mac) == 0) {
     while (1) {
+      digitalClockDisplay(true);
       Serial.println(F("Failed to configure Ethernet using DHCP."));
       Serial.println(F("Please reboot."));
       delay(10000);
     }
   }
+  digitalClockDisplay(true);
   Serial.print("My IP address: ");
   Serial.println(Ethernet.localIP());
   udpClient.begin(localPort);
@@ -86,10 +71,10 @@ void setup() {
   setSyncProvider(getNtpTime);
 
   // Init PubSubClient
-  mqttClient.setServer(mqttServerUrl, mqttServerPort);
-  mqttClient.setCallback(mqttReceiveMsgCallback);
+  mqttConnectToBrokerCallback(mqttClient);
 
   // Send device info to application server
+  digitalClockDisplay(true);
   Serial.println(F("Device Info Status Update"));
   prepareDeviceStatusRequestData(postRequestData);
   sendPostRequest(ethClient, deviceStatusUrl, postRequestData);
@@ -98,30 +83,28 @@ void setup() {
 
 void loop() {
 
-  mqttPreserveConnectionToBrokerCallback(mqttClient);
-
-  // loopCycleTimer = millis();
+  if (!mqttClient.connected()) {
+    digitalClockDisplay(true);
+    Serial.println(F("Disconected from MQTT broker"));
+    mqttConnectToBrokerCallback(mqttClient);
+  }
 
   if (timeStatus() != timeNotSet) {
-    if ((now() - prevDisplay) >= 30) { //update the display only if time has changed
+    if ((now() - prevDisplay) >= 30) {
       prevDisplay = now();
-      digitalClockDisplay();
+      digitalClockDisplay(false);
 
       Serial.print("Free RAM = ");
       Serial.println(freeMemory());
+
+      Serial.println(ethClient.getSocketNumber());
+      Serial.println(ethClientForMqtt.getSocketNumber());
 
     }
   }
 
   // ask for data from server
   // buildDeviceAttributesRequest(postRequestData);
-
-  // respLen = httpResponseData(ethClient, httpResponseBuffer);
-  // Serial.println("OPPP");
-  // Serial.println(respLen);
-  // if (respLen) {
-  //   Serial.write(httpResponseBuffer, respLen);
-  // }
 
   printResponse = false;
   while (ethClient.available()) {
@@ -144,7 +127,8 @@ void loop() {
 
   // if the server's disconnected, stop the client:
   if (isEthClientConnectedToServer && !ethClient.connected()) {
-    Serial.println(F("disconnecting..."));
+    digitalClockDisplay(true);
+    Serial.println(F("Disconnecting..."));
     ethClient.stop();
     isEthClientConnectedToServer = false;
   }
@@ -167,23 +151,19 @@ void loop() {
 
   // Send statistics to app
   if (millis() - lastAttrUpdateTimestamp > attrUpdateInterval ) {
-    Serial.println("Device Attributes Status Update");
+    digitalClockDisplay(true);
+    Serial.println(F("Device Attributes Status Update"));
     prepareDeviceAtributesStatusUpdateRequestData(postRequestData, stateOfAttributes);
     sendPostRequest(ethClient, deviceAttributesUpdateUrl, postRequestData);
     lastAttrUpdateTimestamp = millis();
   }
 
-
-  test = "";
-
-  mqttClient.loop();
-
   Ethernet.maintain();
 
-  // Serial.print("Loop cycle time: ");
-  // Serial.print(millis()-loopCycleTimer);
-  // Serial.println(" ms");
-  // loopCycleTimer = millis();
+  if (mqttClient.loop() == false) {
+    digitalClockDisplay(true);
+    Serial.println(F("MQTT Connection Error when calling loop."));
+  }
 
   // wdt_reset();
 

@@ -58,8 +58,10 @@ void printDigits(int digits) {
   Serial.print(digits);
 }
 
-void digitalClockDisplay() {
-  // digital clock display of the time
+void digitalClockDisplay(bool brackets) {
+  if(brackets) {
+    Serial.print("[");
+  }
   Serial.print(day());
   Serial.print("-");
   Serial.print(month());
@@ -69,5 +71,9 @@ void digitalClockDisplay() {
   Serial.print(hour());
   printDigits(minute());
   printDigits(second());
-  Serial.println();
+  if(brackets) {
+    Serial.print("] ");
+  } else {
+    Serial.println();
+  }
 }

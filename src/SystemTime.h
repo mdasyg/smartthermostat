@@ -14,6 +14,6 @@ extern EthernetUDP udpClient;
 void sendNTPpacket(IPAddress &address);
 time_t getNtpTime();
 void printDigits(int digits);
-void digitalClockDisplay();
+void digitalClockDisplay(bool brackets);
 
 #endif
