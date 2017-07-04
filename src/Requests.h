@@ -7,7 +7,7 @@ const char AMPERSAND = '&';
 
 extern bool isEthClientConnectedToServer;
 
-void coonectToApplicationServer(EthernetClient &ethClient);
+bool connectToApplicationServer(EthernetClient &ethClient);
 
 void sendPostRequest(EthernetClient &ethClient, const char url[], const String &postRequestData);
 

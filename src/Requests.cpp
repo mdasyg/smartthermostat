@@ -1,36 +1,38 @@
 #include "DeviceConfigs.h"
 #include "Requests.h"
-#include "SystemTime.h"
+#include "System.h"
 
-// char httpRequestBuffer[280];
-String httpRequestStr;
-
-int result;
-
-void coonectToApplicationServer(EthernetClient &ethClient) {
-  digitalClockDisplay(true);
-  Serial.println("Trying to connect to application server...");
+bool connectToApplicationServer(EthernetClient &ethClient) {
+  int result;
   ethClient.stop();
+  digitalClockDisplay(true);
+  Serial.println(F("Trying to connect to the application server..."));
   result = ethClient.connect(applicationServerUrl, applicationServerPort);
-  if ( result != 1) {
+  if(result != 1) {
     digitalClockDisplay(true);
-    Serial.print("Connection failed with msg: ");
-    Serial.println(result);
-    while (1) {
-      digitalClockDisplay(true);
-      Serial.println("Please reboot your device");
-      delay(10000);
-    }
+    Serial.print(F("Connection failed with msg: "));
+    Serial.print(result);
+    Serial.println(F(". Will retry again later..."));
   }
-  if (ethClient.connected() ) {
+
+  if (ethClient.connected()) {
     isEthClientConnectedToServer = true;
     digitalClockDisplay(true);
-    Serial.println("Connected to application server");
+    Serial.println(F("Connected to the application server"));
+  } else {
+    digitalClockDisplay(true);
+    Serial.println(F("Connection to the application server failed"));
+    return false;
   }
+  return true;
 }
 
 void sendPostRequest(EthernetClient &ethClient, const char url[], const String &postRequestData) {
-  coonectToApplicationServer(ethClient);
+  if(!connectToApplicationServer(ethClient)) {
+    digitalClockDisplay(true);
+    Serial.println(F("Abort request send."));
+  }
+  String httpRequestStr;
   digitalClockDisplay(true);
   Serial.println(F("Begin sending post request..."));
   // SET POST REQUEST
@@ -59,6 +61,9 @@ void sendPostRequest(EthernetClient &ethClient, const char url[], const String &
   // print post data
   ethClient.print(postRequestData);
 
+  Serial.print(F("Post data length: "));
+  Serial.println(postRequestData.length());
+
   digitalClockDisplay(true);
   Serial.println(F("Post request send"));
 }
@@ -67,6 +72,9 @@ void prepareDeviceStatusRequestData(String &postRequestData) {
   digitalClockDisplay(true);
   Serial.println(F("Begin preparing device status request data..."));
   postRequestData = "";
+  postRequestData += F("dev_uid=");
+  postRequestData += DEVICE_SERIAL_NUMBER;
+  postRequestData += AMPERSAND;
   postRequestData += F("serial_number=");
   postRequestData += DEVICE_SERIAL_NUMBER;
   postRequestData += AMPERSAND;
@@ -87,6 +95,9 @@ void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, devi
   Serial.println(F("Begin preparing device attributes status update request..."));
   int i;
   postRequestData = "";
+  // postRequestData += F("dev_uid=");
+  // postRequestData += DEVICE_SERIAL_NUMBER;
+  // postRequestData += AMPERSAND;
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
     if (i>0) {
       postRequestData += AMPERSAND;

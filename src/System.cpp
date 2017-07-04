@@ -1,9 +1,41 @@
-#include "SystemTime.h"
+#include <MemoryFree.h>
 
-IPAddress ntpTimeServer(10, 168, 10, 60);
+#include "DeviceConfigs.h"
+#include "System.h"
+
+IPAddress ntpTimeServer(10, 168, 10, 60); // TODO REMOVE from here
+byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED }; // TODO REMOVE from here
+
 const int timeZone = 3; // EEST (includes DST)
-
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
+
+extern EthernetUDP udpClient;
+
+// ethernet shield initialization
+void initEthernetShieldNetwork() {
+  byte etherShieldConnectionRetryCount = 0;
+  digitalClockDisplay(true);
+  Serial.println(F("Trying to get IP from DHCP..."));
+  bool isEthernetShieldConnected = false;
+  do {
+    if (Ethernet.begin(mac) == 0) {
+      etherShieldConnectionRetryCount++;
+      digitalClockDisplay(true);
+      Serial.println(F("Failed to configure Ethernet using DHCP."));
+      Serial.println(F("Retry after some seconds..."));
+      delay(5000);
+    } else {
+      isEthernetShieldConnected = true;
+    }
+  } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
+  digitalClockDisplay(true);
+  if(isEthernetShieldConnected) {
+    Serial.print(F("My IP address: "));
+    Serial.println(Ethernet.localIP());
+  } else {
+    Serial.print(F("Keep going w/o netwrok connection"));
+  }
+}
 
 // send an NTP request to the time server at the given address
 void sendNTPpacket(IPAddress &address) {
@@ -29,13 +61,13 @@ void sendNTPpacket(IPAddress &address) {
 
 time_t getNtpTime() {
   while (udpClient.parsePacket() > 0) ; // discard any previously received packets
-  Serial.println("Transmit NTP Request");
+  Serial.println(F("Transmit NTP Request"));
   sendNTPpacket(ntpTimeServer);
   uint32_t beginWait = millis();
   while (millis() - beginWait < 1500) {
     int size = udpClient.parsePacket();
     if (size >= NTP_PACKET_SIZE) {
-      Serial.println("Receive NTP Response");
+      Serial.println(F("Receive NTP Response"));
       udpClient.read(packetBuffer, NTP_PACKET_SIZE);  // read packet into the buffer
       unsigned long secsSince1900;
       // convert four bytes starting at location 40 to a long integer
@@ -46,7 +78,7 @@ time_t getNtpTime() {
       return secsSince1900 - 2208988800UL + timeZone * SECS_PER_HOUR;
     }
   }
-  Serial.println("No NTP Response :-(");
+  Serial.println(F("No NTP Response :-("));
   return 0; // return 0 if unable to get the time
 }
 
@@ -75,5 +107,29 @@ void digitalClockDisplay(bool brackets) {
     Serial.print("] ");
   } else {
     Serial.println();
+  }
+}
+
+void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime) {
+  // Device status in serial
+  if (timeStatus() != timeNotSet) {
+    if ((now() - prevDeviceStatusDisplayTime) >= 30) { // in seconds
+      prevDeviceStatusDisplayTime = now();
+      Serial.println(F("\nDevice Status Update"));
+      Serial.print(F("Time: "));
+      digitalClockDisplay(false);
+      Serial.print(F("Free RAM = "));
+      Serial.print(freeMemory());
+      Serial.println(" kb");
+      // for(int i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+      //   Serial.print(stateOfAttributes[i].name);
+      //   Serial.print(": Current value = ");
+      //   Serial.print(stateOfAttributes[i].currentValue);
+      //   Serial.print(", Set value = ");
+      //   Serial.print(stateOfAttributes[i].setValue);
+      //   Serial.println();
+      // }
+      Serial.println();
+    }
   }
 }
