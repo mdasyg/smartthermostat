@@ -18,7 +18,7 @@ const char MQTT_PASSWORD[] = { "foobar" };
 const unsigned int attrUpdateInterval = 60000L; // in milliseconds
 
 const char applicationServerUrl[] = "home-auto.eu";
-const int applicationServerPort = 1028;
+const int applicationServerPort = 80;
 const char mqttServerUrl[] = "home-auto.eu";
 const int mqttServerPort = 1883;
 

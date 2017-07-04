@@ -9,7 +9,7 @@ extern bool isEthClientConnectedToServer;
 
 bool connectToApplicationServer(EthernetClient &ethClient);
 
-void sendPostRequest(EthernetClient &ethClient, const char url[], const String &postRequestData);
+bool sendPostRequest(EthernetClient &ethClient, const char url[], const String &postRequestData);
 
 void prepareDeviceStatusRequestData(String &postRequestData);
 void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, deviceAttribute states[]);
