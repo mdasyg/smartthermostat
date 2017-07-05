@@ -123,12 +123,11 @@ void loop() {
 
   if (mqttClient.loop() == false) {
     digitalClockDisplay(true);
-    Serial.println(F("MQTT Connection Error when calling loop."));
+    Serial.println(F("MQTT Connection Error when calling loop"));
   }
 
   // device status update to Serial
   statusUpdateToSerial(prevDeviceStatusDisplayTime);
-
 
   // wdt_reset();
 
