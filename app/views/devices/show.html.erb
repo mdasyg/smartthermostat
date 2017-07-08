@@ -25,6 +25,9 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Device Attributes</h3>
+      <button type="button" class="btn btn-default" aria-label="Left Align">
+        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+      </button>
     </div>
     <div class="panel-body">
 
@@ -102,16 +105,9 @@
             </div>
           </div>
 
-          <div class="col-xs-1">
+          <div class="col-xs-2">
             <div class="form-group">
               <%= device_attribute.current_value.nil? ? '-' : device_attribute.current_value %>
-            </div>
-          </div>
-          <div class="col-xs-1">
-            <div class="form-group">
-              <button type="button" class="btn btn-default" aria-label="Left Align">
-                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-              </button>
             </div>
           </div>
 
