@@ -7,9 +7,9 @@ void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
   Serial.print(topic);
   Serial.print(F("] with payload size ["));
   Serial.print(length);
-  Serial.print("] msg [");
+  Serial.print("] msg: ");
   Serial.write(payload, length);
-  Serial.println("]");
+  Serial.println();
 
   if ((int)payload[0] == 97) {
     digitalWrite(boilerRelayPin, HIGH);

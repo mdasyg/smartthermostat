@@ -67,6 +67,8 @@ bool sendPostRequest(EthernetClient &ethClient, const char url[], const String &
 
   digitalClockDisplay(true);
   Serial.println(F("Post request send"));
+
+  return true;
 }
 
 void prepareDeviceStatusRequestData(String &postRequestData) {
@@ -96,9 +98,9 @@ void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, devi
   Serial.println(F("Begin preparing device attributes status update request..."));
   int i;
   postRequestData = "";
-  // postRequestData += F("dev_uid=");
-  // postRequestData += DEVICE_SERIAL_NUMBER;
-  // postRequestData += AMPERSAND;
+  postRequestData += F("dev_uid=");
+  postRequestData += DEVICE_SERIAL_NUMBER;
+  postRequestData += AMPERSAND;
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
     if (i>0) {
       postRequestData += AMPERSAND;

@@ -107,8 +107,7 @@ void loop() {
   }
 
   // attribute1ProccessCallback(stateOfAttributes[0]);
-  // // attribute2ProccessCallback(properties_state[1]);
-  //
+  // attribute2ProccessCallback(properties_state[1]);
 
   // Send statistics to app
   if (millis() - lastAttrUpdateTimestamp > attrUpdateInterval ) {
