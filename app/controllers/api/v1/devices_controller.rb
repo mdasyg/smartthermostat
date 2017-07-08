@@ -1,36 +1,35 @@
 module Api
   module V1
     class DevicesController < ApplicationController
-      skip_before_action :verify_authenticity_token, :only => [:status, :attributes_status_update]
-
+      skip_before_action :verify_authenticity_token, :only => [:status, :attributes_status_update, :attributes_list]
       before_action :update_last_contact_time
 
       def attributes_list
-        if Device.exists?(params[:uid])
-          @device = Device.find(params[:uid])
-        else
-          @device = nil
+        if !params.has_key?(:dev_uid)
+          render json: { status: :error, msg: ['Device UID is missing'] }, status: :bad_request and return
         end
-        respond_to do |format|
-          if @device
-            # puts render_to_string(json: @device.device_attributes, status: :ok)
-            format.json {render :json => @device.device_attributes, status: :ok}
-          else
-            format.json {render json: nil, status: :not_found}
+
+        begin
+          @device = Device.find(params[:dev_uid])
+        rescue ActiveRecord::RecordNotFound
+          respond_to do |format|
+            format.json {render json: { status: :error, msg: ['Device UID not exists'] }, status: :not_found}
           end
+        end
+
+        respond_to do |format|
+          format.json {render json: { status: :ok, msg: @device.device_attributes }, status: :ok}
         end
       end
 
-      def attributes_status_update
-        puts params.inspect
+      def attributes_status_update # remove '_update'
+        # puts params.inspect
         render json: params
       end
 
       def status
-        puts request.env.select {|k, v| k =~ /^HTTP_/}
-
-        device_uid = params[:serial_number].to_i
-        info       = params.except(:controller, :action)
+        device_uid = params[:dev_uid].to_i
+        info       = params.except(:controller, :action, :dev_uid)
 
         info.each do |key, value|
           device_stat = DeviceStat.where(device_uid: device_uid, stat_name: key).take
@@ -50,12 +49,15 @@ module Api
 
         end
 
-        render json: { status: 'OK' }, status: :ok
+        render json: { status: :ok }, status: :ok
       end
 
       private def update_last_contact_time
-                # TODO fix, abort execution if device uid not exists OR not saved
-        device_uid = params[:serial_number].to_i
+        if !params.has_key?(:dev_uid)
+          render json: { status: :error, msg: ['Device UID is missing'] }, status: :bad_request and return
+        end
+
+        device_uid = params[:dev_uid].to_i
         if Device.exists?(device_uid)
           @device = Device.find(device_uid)
         else

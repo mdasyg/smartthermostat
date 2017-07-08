@@ -63,7 +63,7 @@ ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com
 read [this](http://guides.rubyonrails.org/working_with_javascript_in_rails.html#page-change-events)
 for more info. To workaround this we need to replace the '$(document).ready()' 
 with '$(document).on("turbolinks:load", function() {})'
-
++ Use `puts request.env.select {|k, v| k =~ /^HTTP_/}` to print out on console HTTP headers
 
 # Resources
 
