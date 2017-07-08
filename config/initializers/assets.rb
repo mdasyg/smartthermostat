@@ -12,4 +12,3 @@ Rails.application.config.assets.version = '1.0'
 
 Rails.application.config.assets.paths << Rails.root.join('node_modules')
 Rails.application.config.assets.paths << Rails.root.join('node_modules/bootstrap/dist/css')
-Rails.application.config.assets.paths << Rails.root.join('node_modules/eonasdan-bootstrap-datetimepicker/build/css')

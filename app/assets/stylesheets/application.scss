@@ -12,9 +12,14 @@
  *
  */
 @import 'bootstrap';
-@import 'bootstrap-datetimepicker';
-@import 'x-editable/dist/bootstrap3-editable/css/bootstrap-editable';
+@import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker';
 @import 'fullcalendar/dist/fullcalendar';
+@import 'x-editable/dist/bootstrap3-editable/css/bootstrap-editable';
+
+/* hot fix for datepicker not displayed */
+div.datepicker-days {
+  display: block;
+}
 
 /* Override Bootstrap 3 font locations */
 @font-face {

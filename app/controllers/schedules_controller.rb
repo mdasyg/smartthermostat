@@ -8,6 +8,10 @@ class SchedulesController < ApplicationController
   # GET /schedules.json
   def index
     @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
+    @schedule = Schedule.new
+    set_available_devices
+    set_selected_device_attributes
+    set_repeat_every_list
   end
 
   # GET /schedules/1
