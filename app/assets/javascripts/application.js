@@ -10,13 +10,14 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
-//= require bootstrap-sprockets
-//= require jquery_ujs
+//= require jquery/dist/jquery
+//= require bootstrap/dist/js/bootstrap
 //= require turbolinks
-//= require moment
-//= require moment-timezone-with-data
-//= require bootstrap-datetimepicker
+//= require moment/min/moment.min
+//= require moment-timezone-all/builds/moment-timezone-with-data
+//= require eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min
+//= require x-editable/dist/bootstrap3-editable/js/bootstrap-editable
+//= require fullcalendar/dist/fullcalendar
 //= require_tree .
 
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
