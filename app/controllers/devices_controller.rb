@@ -111,7 +111,7 @@ class DevicesController < ApplicationController
     puts device_attribute.inspect
 
     if (device_attribute.nil?)
-      render json: { status: 'error', msg: 'Device Attribute not exist' }, status: :not_found
+      render json: { status: :error, msg: ['Device Attribute not exist'] }, status: :not_found
     end
 
     device_attribute.write_attribute(params[:name], params[:value])
@@ -119,9 +119,26 @@ class DevicesController < ApplicationController
     puts device_attribute.inspect
 
     if device_attribute.save
-      render json: { status: 'ok', msg: 'Attribute updated successfully' }, status: :ok
+      render(json: { status: :ok, msg: ['Attribute updated successfully'] }, status: :ok)
+
+      mqtt_client = Mosquitto::Client.new('tasos-test')
+      puts mqtt_client.inspect
+
+      mqtt_client.on_connect {|rc|
+        p "Connected with return code #{rc}"
+        # publish a test message once connected
+        # mqtt_client.publish(nil, device_uid, 'test message', Mosquitto::AT_MOST_ONCE, true)
+      }
+
+      asdf = mqtt_client.connect("10.168.10.50", 1883, 10)
+      puts asdf
+
+      mqtt_client.publish(nil, params[:device_uid], "{'dev_attr': [{ 'id': '69', 'curVal': #{device_attribute.read_attribute(params[:name])} }]}", Mosquitto::AT_MOST_ONCE, false)
+
+      mqtt_client.disconnect()
+
     else
-      render json: { status: 'error', msg: 'Device Attribute could not updated' }, status: :internal_server_error
+      render json: { status: :error, msg: ['Device Attribute could not updated'] }, status: :internal_server_error
     end
 
   end

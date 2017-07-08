@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       post '/devices/attributes_list', to: 'devices#attributes_list'
 
       post '/devices/status', to: 'devices#status'
-      post '/devices/attributes_status_update', to: 'devices#attributes_status_update'
+      post '/devices/attributes_status', to: 'devices#attributes_status'
     end
   end
 
