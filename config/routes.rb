@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   resources :schedules
   resources :devices, param: :uid
 
-  get '/devices/:uid/get_device_attributes_list', to: 'devices#get_device_attributes_list'
   post '/devices/:uid/update_device_attribute_value', to: 'devices#update_device_attribute_value'
 
   get '/admin', to: 'admin#index'
@@ -18,8 +17,9 @@ Rails.application.routes.draw do
   # api
   namespace(:api) do
     namespace(:v1) do
+      post '/devices/attributes_list', to: 'devices#attributes_list'
+
       post '/devices/status', to: 'devices#status'
-      get '/devices/:uid/attributes_list', to: 'devices#attributes_list'
       post '/devices/attributes_status_update', to: 'devices#attributes_status_update'
     end
   end
