@@ -2,34 +2,34 @@ var $actionTemplate = null;
 
 function addNewAction($thisClick) {
     if ($.isEmptyObject(selectedDeviceAttributes)) {
-        alert('No device selected. Please select one first');
+        alert('Device has no attributes, please add some first.');
         return false;
     }
 
-    var $thisForm = $thisClick.closest('form');
-    var $actionsContainer = $thisForm.find('.actions-container');
+    let $thisForm = $thisClick.closest('form');
+    let $actionsContainer = $thisForm.find('.actions-container');
 
-    var numberOfDeviceAttributes = Object.keys(selectedDeviceAttributes).length;
-    var numberOfActions = $actionsContainer.children('.action').length;
+    let numberOfDeviceAttributes = Object.keys(selectedDeviceAttributes).length;
+    let numberOfActions = $actionsContainer.children('.action').length;
     if (numberOfActions >= numberOfDeviceAttributes) {
         alert('Device has only (' + numberOfDeviceAttributes + ') attributes available.');
         return false;
     }
 
-    var lastActionDomId = parseInt($actionsContainer.find('.action').last().attr('data-index'));
+    let lastActionDomId = parseInt($actionsContainer.find('.action').last().attr('data-index'));
     if (!lastActionDomId) {
         lastActionDomId = 0;
     }
-    var nextActionDomId = lastActionDomId + 1;
+    let nextActionDomId = lastActionDomId + 1;
 
-    var $newAction = $actionTemplate.clone();
+    let $newAction = $actionTemplate.clone();
 
     $newAction.attr('data-index', nextActionDomId);
 
-    var propertyName = null;
-    var propertyId = null;
+    let propertyName = null;
+    let propertyId = null;
 
-    var $newActionInputs = $newAction.find('input');
+    let $newActionInputs = $newAction.find('input');
     $newActionInputs.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -41,7 +41,7 @@ function addNewAction($thisClick) {
         }
     });
 
-    var $newActionSelects = $newAction.find('select');
+    let $newActionSelects = $newAction.find('select');
     $newActionSelects.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -53,7 +53,7 @@ function addNewAction($thisClick) {
         }
     });
 
-    var newSelectOptions = [];
+    let newSelectOptions = [];
     $.each(selectedDeviceAttributes, function (key, value) {
         newSelectOptions.push($('<option>').attr('value', key).text(value));
     });
@@ -68,7 +68,7 @@ $(document).on("turbolinks:load", function () {
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
-        var $thisClick = $(this);
+        let $thisClick = $(this);
         // var thisRowId = ($thisClick.closest('.grid-row').data('id')) ? $thisClick.closest('.grid-row').data('id') : null;
         if ($thisClick.hasClass('active')) {
             if ($thisClick.hasClass('add-new-action')) {

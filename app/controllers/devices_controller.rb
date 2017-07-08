@@ -1,6 +1,6 @@
 class DevicesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_device, only: [:show, :edit, :update, :destroy]
+  before_action :set_device, only: [:show, :edit, :update, :destroy, :get_device_attributes_list]
   before_action :set_value_types, only: [:new, :edit]
 
   # GET /devices
@@ -167,6 +167,11 @@ class DevicesController < ApplicationController
       format.html {redirect_to devices_url, notice: 'Device was successfully destroyed.'}
       format.json {head :no_content}
     end
+  end
+
+  # GET /devices/1/get_device_attributes_list
+  def get_device_attributes_list
+    render json: @device.device_attributes
   end
 
   ##############################################################################

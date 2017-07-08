@@ -11,10 +11,10 @@
 // about supported directives.
 //
 //= require jquery/dist/jquery
-//= require bootstrap/dist/js/bootstrap
 //= require turbolinks
 //= require moment/min/moment.min
 //= require moment-timezone-all/builds/moment-timezone-with-data
+//= require bootstrap/dist/js/bootstrap
 //= require eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min
 //= require x-editable/dist/bootstrap3-editable/js/bootstrap-editable
 //= require fullcalendar/dist/fullcalendar
