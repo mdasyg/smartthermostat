@@ -4,8 +4,6 @@
   <title><%= full_title(yield(:title)) %></title>
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track': true %>
-  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
   <%= csrf_meta_tags %>
   <%= render 'layouts/shim' %>
 </head>
@@ -22,6 +20,8 @@
   <%= render 'layouts/footer' %>
 
   <div>
+    <%= debug(asset_path("/devices/device-properties.js")) if Rails.env.development? %>
+    <%= debug(asset_url("application.js")) if Rails.env.development? %>
     <%= debug(Time.new.zone) if Rails.env.development? %>
     <%= debug(RUBY_VERSION) if Rails.env.development? %>
     <%= debug(user_signed_in?.inspect) if Rails.env.development? %>
