@@ -15,8 +15,8 @@
 //= require moment/min/moment.min
 //= require moment-timezone-all/builds/moment-timezone-with-data
 //= require bootstrap/dist/js/bootstrap
-//= require eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min
 //= require x-editable/dist/bootstrap3-editable/js/bootstrap-editable
+//= require eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker
 //= require fullcalendar/dist/fullcalendar
 //= require_tree .
 

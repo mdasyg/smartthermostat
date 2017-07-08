@@ -55,10 +55,11 @@ function initializeFullCalendar() {
         editable: true,
         eventLimit: true,
 
-        select: function (start, end) {
+        events: '/schedules.json',
 
+        select: function (start, end, jsEvent) {
 
-            console.log(start, end);
+            $('#my-modal').modal('show');
 
             // $.getScript('/events/new', function () {
             //     $('#event_date_range').val(moment(start).format("MM/DD/YYYY HH:mm") + ' - ' + moment(end).format("MM/DD/YYYY HH:mm"))
@@ -78,11 +79,12 @@ $(document).on("turbolinks:load", function () {
     initializeFullCalendar();
 
     $('#schedule_datetime').datetimepicker({
-        // locale: 'en',
-        // format: "DD/MM/YYYY HH:mm:ss",
-        // extraFormats: ['YYYY-MM-DD HH:mm:ss'],
+        debug: true,
+        locale: 'en',
+        format: "DD/MM/YYYY HH:mm:ss",
+        extraFormats: ['YYYY-MM-DD HH:mm:ss'],
         // showClear: true,
-        // sideBySide: true,
+        sideBySide: true,
         // defaultDate: moment()
     });
     // $('#schedule_datetime').data('DateTimePicker').format("DD/MM/YYYY HH:mm:ss")
