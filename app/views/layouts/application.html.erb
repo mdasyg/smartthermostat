@@ -20,8 +20,6 @@
   <%= render 'layouts/footer' %>
 
   <div>
-    <%= debug(asset_path("/devices/device-properties.js")) if Rails.env.development? %>
-    <%= debug(asset_url("application.js")) if Rails.env.development? %>
     <%= debug(Time.new.zone) if Rails.env.development? %>
     <%= debug(RUBY_VERSION) if Rails.env.development? %>
     <%= debug(user_signed_in?.inspect) if Rails.env.development? %>

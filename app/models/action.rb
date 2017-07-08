@@ -1,6 +1,6 @@
 class Action < ApplicationRecord
 
-	validates :attribute_value, presence: true
+	validates :device_attribute_value, presence: true
 
 	belongs_to :device_attribute
 

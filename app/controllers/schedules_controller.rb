@@ -188,6 +188,6 @@ class SchedulesController < ApplicationController
   end
 
   private def safe_schedule_action_params(unsafe_action)
-    unsafe_action.permit(:attribute_id, :attribute_value)
+    unsafe_action.permit(:device_attribute_id, :device_attribute_value)
   end
 end
