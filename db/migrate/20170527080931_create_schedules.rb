@@ -5,6 +5,7 @@ class CreateSchedules < ActiveRecord::Migration[5.0]
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.integer :user_id, null: false, unsigned: true
       t.bigint :device_uid, null: false, unsigned: true
+      t.string :title, null: false
       t.datetime :datetime
       t.integer :is_recurrent, null: false, unsigned: true, limit: 1
       t.integer :repeat_every, unsigned: true, limit: 1
