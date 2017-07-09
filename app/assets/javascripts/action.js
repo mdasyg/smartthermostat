@@ -1,12 +1,19 @@
 var $actionTemplate = null;
 
 function addNewAction($thisClick) {
+    let $thisForm = $thisClick.closest('form');
+    let deviceUid = $thisForm.find('.schedule-device-selector').val();
+
+    if (!deviceUid) {
+        alert('Please select a device.');
+        return false;
+    }
+
     if ($.isEmptyObject(selectedDeviceAttributes)) {
         alert('Device has no attributes, please add some first.');
         return false;
     }
 
-    let $thisForm = $thisClick.closest('form');
     let $actionsContainer = $thisForm.find('.actions-container');
 
     let numberOfDeviceAttributes = Object.keys(selectedDeviceAttributes).length;
