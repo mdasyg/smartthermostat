@@ -42,7 +42,7 @@ function addNewDeviceAttribute($thisClick) {
     $deviceAttributesContainer.append($newDeviceAttribute);
 }
 
-$(document).on("turbolinks:load", function () { // we need this because of turbolinks
+$(document).on('turbolinks:load', function () { // we need this because of turbolinks
     $deviceAttributeTemplate = $('#device-attribute-template').find('.device-attribute');
     $deviceAttributesContainer = $(document.body).find('#device-form').find('.device-attributes-container');
 

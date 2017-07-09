@@ -8,7 +8,7 @@ class SchedulesController < ApplicationController
   # GET /schedules.json
   def index
     @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
-    @schedule = Schedule.new
+    @schedule  = Schedule.new
     set_available_devices
     set_selected_device_attributes
     set_repeat_every_list
@@ -188,7 +188,7 @@ class SchedulesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   private def safe_schedule_params
-    params.require(:schedule).permit(:device_uid, :datetime, :is_recurrent, :repeat_every, :recurrence_period)
+    params.require(:schedule).permit(:device_uid, :title, :datetime, :is_recurrent, :repeat_every, :recurrence_period)
   end
 
   private def safe_schedule_action_params(unsafe_action)

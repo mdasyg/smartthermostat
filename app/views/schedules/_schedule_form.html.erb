@@ -1,8 +1,18 @@
 <div id="get-device-attributes-list-url" class="hidden" data-url="<%= device_url('DEVICE_ID') + '/get_device_attributes_list' %>"></div>
 
+<%= schedule.id %>
+
+<%
+  form_options = {
+      id:                'schedule-form',
+      'data-create-url': schedules_url,
+      'data-update-url': schedule_url('SCHEDULE_ID'),
+  }
+%>
+
 <div id="schedule-form-container">
 
-  <%= form_for(schedule, html: { id: 'schedule-form' }) do |schedule_form| %>
+  <%= form_for(schedule, html: form_options) do |schedule_form| %>
 
     <% if schedule.errors.any? %>
       <div id="error_explanation">
@@ -16,11 +26,22 @@
       </div>
     <% end %>
 
+    <%= schedule_form.hidden_field :id %>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="form-group">
+          <%= schedule_form.label :title %>
+          <%= schedule_form.text_field :title, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-xs-6">
         <div class="form-group">
           <%= schedule_form.label :device_uid %>
-          <%= schedule_form.select(:device_uid, {}, { include_blank: '- Select device -' }, { class: 'form-control schedule-device-selection' }) do %>
+          <%= schedule_form.select(:device_uid, {}, { include_blank: '- Select device -' }, { class: 'form-control schedule-device-selector' }) do %>
             <% if @availiable_devices.any? %>
               <% options_for_select(@availiable_devices, schedule.device_uid) %>
             <% end %>
@@ -68,12 +89,6 @@
     <hr/>
 
     <%= render partial: '/actions/action_form', locals: { actions: schedule.actions } %>
-
-    <hr/>
-
-    <div class="actions">
-      <%= schedule_form.submit %>
-    </div>
 
   <% end %>
 
