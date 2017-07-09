@@ -62,26 +62,27 @@
     </div>
 
     <div class="row">
-      <div class="col-xs-4">
-        <div class="form-group">
-          <%= schedule_form.label :is_recurrent %>
-          <div class="checkbox checkbox-primary">
-            <%= schedule_form.check_box :is_recurrent %>
+      <div class="col-xs-12">
+        <%= schedule_form.check_box :is_recurrent %>
+        <%= schedule_form.label :is_recurrent %>
+      </div>
+    </div>
+
+    <div id="recurrent-entries" class="hidden">
+      <div class="row">
+        <div class="col-xs-4">
+          <div class="form-group">
+            <%= schedule_form.label :recurrence_period %>
+            <%= schedule_form.text_field :recurrence_period, class: 'form-control' %>
           </div>
         </div>
-      </div>
-      <div class="col-xs-4">
-        <div class="form-group">
-          <%= schedule_form.label :recurrence_period %>
-          <%= schedule_form.text_field :recurrence_period, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-xs-4">
-        <div class="form-group">
-          <%= schedule_form.label :repeat_every %>
-          <%= schedule_form.select(:repeat_every, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>
-            <% options_for_select(@repeat_every_list, schedule.repeat_every) %>
-          <% end %>
+        <div class="col-xs-4">
+          <div class="form-group">
+            <%= schedule_form.label :repeat_every %>
+            <%= schedule_form.select(:repeat_every, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>
+              <% options_for_select(@repeat_every_list, schedule.repeat_every) %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>

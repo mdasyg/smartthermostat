@@ -3,17 +3,25 @@ var $calendar = null;
 var $scheduleModal = null;
 var $scheduleForm = null;
 var $scheduleId = null;
+var $actionsContainer = null;
 
-function replaceUrlParams(url, deviceUid = null) {
-    if (deviceUid) {
-        url = url.replace('DEVICE_ID', deviceUid);
+function replaceUrlParams(url, data = {}) {
+    if (!url) {
+        return false;
     }
+
+    if (data.deviceUid) {
+        url = url.replace('DEVICE_ID', data.deviceUid);
+    }
+    if (data.scheduleId) {
+        url = url.replace('SCHEDULE_ID', data.scheduleId);
+    }
+
     return url;
 }
 
 function updateSelectedDeviceAttributes($thisElement, initActionsContainer) {
     let $thisForm = $thisElement.closest('form');
-    let $actionsContainer = $thisForm.find('.actions-container');
     let deviceUid = $thisElement.val();
     selectedDeviceAttributes = {};
 
@@ -26,7 +34,7 @@ function updateSelectedDeviceAttributes($thisElement, initActionsContainer) {
     //     device_uid: deviceUid
     // };
     let url = $('#get-device-attributes-list-url').data('url');
-    url = replaceUrlParams(url, deviceUid);
+    url = replaceUrlParams(url, {deviceUid: deviceUid});
     let request = $.ajax({
         url: url,
         type: 'get',
@@ -44,10 +52,6 @@ function updateSelectedDeviceAttributes($thisElement, initActionsContainer) {
             addNewAction($thisForm);
         }
     });
-}
-
-function editSchedule(event) {
-
 }
 
 function initializeFullCalendar() {
@@ -70,11 +74,11 @@ function initializeFullCalendar() {
         },
         eventClick: function (calEvent, jsEvent, view) {
 
-            console.log(calEvent);
-            console.log(calEvent.id);
-            console.log(calEvent.device_uid);
-            console.log(calEvent.name);
-            console.log(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
+            // console.log(calEvent);
+            // console.log(calEvent.id);
+            // console.log(calEvent.device_uid);
+            // console.log(calEvent.name);
+            // console.log(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
 
             $scheduleId.val(calEvent.id);
             $scheduleForm.find('#schedule_device_uid').val(calEvent.device_uid);
@@ -102,9 +106,19 @@ function initializeFullCalendar() {
 }
 
 function saveSchedule($thisClick) {
+    let url = null;
+    if ($scheduleId.val()) {
+        url = $scheduleForm.data('update-url');
+        url = replaceUrlParams(url, {scheduleId: $scheduleId.val()});
+    } else {
+        url = $scheduleForm.data('create-url');
+    }
     let request = $.ajax({
-        url: $scheduleId.val() ? $scheduleForm.data('update-url') : $scheduleForm.data('create-url'),
-        type: 'post',
+        url: url,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        },
+        type: 'put',
         dataType: 'json',
         data: $scheduleForm.serialize()
     });
@@ -128,6 +142,7 @@ $(document).on('turbolinks:load', function () {
     $scheduleForm = $scheduleModal.find('#schedule-form');
     $scheduleId = $scheduleForm.find('#schedule_id');
     $calendar = $('.calendar');
+    $actionsContainer = $scheduleForm.find('.actions-container');
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
@@ -142,7 +157,6 @@ $(document).on('turbolinks:load', function () {
 
     initializeFullCalendar();
 
-
     $('#schedule_datetime').datetimepicker({
         // locale: 'en',
         format: 'DD/MM/YYYY HH:mm',
@@ -152,7 +166,16 @@ $(document).on('turbolinks:load', function () {
         defaultDate: moment()
     });
 
+    $('#schedule_is_recurrent').on('change', function () {
+        if ($(this).prop('checked')) {
+            $('#recurrent-entries').removeClass('hidden');
+        } else {
+            $('#recurrent-entries').addClass('hidden');
+        }
+    });
+
     $('.schedule-device-selector').on('change', function (event) {
+        $actionsContainer.empty();
         updateSelectedDeviceAttributes($(this), true);
     });
 
