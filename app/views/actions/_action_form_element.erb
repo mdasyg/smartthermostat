@@ -26,7 +26,7 @@
 
       <div class="col-xs-5">
         <div class="form-group">
-          <%= action_form.select(:device_attribute_id, {}, {}, { class: 'form-control', id: 'action-device-attributes-select-box' }) do %>
+          <%= action_form.select(:device_attribute_id, {}, {}, { class: 'form-control action-device-attribute-select-box' }) do %>
             <% options_for_select(@selected_device_attributes, action.device_attribute_id) %>
           <% end %>
         </div>
@@ -34,7 +34,7 @@
 
       <div class="col-xs-5">
         <div class="form-group">
-          <%= action_form.text_field :device_attribute_value, class: 'form-control' %>
+          <%= action_form.text_field :device_attribute_value, class: 'form-control action-device-attribute-value' %>
         </div>
       </div>
 
