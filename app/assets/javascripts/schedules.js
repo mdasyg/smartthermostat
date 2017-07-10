@@ -20,7 +20,7 @@ function replaceUrlParams(url, data = {}) {
     return url;
 }
 
-function updateSelectedDeviceAttributes($thisElement, initActionsContainer) {
+function updateSelectedDeviceAttributes($thisElement, initActionsContainer, actionData = null) {
     let $thisForm = $thisElement.closest('form');
     let deviceUid = $thisElement.val();
     selectedDeviceAttributes = {};
@@ -50,6 +50,13 @@ function updateSelectedDeviceAttributes($thisElement, initActionsContainer) {
         if (initActionsContainer) {
             $actionsContainer.empty();
             addNewAction($thisForm);
+        }
+        if (actionData) {
+            let $actionsFormContainer = $scheduleForm.find('.action-form-container');
+            actionData.forEach(function (action) {
+                console.log(action);
+                addNewAction($actionsFormContainer, action);
+            });
         }
     });
 }
@@ -85,9 +92,8 @@ function initializeFullCalendar() {
             $scheduleForm.find('#schedule_title').val(calEvent.name);
             $scheduleForm.find('#schedule_datetime').data('DateTimePicker').date(calEvent.start);
 
-            updateSelectedDeviceAttributes($('.schedule-device-selector'), false);
+            updateSelectedDeviceAttributes($('.schedule-device-selector'), false, calEvent.actions);
 
-            // must populate the actions
 
             $scheduleModal.modal('show');
 
@@ -159,6 +165,7 @@ $(document).on('turbolinks:load', function () {
 
     $('#schedule_datetime').datetimepicker({
         // locale: 'en',
+        // debug: true,
         format: 'DD/MM/YYYY HH:mm',
         extraFormats: ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD HH:mm:ss'],
         showClear: true,
@@ -179,4 +186,7 @@ $(document).on('turbolinks:load', function () {
         updateSelectedDeviceAttributes($(this), true);
     });
 
+    $scheduleModal.on('hidden.bs.modal', function (event) {
+        resetScheduleModal();
+    });
 });

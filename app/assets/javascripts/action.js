@@ -1,7 +1,7 @@
 var $actionTemplate = null;
 
-function addNewAction($thisClick) {
-    let $thisForm = $thisClick.closest('form');
+function addNewAction($thisElement, actionData) {
+    let $thisForm = $thisElement.closest('form');
     let deviceUid = $thisForm.find('.schedule-device-selector').val();
 
     if (!deviceUid) {
@@ -64,13 +64,18 @@ function addNewAction($thisClick) {
     $.each(selectedDeviceAttributes, function (key, value) {
         newSelectOptions.push($('<option>').attr('value', key).text(value));
     });
-    $newAction.find('#action-device-attributes-select-box').empty().append(newSelectOptions);
+    $newAction.find('.action-device-attribute-select-box').empty().append(newSelectOptions);
+
+    if (actionData) {
+        $newAction.find('.action-device-attribute-select-box').val(actionData.device_attribute_id);
+        $newAction.find('.action-device-attribute-value').val(actionData.device_attribute_value);
+    }
 
     $actionsContainer.append($newAction);
 
 }
 
-$(document).on("turbolinks:load", function () {
+$(document).on('turbolinks:load', function () {
     $actionTemplate = $(document.body).find('#action-template .action');
 
     $(document.body).on('click', '.action-button', function (event) {

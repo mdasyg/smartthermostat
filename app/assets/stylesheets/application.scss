@@ -17,7 +17,7 @@
 //@import 'x-editable/dist/bootstrap3-editable/css/bootstrap-editable';
 
 /* hot fix for datepicker not displayed */
-div.datepicker-days {
+.datepicker div.datepicker-days {
   display: block;
 }
 
