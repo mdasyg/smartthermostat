@@ -11,6 +11,7 @@
 // about supported directives.
 //
 //= require jquery/dist/jquery
+//= require jquery-ujs/src/rails
 //= require turbolinks
 //= require moment/min/moment.min
 //= require moment-timezone-all/builds/moment-timezone-with-data
