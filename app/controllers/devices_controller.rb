@@ -169,37 +169,48 @@ class DevicesController < ApplicationController
     end
   end
 
-  # GET /devices/1/get_device_attributes_list
-  def get_device_attributes_list
-    render json: @device.device_attributes
-  end
+  def search
 
-  ##############################################################################
-  ##### PRIVATE METHODS ########################################################
-  ##############################################################################
+    search_term = params.permit(:q)
 
-  # Use callbacks to share common setup or constraints between actions.
-  private def set_device
-    @device = Device.where(user_id: current_user.id).find(params[:uid])
-  end
-
-  private def set_value_types
-    @value_types = []
-    ValueType.all.each do |value|
-      @value_types << [value.name, value.id]
+    if !search_term.empty?
+      puts search_term.inspect
     end
-    if @value_types.empty?
-      redirect_to admin_path
+
+      render json: [{ 'id': '3', 'text': 'Therm' }]
     end
-  end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  private def safe_device_params
-    params.require(:device).permit(:name, :location, :description)
-  end
+    # GET /devices/1/get_device_attributes_list
+    def get_device_attributes_list
+      render json: @device.device_attributes
+    end
 
-  private def safe_device_attribute_params(unsafe_attribute)
-    unsafe_attribute.permit(:name, :value_type_id, :value_min, :value_max, :set_value)
-  end
+    ##############################################################################
+    ##### PRIVATE METHODS ########################################################
+    ##############################################################################
 
-end
+    # Use callbacks to share common setup or constraints between actions.
+    private def set_device
+      @device = Device.where(user_id: current_user.id).find(params[:uid])
+    end
+
+    private def set_value_types
+      @value_types = []
+      ValueType.all.each do |value|
+        @value_types << [value.name, value.id]
+      end
+      if @value_types.empty?
+        redirect_to admin_path
+      end
+    end
+
+    # Never trust parameters from the scary internet, only allow the white list through.
+    private def safe_device_params
+      params.require(:device).permit(:name, :location, :description)
+    end
+
+    private def safe_device_attribute_params(unsafe_attribute)
+      unsafe_attribute.permit(:name, :value_type_id, :value_min, :value_max, :set_value)
+    end
+
+  end
