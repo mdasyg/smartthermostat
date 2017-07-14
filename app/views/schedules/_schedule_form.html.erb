@@ -29,10 +29,16 @@
     <%= schedule_form.hidden_field :id %>
 
     <div class="row">
-      <div class="col-xs-12">
+      <div class="col-xs-6">
         <div class="form-group">
           <%= schedule_form.label :title %>
           <%= schedule_form.text_field :title, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="form-group">
+          <%= schedule_form.label :description %>
+          <%= schedule_form.text_field :description, class: 'form-control' %>
         </div>
       </div>
     </div>
@@ -40,20 +46,21 @@
     <div class="row">
       <div class="col-xs-6">
         <div class="form-group">
-          <%= schedule_form.label :device_uid %>
-          <%= schedule_form.select(:device_uid, {}, { include_blank: '- Select device -' }, { class: 'form-control schedule-device-selector' }) do %>
-            <% if @availiable_devices.any? %>
-              <% options_for_select(@availiable_devices, schedule.device_uid) %>
-            <% end %>
-          <% end %>
+          <%= schedule_form.label :start_datetime %>
+          <div class="input-group">
+            <%= schedule_form.text_field(:start_datetime, { class: 'form-control', 'aria-describedby': 'schedule-start-datetime-calendar-addon' }) %>
+            <span class="input-group-addon" id="schedule-start-datetime-calendar-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
         </div>
       </div>
       <div class="col-xs-6">
         <div class="form-group">
-          <%= schedule_form.label :datetime %>
+          <%= schedule_form.label :end_datetime %>
           <div class="input-group">
-            <%= schedule_form.text_field(:datetime, { class: 'form-control', 'aria-describedby': 'schedule-datetime-calendar-addon' }) %>
-            <span class="input-group-addon" id="schedule-datetime-calendar-addon">
+            <%= schedule_form.text_field(:end_datetime, { class: 'form-control', 'aria-describedby': 'schedule-end-datetime-calendar-addon' }) %>
+            <span class="input-group-addon" id="schedule-end-datetime-calendar-addon">
               <span class="glyphicon glyphicon-calendar"></span>
             </span>
           </div>
@@ -62,39 +69,33 @@
     </div>
 
     <div class="row">
-      <div class="col-xs-12">
-        <%= schedule_form.check_box :is_recurrent %>
-        <%= schedule_form.label :is_recurrent %>
+      <div class="col-xs-6">
+        <div class="form-group">
+          <%= label(ScheduleEvent, :device_uid, 'Select device') %>
+          <%= select(ScheduleEvent, :device_uid, Device.all.collect {|p| [p.name, p.uid]}, { include_blank: '- Select device -' }, { id: 'add-new-event-to-schedule', name: nil, class: 'form-control' }) %>
+        </div>
       </div>
     </div>
 
-    <div id="recurrent-entries" class="hidden">
+    <hr>
+
+    <!--EVENT DRAFT-->
+    <div class="event" data-id="1" data-device-uid="3245423534">
       <div class="row">
-        <div class="col-xs-4">
-          <div class="form-group">
-            <%= schedule_form.label :recurrence_period %>
-            <%= schedule_form.text_field :recurrence_period, class: 'form-control' %>
-          </div>
-        </div>
-        <div class="col-xs-4">
-          <div class="form-group">
-            <%= schedule_form.label :repeat_every %>
-            <%= schedule_form.select(:repeat_every, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>
-              <% options_for_select(@repeat_every_list, schedule.repeat_every) %>
-            <% end %>
-          </div>
-        </div>
+        <div class="col-xs-4">DEVICE NAME</div>
+        <div class="col-xs-4">REMOVE EVENT</div>
+        <div class="col-xs-4">ADD ACTION</div>
       </div>
     </div>
 
-    <hr/>
+    <% schedule_event = ScheduleEvent.new %>
 
-    <%= render partial: '/actions/action_form', locals: { actions: schedule.actions } %>
+    <%= fields_for schedule_event do |se| %>
+      <%= se.label :device_uid %>
+      <%= se.text_field :device_uid %>
+    <% end %>
 
   <% end %>
 
 </div>
 
-<div id="action-template" class="hidden">
-  <%= render partial: '/actions/action_form_element', locals: { action: Action.new } %>
-</div>

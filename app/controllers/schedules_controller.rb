@@ -1,17 +1,17 @@
 class SchedulesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_schedule, only: [:show, :edit, :update, :destroy]
-  before_action :set_available_devices, only: [:new, :edit]
-  before_action :set_repeat_every_list, only: [:new, :edit]
+  # before_action :set_schedule, only: [:show, :edit, :update, :destroy]
+  # before_action :set_available_devices, only: [:new, :edit]
+  # before_action :set_repeat_every_list, only: [:new, :edit]
 
   # GET /schedules
   # GET /schedules.json
   def index
     @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
-    @schedule  = Schedule.new
-    set_available_devices
-    set_selected_device_attributes
-    set_repeat_every_list
+    # @schedule  = Schedule.new
+    # set_available_devices
+    # set_selected_device_attributes
+    # set_repeat_every_list
   end
 
   # GET /schedules/1
@@ -21,11 +21,13 @@ class SchedulesController < ApplicationController
 
   # GET /schedules/new
   def new
-    if @availiable_devices.empty?
-      redirect_to new_device_path
-    end
     @schedule = Schedule.new
-    set_selected_device_attributes
+
+    # if @availiable_devices.empty?
+    #   redirect_to new_device_path
+    # end
+
+    # set_selected_device_attributes
   end
 
   # GET /schedules/1/edit

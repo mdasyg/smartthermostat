@@ -4,11 +4,12 @@
   <h1>Schedules</h1>
 </div>
 
-<%= render 'schedule_modal', schedule: @schedule %>
+<% # render 'schedule_modal', schedule: @schedule %>
 
 <div class="row">
-  <div class="col-xs-5"><b>Device</b></div>
-  <div class="col-xs-5"><b>Datetime</b></div>
+  <div class="col-xs-4"><b>Title</b></div>
+  <div class="col-xs-3"><b>Start Datetime</b></div>
+  <div class="col-xs-3"><b>End Datetime</b></div>
   <div class="col-xs-2"><b>Actions</b></div>
 </div>
 
@@ -17,8 +18,10 @@
 <% @schedules.each do |schedule| %>
 
   <div class="row">
-    <div class="col-xs-5"><%= schedule.device.name %></div>
-    <div class="col-xs-5"><%= schedule.datetime %></div>
+    <div class="col-xs-4"><%= schedule.title %></div>
+    <div class="col-xs-3"><%= schedule.start_datetime %></div>
+    <div class="col-xs-3"><%= schedule.end_datetime %></div>
+
     <div class="col-xs-2">
       <%= link_to(schedule) do %>
         <span class="glyphicon glyphicon-zoom-in"></span>
@@ -30,9 +33,8 @@
         <span class="glyphicon glyphicon-remove"></span>
       <% end %>
     </div>
-  </div>
 
-  <hr/>
+  </div>
 
 <% end %>
 
