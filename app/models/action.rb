@@ -1,10 +1,10 @@
 class Action < ApplicationRecord
 
-	validates :device_attribute_value, presence: true
+  validates :device_attribute_value, presence: true
 
-	belongs_to :device_attribute
+  belongs_to :device_attribute
 
-	has_one :event, dependent: :destroy
-	has_one :schedule, through: :event
+  has_one :schedule_event_action, dependent: :destroy
+  has_one :schedule_event, through: :schedule_event_action
 
 end

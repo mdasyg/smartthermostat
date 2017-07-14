@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170527080931) do
+ActiveRecord::Schema.define(version: 20170527060931) do
 
   create_table "actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "device_attribute_id", null: false, unsigned: true
@@ -54,23 +54,29 @@ ActiveRecord::Schema.define(version: 20170527080931) do
     t.index ["user_id"], name: "fk_rails_410b63ef65"
   end
 
-  create_table "events", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "schedule_events", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "schedule_id", null: false, unsigned: true
+    t.bigint "device_uid", null: false, unsigned: true
+    t.index ["device_uid"], name: "fk_rails_07433a881c"
+    t.index ["schedule_id", "device_uid"], name: "index_schedule_events_on_schedule_id_and_device_uid", unique: true
+  end
+
+  create_table "schedule_events_actions", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "schedule_event_id", null: false, unsigned: true
     t.integer "action_id", null: false, unsigned: true
-    t.index ["action_id"], name: "fk_rails_62e0abe502"
-    t.index ["schedule_id", "action_id"], name: "index_events_on_schedule_id_and_action_id", unique: true
+    t.index ["action_id"], name: "fk_rails_0dc9a5e5a1"
+    t.index ["schedule_event_id", "action_id"], name: "index_schedule_events_actions_on_schedule_event_id_and_action_id", unique: true
   end
 
   create_table "schedules", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "user_id", null: false, unsigned: true
-    t.bigint "device_uid", null: false, unsigned: true
-    t.datetime "datetime"
     t.string "title", null: false
+    t.text "description"
+    t.datetime "start_datetime", null: false
+    t.datetime "end_datetime", null: false
     t.integer "is_recurrent", limit: 1, null: false, unsigned: true
     t.integer "repeat_every", limit: 1, unsigned: true
     t.integer "recurrence_period", comment: "Measured in what the \"repeat_every\" says", unsigned: true
-    t.text "description"
-    t.index ["device_uid"], name: "fk_rails_df1268bd4e"
     t.index ["user_id"], name: "fk_rails_3c900465fa"
   end
 
@@ -113,8 +119,9 @@ ActiveRecord::Schema.define(version: 20170527080931) do
   add_foreign_key "device_attributes", "value_types"
   add_foreign_key "device_stats", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "devices", "users"
-  add_foreign_key "events", "actions"
-  add_foreign_key "events", "schedules"
-  add_foreign_key "schedules", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "schedule_events", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "schedule_events", "schedules"
+  add_foreign_key "schedule_events_actions", "actions"
+  add_foreign_key "schedule_events_actions", "schedule_events"
   add_foreign_key "schedules", "users"
 end
