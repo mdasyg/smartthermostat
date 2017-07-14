@@ -1,0 +1,17 @@
+<div class="schedule-events-container">
+
+  <%= fields_for schedule_event do |se| %>
+    <div class="schedule-event" data-id="<%= schedule_event.id %>" data-device-uid="<%= schedule_event.device_uid %>">
+      <div class="row">
+        <div class="col-xs-4">
+          <%= schedule_event.device.name %>
+        </div>
+        <div class="col-xs-4">REMOVE EVENT BUTTON</div>
+        <div class="col-xs-4">ADD ACTION BUTTON</div>
+      </div>
+    </div>
+
+
+  <% end %>
+
+</div>

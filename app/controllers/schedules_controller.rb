@@ -1,6 +1,6 @@
 class SchedulesController < ApplicationController
   before_action :authenticate_user!
-  # before_action :set_schedule, only: [:show, :edit, :update, :destroy]
+  before_action :set_schedule, only: [:show, :edit, :update, :destroy]
   # before_action :set_available_devices, only: [:new, :edit]
   # before_action :set_repeat_every_list, only: [:new, :edit]
 
@@ -32,7 +32,7 @@ class SchedulesController < ApplicationController
 
   # GET /schedules/1/edit
   def edit
-    set_selected_device_attributes
+    # set_selected_device_attributes
   end
 
   # POST /schedules
