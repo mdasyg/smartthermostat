@@ -1,29 +1,28 @@
-var $actionTemplate = null;
-
-function addNewAction($thisElement, actionData) {
-    let $thisForm = $thisElement.closest('form');
-    let deviceUid = $thisForm.find('.schedule-device-selector').val();
-
-    if (!deviceUid) {
-        alert('Please select a device.');
-        return false;
-    }
-
-    if ($.isEmptyObject(selectedDeviceAttributes)) {
-        alert('Device has no attributes, please add some first.');
-        return false;
-    }
-
-    let $actionsContainer = $thisForm.find('.actions-container');
-
-    let numberOfDeviceAttributes = Object.keys(selectedDeviceAttributes).length;
-    let numberOfActions = $actionsContainer.children('.action').length;
-    if (numberOfActions >= numberOfDeviceAttributes) {
-        alert('Device has only (' + numberOfDeviceAttributes + ') attributes available.');
-        return false;
-    }
-
-    let lastActionDomId = parseInt($actionsContainer.find('.action').last().attr('data-index'));
+function addNewAction($containerToAppendActions, $actionTemplate, prefixForActionSubForm) {
+    // function addNewAction($thisElement, actionData) {
+    // // let $thisForm = $thisElement.closest('form');
+    // // let deviceUid = $thisForm.find('.schedule-device-selector').val();
+    // //
+    // // if (!deviceUid) {
+    // //     alert('Please select a device.');
+    // //     return false;
+    // // }
+    // //
+    // // if ($.isEmptyObject(selectedDeviceAttributes)) {
+    // //     alert('Device has no attributes, please add some first.');
+    // //     return false;
+    // // }
+    // //
+    // // let $actionsContainer = $thisForm.find('.actions-container');
+    // //
+    // // let numberOfDeviceAttributes = Object.keys(selectedDeviceAttributes).length;
+    // // let numberOfActions = $actionsContainer.children('.action').length;
+    // // if (numberOfActions >= numberOfDeviceAttributes) {
+    // //     alert('Device has only (' + numberOfDeviceAttributes + ') attributes available.');
+    // //     return false;
+    // // }
+    //
+    let lastActionDomId = parseInt($containerToAppendActions.find('.action').last().attr('data-index'));
     if (!lastActionDomId) {
         lastActionDomId = 0;
     }
@@ -35,16 +34,22 @@ function addNewAction($thisElement, actionData) {
 
     let propertyName = null;
     let propertyId = null;
-
+    //
     let $newActionInputs = $newAction.find('input');
     $newActionInputs.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
-            $(this).attr('name', propertyName.replace('INDEX', nextActionDomId));
+            propertyName = propertyName.replace('REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX', prefixForActionSubForm);
+            propertyName = propertyName.replace('ACTION_INDEX', nextActionDomId);
+            $(this).attr('name', propertyName);
         }
         propertyId = $(this).attr('id');
         if (propertyId) {
-            $(this).attr('id', propertyId.replace('INDEX', nextActionDomId));
+            propertyId = propertyId.replace('REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX', prefixForActionSubForm);
+            propertyId = propertyId.replace('ACTION_INDEX', nextActionDomId);
+            propertyId = propertyId.replace('[', '_');
+            propertyId = propertyId.replace(']', '_');
+            $(this).attr('id', propertyId);
         }
     });
 
@@ -52,32 +57,36 @@ function addNewAction($thisElement, actionData) {
     $newActionSelects.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
-            $(this).attr('name', propertyName.replace('INDEX', nextActionDomId));
+            propertyName = propertyName.replace('REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX', prefixForActionSubForm);
+            propertyName = propertyName.replace('ACTION_INDEX', nextActionDomId);
+            $(this).attr('name', propertyName);
         }
         propertyId = $(this).attr('id');
         if (propertyId) {
-            $(this).attr('id', propertyId.replace('INDEX', nextActionDomId));
+            propertyId = propertyId.replace('REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX', prefixForActionSubForm);
+            propertyId = propertyId.replace('ACTION_INDEX', nextActionDomId);
+            propertyId = propertyId.replace('[', '_');
+            propertyId = propertyId.replace(']', '_');
+            $(this).attr('id', propertyId);
         }
     });
-
-    let newSelectOptions = [];
-    $.each(selectedDeviceAttributes, function (key, value) {
-        newSelectOptions.push($('<option>').attr('value', key).text(value));
-    });
-    $newAction.find('.action-device-attribute-select-box').empty().append(newSelectOptions);
-
-    if (actionData) {
-        $newAction.find('.action-device-attribute-select-box').val(actionData.device_attribute_id);
-        $newAction.find('.action-device-attribute-value').val(actionData.device_attribute_value);
-    }
-
-    $actionsContainer.append($newAction);
+    //
+    // let newSelectOptions = [];
+    // $.each(selectedDeviceAttributes, function (key, value) {
+    //     newSelectOptions.push($('<option>').attr('value', key).text(value));
+    // });
+    // $newAction.find('.action-device-attribute-select-box').empty().append(newSelectOptions);
+    //
+    // if (actionData) {
+    //     $newAction.find('.action-device-attribute-select-box').val(actionData.device_attribute_id);
+    //     $newAction.find('.action-device-attribute-value').val(actionData.device_attribute_value);
+    // }
+    //
+    $containerToAppendActions.append($newAction);
 
 }
 
 $(document).on('turbolinks:load', function () {
-    $actionTemplate = $(document.body).find('#action-template .action');
-
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
         let $thisClick = $(this);

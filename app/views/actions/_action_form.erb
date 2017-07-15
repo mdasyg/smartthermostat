@@ -1,35 +1,23 @@
-<div class="action-form-container">
-
-  <div class="row">
-
-    <div class="col-xs-12">
-      <div class="form-group">
-        <button type="button" class="action-button active add-new-action form-control">
-          <span>Add New Action</span>
-        </button>
-      </div>
-    </div>
-
-  </div>
+<div class="actions-form-container">
 
   <div class="actions-header">
 
     <div class="row">
 
       <div class="col-xs-5">
-        <div class="field form-group">
+        <div class="form-group">
           <%= label(Action, :attribute_id, 'Attribute') %>
         </div>
       </div>
 
       <div class="col-xs-5">
-        <div class="field form-group">
+        <div class="form-group">
           <%= label(Action, :attribute_value, 'Attribute Value') %>
         </div>
       </div>
 
       <div class="col-xs-2">
-        <div class="field form-group">
+        <div class="form-group">
           <label>Action</label>
         </div>
       </div>
@@ -40,7 +28,7 @@
 
   <div class="actions-container">
     <% if actions.any? %>
-      <%= render partial: '/actions/action_form_element', collection: actions, as: :action %>
+      <%= render partial: '/actions/action_form_element', collection: actions, as: :action, locals: { prefix_for_subform: prefix_for_subform } %>
     <% end %>
   </div>
 

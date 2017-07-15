@@ -1,16 +1,52 @@
-<div class="schedule-events-container">
+<% schedule_event_index = (defined? schedule_event_counter) ? schedule_event_counter : 'SCHEDULE_EVENT_INDEX' %>
+<% current_form_prefix = 'schedule_event' %>
+<% prefix_for_subform = current_form_prefix + "[#{schedule_event_index}]" %>
 
-  <%= fields_for schedule_event do |se| %>
-    <div class="schedule-event" data-id="<%= schedule_event.id %>" data-device-uid="<%= schedule_event.device_uid %>">
-      <div class="row">
-        <div class="col-xs-4">
-          <%= schedule_event.device.name %>
+<div class="schedule-event form-row <%= ((schedule_event_index % 2) == 1) ? 'odd' : 'even' %>" data-index="<%= schedule_event_index %>" data-device-uid="<%= schedule_event.device_uid %>">
+
+  <%= fields_for current_form_prefix, schedule_event, index: schedule_event_index do |schedule_event_form| %>
+
+    <% if schedule_event.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(schedule_event.errors.count, 'error') %> prohibited
+          this schedule from being saved:</h2>
+        <ul>
+          <% schedule_event.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= schedule_event_form.hidden_field :id %>
+
+    <div class="schedule-event-form-prefix-for-subform hidden" data-prefix="<%= prefix_for_subform %>"></div>
+
+    <div class="row">
+      <div class="col-xs-4">
+        <div class="form-group">
+          <span><%= (schedule_event && schedule_event.device) ? schedule_event.device.name : '' %></span>
         </div>
-        <div class="col-xs-4">REMOVE EVENT BUTTON</div>
-        <div class="col-xs-4">ADD ACTION BUTTON</div>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <button type="button" class="action-button active remove-form-row form-control">
+            <span class="glyphicon glyphicon-remove"></span>
+            Remove event
+          </button>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <button type="button" class="action-button active add-schedule-event-action form-control">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add event action
+          </button>
+        </div>
       </div>
     </div>
 
+    <%= render partial: '/actions/action_form', locals: { actions: schedule_event.actions, prefix_for_subform: prefix_for_subform } %>
 
   <% end %>
 
