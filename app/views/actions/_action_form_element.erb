@@ -1,12 +1,9 @@
-<% action_index = (defined? action_counter) ? action_counter : 'INDEX' %>
-<% prefix = 'actions' %>
-
-
-
+<% action_index = (defined? action_counter) ? action_counter : 'ACTION_INDEX' %>
+<% current_form_prefix = prefix_for_subform + '[actions]' %>
 
 <div class="action form-row" data-index="<%= action_index %>">
 
-  <%= fields_for prefix, action, index: action_index do |action_form| %>
+  <%= fields_for current_form_prefix, action, index: action_index do |action_form| %>
 
     <% if action.errors.any? %>
       <div id="error_explanation">
@@ -26,9 +23,8 @@
 
       <div class="col-xs-5">
         <div class="form-group">
-          <%= action_form.select(:device_attribute_id, {}, {}, { class: 'form-control action-device-attribute-select-box' }) do %>
-            <% options_for_select(@selected_device_attributes, action.device_attribute_id) %>
-          <% end %>
+          <% selected_dev_attr = (action && action.device_attribute) ? [[action.device_attribute.name, action.device_attribute_id]] : [] %>
+          <%= action_form.select(:device_attribute_id, selected_dev_attr, {}, { class: 'form-control' }) %>
         </div>
       </div>
 

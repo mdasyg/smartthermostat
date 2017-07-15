@@ -1,5 +1,5 @@
 <div id="get-device-attributes-list-url" class="hidden" data-url="<%= device_url('DEVICE_ID') + '/get_device_attributes_list' %>"></div>
-
+<div id="devices-search-url" class="hidden" data-url="<%= devices_search_url %>"></div>
 <%
   form_options = {
       id:                'schedule-form',
@@ -67,23 +67,70 @@
     </div>
 
     <div class="row">
-      <div class="col-xs-3">
-        <div class="form-group">
-          <%= select(ScheduleEvent, :device_uid, Device.all.collect {|p| [p.name, p.uid]}, {}, { id: 'add-new-event-to-schedule', name: nil, class: 'form-control' }) %>
-        </div>
+      <div class="col-xs-12">
+        <%= schedule_form.check_box :is_recurrent %>
+        <%= schedule_form.label :is_recurrent %>
       </div>
-      <div class="col-xs-3">
-        <div class="form-group">
-          <button type="button" class="action-button active add-new-event-to-schedule-button form-control">Add new event for this device</button>
+    </div>
+
+    <div id="recurrent-entries" class="hidden">
+      <div class="row">
+        <div class="col-xs-4">
+          <div class="form-group">
+            <%= schedule_form.label :recurrence_period %>
+            <%= schedule_form.text_field :recurrence_period, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-xs-4">
+          <div class="form-group">
+            <%= schedule_form.label :repeat_every %>
+            <%= schedule_form.select(:repeat_every, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>
+              <% options_for_select(repeat_every_list, schedule.repeat_every) %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
 
     <hr>
 
-    <%= render partial: '/schedules/schedule_event_form', collection: schedule.schedule_events, as: :schedule_event %>
+    <div id="add-new-event-to-schedule-container">
+      <div class="row">
+        <div class="col-xs-3">
+          <div class="form-group">
+            <%= select(ScheduleEvent, :device_uid, [], {}, { id: 'add-new-event-to-schedule', name: nil, class: 'form-control' }) %>
+          </div>
+        </div>
+        <div class="col-xs-3">
+          <div class="form-group">
+            <button type="button" class="action-button active add-new-event-to-schedule form-control">
+              <span class="glyphicon glyphicon-plus"></span>
+              Add new schedule event
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="schedule-events-container">
+      <%= render partial: '/schedules/schedule_event_form', collection: schedule.schedule_events, as: :schedule_event %>
+    </div>
+
+    <%= schedule_form.submit %>
 
   <% end %>
 
 </div>
 
+
+
+<div id="schedule-subforms-templates" class="hidden">
+  <div class="shcedule-event-template">
+    <%= render partial: '/schedules/schedule_event_form', locals: { schedule_event: ScheduleEvent.new } %>
+  </div>
+  <div class="schedule-event-action-template">
+    <%= render partial: '/actions/action_form_element', locals: { action: Action.new, prefix_for_subform: 'REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX' } %>
+  </div>
+</div>

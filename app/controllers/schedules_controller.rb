@@ -1,8 +1,9 @@
 class SchedulesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_schedule, only: [:show, :edit, :update, :destroy]
+  before_action :set_repeat_every_list, only: [:new, :edit]
+
   # before_action :set_available_devices, only: [:new, :edit]
-  # before_action :set_repeat_every_list, only: [:new, :edit]
 
   # GET /schedules
   # GET /schedules.json

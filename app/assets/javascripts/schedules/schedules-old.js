@@ -150,23 +150,7 @@
 //
 //     initializeFullCalendar();
 //
-//     $('#schedule_datetime').datetimepicker({
-//         // locale: 'en',
-//         // debug: true,
-//         format: 'DD/MM/YYYY HH:mm',
-//         extraFormats: ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD HH:mm:ss'],
-//         showClear: true,
-//         sideBySide: true,
-//         defaultDate: moment()
-//     });
 //
-//     $('#schedule_is_recurrent').on('change', function () {
-//         if ($(this).prop('checked')) {
-//             $('#recurrent-entries').removeClass('hidden');
-//         } else {
-//             $('#recurrent-entries').addClass('hidden');
-//         }
-//     });
 //
 //     $('.schedule-device-selector').on('change', function (event) {
 //         $actionsContainer.empty();
