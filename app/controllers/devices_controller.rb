@@ -170,16 +170,20 @@ class DevicesController < ApplicationController
   end
 
   def search
-
-    search_term = params.permit(:q)
-
-    if !search_term.empty?
-      puts search_term.inspect
-      render json: [{ 'id': '3', 'text': 'Therm' }]
+    if !params.has_key?(:term)
+      render json: [] and return
     else
-      render json: []
+      search_term = params[:term]
     end
 
+    results = Device.select('uid, name').where(['name LIKE :name', { name: '%' + search_term + '%' }])
+
+    formated_results = []
+    results.each do |device|
+      formated_results << { id: device.uid.to_s, text: device.name }
+    end
+
+    render json: formated_results
 
   end
 

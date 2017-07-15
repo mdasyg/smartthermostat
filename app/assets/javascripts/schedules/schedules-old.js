@@ -1,101 +1,3 @@
-// var selectedDeviceAttributes = {};
-// var $calendar = null;
-// var $scheduleModal = null;
-// var $scheduleForm = null;
-// var $scheduleId = null;
-// var $actionsContainer = null;
-
-// function updateSelectedDeviceAttributes($thisElement, initActionsContainer, actionData = null) {
-//     let $thisForm = $thisElement.closest('form');
-//     let deviceUid = $thisElement.val();
-//     selectedDeviceAttributes = {};
-//
-//     if (!deviceUid) {
-//         // alert('Please select a device.');
-//         return false;
-//     }
-//
-//     // var data = {
-//     //     device_uid: deviceUid
-//     // };
-//     let url = $('#get-device-attributes-list-url').data('url');
-//     url = replaceUrlParams(url, {deviceUid: deviceUid});
-//     let request = $.ajax({
-//         url: url,
-//         type: 'get',
-//         dataType: 'json',
-//         // data: data
-//     });
-//     request.done(function (responseData, textStatus, jqXHR) {
-//         let deviceAttributes = $(responseData);
-//         selectedDeviceAttributes = {};
-//         deviceAttributes.each(function () {
-//             selectedDeviceAttributes[this.id] = this.name;
-//         });
-//         if (initActionsContainer) {
-//             $actionsContainer.empty();
-//             addNewAction($thisForm);
-//         }
-//         if (actionData) {
-//             let $actionsFormContainer = $scheduleForm.find('.action-form-container');
-//             actionData.forEach(function (action) {
-//                 console.log(action);
-//                 addNewAction($actionsFormContainer, action);
-//             });
-//         }
-//     });
-// }
-//
-// function initializeFullCalendar() {
-//     $calendar.fullCalendar({
-//         timezone: false,
-//         header: {
-//             left: 'prev,next today',
-//             center: 'title',
-//             right: 'month,agendaWeek,agendaDay listMonth'
-//         },
-//         selectable: true,
-//         selectHelper: true,
-//         editable: true,
-//         eventLimit: true,
-//         // events: '/schedules.json',
-//         select: function (start, end, jsEvent) {
-//             $('#schedule_datetime').data('DateTimePicker').date(start);
-//             $scheduleModal.modal('show');
-//             $calendar.fullCalendar('unselect');
-//         },
-//         eventClick: function (calEvent, jsEvent, view) {
-//
-//             // console.log(calEvent);
-//             // console.log(calEvent.id);
-//             // console.log(calEvent.device_uid);
-//             // console.log(calEvent.name);
-//             // console.log(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
-//
-//             $scheduleId.val(calEvent.id);
-//             $scheduleForm.find('#schedule_device_uid').val(calEvent.device_uid);
-//             $scheduleForm.find('#schedule_title').val(calEvent.name);
-//             $scheduleForm.find('#schedule_datetime').data('DateTimePicker').date(calEvent.start);
-//
-//             updateSelectedDeviceAttributes($('.schedule-device-selector'), false, calEvent.actions);
-//
-//
-//             $scheduleModal.modal('show');
-//
-//             return false;
-//         },
-//         // eventDrop: function (event, delta, revertFunc) {
-//         //
-//         //     console.log(event.title + " was dropped on " + event.start.format());
-//         //
-//         //     if (!confirm("Are you sure about this change?")) {
-//         //         revertFunc();
-//         //     }
-//         //
-//         // }
-//     });
-// }
-//
 // function saveSchedule($thisClick) {
 //     let url = null;
 //     if ($scheduleId.val()) {
@@ -133,9 +35,7 @@
 // $scheduleModal = $('#schedule-modal');
 // $scheduleForm = $scheduleModal.find('#schedule-form');
 // $scheduleId = $scheduleForm.find('#schedule_id');
-// $calendar = $('.calendar');
 // $actionsContainer = $scheduleForm.find('.actions-container');
-
 //
 //     $(document.body).on('click', '.action-button', function (event) {
 //         event.stopPropagation();
@@ -146,15 +46,6 @@
 //                 saveSchedule($thisClick);
 //             }
 //         }
-//     });
-//
-//     initializeFullCalendar();
-//
-//
-//
-//     $('.schedule-device-selector').on('change', function (event) {
-//         $actionsContainer.empty();
-//         updateSelectedDeviceAttributes($(this), true);
 //     });
 //
 //     $scheduleModal.on('hidden.bs.modal', function (event) {
