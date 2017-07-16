@@ -27,6 +27,33 @@ function replaceUrlParams(url, data = {}) {
     return url;
 }
 
+function getDeviceAttributes(deviceUid, callback) {
+    let data = {
+        deviceUid: deviceUid
+    };
+    let url = $('#get-device-attributes-list-url').data('url');
+    url = replaceUrlParams(url, data);
+    // attributes request
+    let request = $.ajax({
+        url: url,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        },
+        type: 'get',
+        dataType: 'json',
+    });
+    request.done(function (responseData, textStatus, jqXHR) {
+        callback(responseData);
+    });
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+        // alert(errorThrown + ': ' + textStatus);
+    });
+
+}
+
 function loadScheduleEventValues(data) {
     $scheduleId.val(data.id);
     $scheduleForm.find('#schedule_device_uid').val(data.device_uid);
@@ -121,23 +148,22 @@ function initializeFullCalendar() {
     });
 }
 
-function addNewScheduleEvent() {
-    let deviceUid = $scheduleEventDeviceSelector.val();
-    if (!deviceUid) {
-        alert('Please select a device.');
-        return false;
-    }
+function addNewScheduleEventAction($scheduleEventArea, deviceAttr) {
+    let $scheduleEventActionsContainer = $scheduleEventArea.find('.actions-container');
+    let prefixForScheduleEventActionSubform = $scheduleEventArea.find('.schedule-event-form-prefix-for-subform').data('prefix');
 
-    let deviceAlreadyExists = false;
-    $scheduleEventsContainer.find('.schedule-event').each(function () {
-        if ($(this).data('device-uid') == deviceUid) {
-            deviceAlreadyExists = true;
-        }
-    });
-    if (deviceAlreadyExists) {
-        alert('Device already exists on schedule.');
-        return false;
-    }
+    let scheduleEventIndex = $scheduleEventArea.data('index');
+    prefixForScheduleEventActionSubform = prefixForScheduleEventActionSubform.replace('SCHEDULE_EVENT_INDEX', scheduleEventIndex);
+
+    let actionData = {
+        deviceAttributeId: deviceAttr.id,
+        deviceAttributeName: deviceAttr.name
+    };
+    addNewAction($scheduleEventActionsContainer, $scheduleEventActionSubFormTemplate, prefixForScheduleEventActionSubform, actionData);
+}
+
+function appendScheduleEventWithDeviceAttributes(deviceAttributes) {
+    let deviceUid = $scheduleEventDeviceSelector.val();
 
     let lastScheduleEventDomId = parseInt($scheduleEventsContainer.find('.schedule-event').last().attr('data-index'));
     if (!lastScheduleEventDomId) {
@@ -175,22 +201,33 @@ function addNewScheduleEvent() {
         }
     });
 
+    deviceAttributes.forEach(function (deviceAttr) {
+        addNewScheduleEventAction($newScheduleEvent, deviceAttr);
+    });
+
     $scheduleEventsContainer.append($newScheduleEvent);
 }
 
-function addNewScheduleEventAction($thisClick) {
-    let $closestScheduleEvent = $thisClick.closest('.schedule-event');
-    let $scheduleEventActionsContainer = $closestScheduleEvent.find('.actions-container');
-    let prefixForScheduleEventActionSubform = $closestScheduleEvent.find('.schedule-event-form-prefix-for-subform').data('prefix');
-
-    let lastScheduleEventDomId = parseInt($scheduleEventsContainer.find('.schedule-event').last().attr('data-index'));
-    if (!lastScheduleEventDomId) {
-        lastScheduleEventDomId = 0;
+function addNewScheduleEvent() {
+    let deviceUid = $scheduleEventDeviceSelector.val();
+    if (!deviceUid) {
+        alert('Please select a device.');
+        return false;
     }
 
-    prefixForScheduleEventActionSubform = prefixForScheduleEventActionSubform.replace('SCHEDULE_EVENT_INDEX', lastScheduleEventDomId);
+    let deviceAlreadyExists = false;
+    $scheduleEventsContainer.find('.schedule-event').each(function () {
+        if ($(this).data('device-uid') == deviceUid) {
+            deviceAlreadyExists = true;
+        }
+    });
+    if (deviceAlreadyExists) {
+        alert('Device already exists on schedule.');
+        return false;
+    }
 
-    addNewAction($scheduleEventActionsContainer, $scheduleEventActionSubFormTemplate, prefixForScheduleEventActionSubform);
+    getDeviceAttributes(deviceUid, appendScheduleEventWithDeviceAttributes);
+
 }
 
 function scheduleRecurrenceFieldsVisibilityToggle(event) {

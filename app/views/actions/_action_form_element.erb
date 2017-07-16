@@ -18,13 +18,13 @@
     <% end %>
 
     <%= action_form.hidden_field :id %>
+    <%= action_form.hidden_field :device_attribute_id, class: 'action-device-attributee-id' %>
 
     <div class="row">
 
       <div class="col-xs-3">
         <div class="form-group">
-          <% selected_dev_attr = (action && action.device_attribute) ? [[action.device_attribute.name, action.device_attribute_id]] : [] %>
-          <%= action_form.select(:device_attribute_id, selected_dev_attr, {}, { class: 'form-control' }) %>
+          <span class="schedule-event-action-device-attribute-name-placeholder"><%= (action && action.device_attribute) ? action.device_attribute.name : '' %></span>
         </div>
       </div>
 
