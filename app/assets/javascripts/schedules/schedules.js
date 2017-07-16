@@ -43,7 +43,14 @@ function getDeviceAttributes(deviceUid, callback) {
         dataType: 'json',
     });
     request.done(function (responseData, textStatus, jqXHR) {
-        callback(responseData);
+        let dataForScheduleEventActions = [];
+        responseData.forEach(function (item) {
+            dataForScheduleEventActions.push({
+                device_attribute_id: item.id,
+                device_attribute_name: item.name
+            });
+        });
+        callback(dataForScheduleEventActions);
     });
     request.fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);
@@ -55,11 +62,21 @@ function getDeviceAttributes(deviceUid, callback) {
 }
 
 function loadScheduleEventValues(data) {
-    $scheduleId.val(data.id);
+    // console.log(data);
+    $scheduleForm.find('#schedule_id').val(data.id);
     $scheduleForm.find('#schedule_device_uid').val(data.device_uid);
-    $scheduleForm.find('#schedule_title').val(data.title);
-    $scheduleForm.find('#schedule_start_datetime').data('DateTimePicker').date(data.start_datetime);
-    $scheduleForm.find('#schedule_end_datetime').data('DateTimePicker').date(calEvent.end_datetime);
+    $scheduleForm.find('#schedule_title').val(data.name);
+    $scheduleForm.find('#schedule_description').val(data.description);
+    $scheduleForm.find('#schedule_start_datetime').data('DateTimePicker').date(data.start);
+    $scheduleForm.find('#schedule_end_datetime').data('DateTimePicker').date(data.end);
+
+    data.schedule_events.forEach(function (schedule_event) {
+        let scheduleEventData = {
+            device_name: schedule_event.device_name
+        };
+        appendScheduleEventWithActions(schedule_event.actions, scheduleEventData);
+    });
+
 }
 
 function initAddNewEventSelect2() {
@@ -116,24 +133,15 @@ function initializeFullCalendar() {
         selectHelper: true,
         editable: true,
         eventLimit: true,
-        // events: '/schedules.json',
+        events: '/schedules.json',
         select: function (start, end, jsEvent) {
-
-            console.log("sdfasdfsf")
-
             $scheduleModal.modal('show');
             $calendar.fullCalendar('unselect');
         },
         eventClick: function (calEvent, jsEvent, view) {
-
             // console.log(calEvent);
-            // console.log(calEvent.id);
-            // console.log(calEvent.device_uid);
-            // console.log(calEvent.name);
-            // console.log(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
-
+            loadScheduleEventValues(calEvent);
             $scheduleModal.modal('show');
-
             return false;
         },
         // eventDrop: function (event, delta, revertFunc) {
@@ -148,21 +156,17 @@ function initializeFullCalendar() {
     });
 }
 
-function addNewScheduleEventAction($scheduleEventArea, deviceAttr) {
+function addNewScheduleEventAction($scheduleEventArea, scheduleEventAction) {
     let $scheduleEventActionsContainer = $scheduleEventArea.find('.actions-container');
     let prefixForScheduleEventActionSubform = $scheduleEventArea.find('.schedule-event-form-prefix-for-subform').data('prefix');
 
     let scheduleEventIndex = $scheduleEventArea.data('index');
     prefixForScheduleEventActionSubform = prefixForScheduleEventActionSubform.replace('SCHEDULE_EVENT_INDEX', scheduleEventIndex);
 
-    let actionData = {
-        deviceAttributeId: deviceAttr.id,
-        deviceAttributeName: deviceAttr.name
-    };
-    addNewAction($scheduleEventActionsContainer, $scheduleEventActionSubFormTemplate, prefixForScheduleEventActionSubform, actionData);
+    addNewAction($scheduleEventActionsContainer, $scheduleEventActionSubFormTemplate, prefixForScheduleEventActionSubform, scheduleEventAction);
 }
 
-function appendScheduleEventWithDeviceAttributes(deviceAttributes) {
+function appendScheduleEventWithActions(dataForScheduleEventActions, dataForScheduleEvent = {}) {
     let deviceUid = $scheduleEventDeviceSelector.val();
 
     let lastScheduleEventDomId = parseInt($scheduleEventsContainer.find('.schedule-event').last().attr('data-index'));
@@ -175,9 +179,9 @@ function appendScheduleEventWithDeviceAttributes(deviceAttributes) {
 
     $newScheduleEvent.attr('data-index', nextScheduleEventDomId);
     $newScheduleEvent.attr('data-device-uid', deviceUid);
-    let deviceName = $scheduleEventDeviceSelector.find('option:selected').text();
+    let deviceName = (dataForScheduleEvent.device_name) ? dataForScheduleEvent.device_name : $scheduleEventDeviceSelector.find('option:selected').text();
     $newScheduleEvent.find('.schedule-event-device-name-placeholder').text(deviceName);
-    $newScheduleEvent.find('.schedule-event-device-uid').val(deviceUid)
+    $newScheduleEvent.find('.schedule-event-device-uid').val(deviceUid);
 
     $newScheduleEvent.removeClass('odd, even');
     if ((nextScheduleEventDomId % 2) == 1) {
@@ -201,8 +205,8 @@ function appendScheduleEventWithDeviceAttributes(deviceAttributes) {
         }
     });
 
-    deviceAttributes.forEach(function (deviceAttr) {
-        addNewScheduleEventAction($newScheduleEvent, deviceAttr);
+    dataForScheduleEventActions.forEach(function (scheduleEventAction) {
+        addNewScheduleEventAction($newScheduleEvent, scheduleEventAction);
     });
 
     $scheduleEventsContainer.append($newScheduleEvent);
@@ -226,7 +230,7 @@ function addNewScheduleEvent() {
         return false;
     }
 
-    getDeviceAttributes(deviceUid, appendScheduleEventWithDeviceAttributes);
+    getDeviceAttributes(deviceUid, appendScheduleEventWithActions);
 
 }
 
@@ -265,12 +269,12 @@ $(document).on('turbolinks:load', function () {
         if ($thisClick.hasClass('active')) {
             if ($thisClick.hasClass('add-new-event-to-schedule')) {
                 addNewScheduleEvent($thisClick);
-            } else if ($thisClick.hasClass('add-schedule-event-action')) {
-                addNewScheduleEventAction($thisClick);
-
             }
         }
     });
 
+    $scheduleModal.on('hidden.bs.modal', function (event) {
+        resetScheduleModal();
+    });
 
 });

@@ -6,8 +6,16 @@ class SchedulesController < ApplicationController
   # GET /schedules
   # GET /schedules.json
   def index
-    @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
-    @schedule  = Schedule.new
+    if params.include?(:start)
+      if params.include?(:end)
+        @schedules = Schedule.select('*').where(['user_id = :user_id AND start_datetime >= :start_datetime AND end_datetime <= :end_datetime', { user_id: current_user.id, start_datetime: params[:start], end_datetime: params[:end] }]).find_each
+      else
+        @schedules = Schedule.select('*').where(['user_id = :user_id AND start_datetime >= :start_datetime', { user_id: current_user.id, start_datetime: params[:start] }]).find_each
+      end
+    else
+      @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
+    end
+    @schedule = Schedule.new
   end
 
   # GET /schedules/1
