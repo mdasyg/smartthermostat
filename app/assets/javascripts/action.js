@@ -30,12 +30,12 @@ function addNewAction($containerToAppendActions, $actionTemplate, prefixForActio
         }
     });
 
-    console.log(actionData);
-
     if (actionData) {
-        $newAction.find('.action-device-attributee-id').val(actionData.deviceAttributeId);
-        $newAction.find('.schedule-event-action-device-attribute-name-placeholder').text(actionData.deviceAttributeName);
-        // $newAction.find('.action-device-attribute-value').val(actionData.device_attribute_value);
+        $newAction.find('.action-id').val(actionData.id);
+        $newAction.find('.action-device-attribute-id').val(actionData.device_attribute_id);
+        $newAction.find('.schedule-event-action-device-attribute-name-placeholder').text(actionData.device_attribute_name);
+        $newAction.find('.action-device-attribute-start-value').val(actionData.device_attribute_start_value);
+        $newAction.find('.action-device-attribute-end-value').val(actionData.device_attribute_end_value);
     }
 
     $containerToAppendActions.append($newAction);

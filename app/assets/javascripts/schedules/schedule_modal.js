@@ -1,4 +1,5 @@
 function resetScheduleModal() {
     $scheduleForm.trigger('reset');
-    $actionsContainer.empty();
+    $scheduleEventsContainer.empty();
+    $scheduleEventDeviceSelector.val(null).trigger('change');
 }

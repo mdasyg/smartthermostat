@@ -47,7 +47,4 @@
 //         }
 //     });
 //
-//     $scheduleModal.on('hidden.bs.modal', function (event) {
-//         resetScheduleModal();
-//     });
 // });
