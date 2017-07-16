@@ -1,5 +1,6 @@
 var $scheduleFormContainer = null;
 var $scheduleForm = null;
+var $scheduleModal = null;
 var $addNewEventToScheduleContainer = null;
 var $scheduleEventsContainer = null;
 var $scheduleStartDatetime = null;
@@ -24,6 +25,14 @@ function replaceUrlParams(url, data = {}) {
     }
 
     return url;
+}
+
+function loadScheduleEventValues(data) {
+    $scheduleId.val(data.id);
+    $scheduleForm.find('#schedule_device_uid').val(data.device_uid);
+    $scheduleForm.find('#schedule_title').val(data.title);
+    $scheduleForm.find('#schedule_start_datetime').data('DateTimePicker').date(data.start_datetime);
+    $scheduleForm.find('#schedule_end_datetime').data('DateTimePicker').date(calEvent.end_datetime);
 }
 
 function initAddNewEventSelect2() {
@@ -82,7 +91,9 @@ function initializeFullCalendar() {
         eventLimit: true,
         // events: '/schedules.json',
         select: function (start, end, jsEvent) {
-            $('#schedule_datetime').data('DateTimePicker').date(start);
+
+            console.log("sdfasdfsf")
+
             $scheduleModal.modal('show');
             $calendar.fullCalendar('unselect');
         },
@@ -93,14 +104,6 @@ function initializeFullCalendar() {
             // console.log(calEvent.device_uid);
             // console.log(calEvent.name);
             // console.log(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
-
-            $scheduleId.val(calEvent.id);
-            $scheduleForm.find('#schedule_device_uid').val(calEvent.device_uid);
-            $scheduleForm.find('#schedule_title').val(calEvent.name);
-            $scheduleForm.find('#schedule_datetime').data('DateTimePicker').date(calEvent.start);
-
-            updateSelectedDeviceAttributes($('.schedule-device-selector'), false, calEvent.actions);
-
 
             $scheduleModal.modal('show');
 
@@ -145,8 +148,10 @@ function addNewScheduleEvent() {
     let $newScheduleEvent = $scheduleEventSubFormTemplate.clone();
 
     $newScheduleEvent.attr('data-index', nextScheduleEventDomId);
-    $newScheduleEvent.attr('data-device-uid', $scheduleEventDeviceSelector.val());
-    $newScheduleEvent.find('.schedule-event-device-name-placeholder').text($scheduleEventDeviceSelector.find('option:selected').text());
+    $newScheduleEvent.attr('data-device-uid', deviceUid);
+    let deviceName = $scheduleEventDeviceSelector.find('option:selected').text();
+    $newScheduleEvent.find('.schedule-event-device-name-placeholder').text(deviceName);
+    $newScheduleEvent.find('.schedule-event-device-uid').val(deviceUid)
 
     $newScheduleEvent.removeClass('odd, even');
     if ((nextScheduleEventDomId % 2) == 1) {
@@ -198,6 +203,7 @@ function scheduleRecurrenceFieldsVisibilityToggle(event) {
 
 $(document).on('turbolinks:load', function () {
     $scheduleFormContainer = $('#schedule-form-container');
+    $scheduleModal = $('#schedule-modal');
     $scheduleForm = $scheduleFormContainer.find('#schedule-form');
     $scheduleEventDeviceSelector = $scheduleForm.find('#schedule-event-device-selector');
     $scheduleEventsContainer = $scheduleForm.find('.schedule-events-container');

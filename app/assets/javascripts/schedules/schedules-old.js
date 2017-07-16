@@ -32,7 +32,6 @@
 //
 // $(document).on('turbolinks:load', function () {
 //
-// $scheduleModal = $('#schedule-modal');
 // $scheduleForm = $scheduleModal.find('#schedule-form');
 // $scheduleId = $scheduleForm.find('#schedule_id');
 // $actionsContainer = $scheduleForm.find('.actions-container');
