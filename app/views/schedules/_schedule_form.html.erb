@@ -12,6 +12,8 @@
 
   <%= form_for(schedule, html: form_options) do |schedule_form| %>
 
+    <%= schedule.errors.inspect %>
+
     <% if schedule.errors.any? %>
       <div id="error_explanation">
         <h2><%= pluralize(schedule.errors.count, 'error') %> prohibited this

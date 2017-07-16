@@ -1,7 +1,7 @@
 class Schedule < ApplicationRecord
 
+  validates :title, presence: true
   # validates :datetime, presence: true
-  # validates :title, presence: true
 
   REPEAT_EVERY = {
       MINUTE: { ID: 1, LABEL: 'Minute' },

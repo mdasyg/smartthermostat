@@ -1,18 +1,13 @@
 class SchedulesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_schedule, only: [:show, :edit, :update, :destroy]
-  before_action :set_repeat_every_list, only: [:new, :edit]
-
-  # before_action :set_available_devices, only: [:new, :edit]
+  before_action :set_repeat_every_list, only: [:new, :edit, :index]
 
   # GET /schedules
   # GET /schedules.json
   def index
     @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
-    # @schedule  = Schedule.new
-    # set_available_devices
-    # set_selected_device_attributes
-    # set_repeat_every_list
+    @schedule  = Schedule.new
   end
 
   # GET /schedules/1
@@ -23,17 +18,10 @@ class SchedulesController < ApplicationController
   # GET /schedules/new
   def new
     @schedule = Schedule.new
-
-    # if @availiable_devices.empty?
-    #   redirect_to new_device_path
-    # end
-
-    # set_selected_device_attributes
   end
 
   # GET /schedules/1/edit
   def edit
-    # set_selected_device_attributes
   end
 
   # POST /schedules
@@ -42,20 +30,42 @@ class SchedulesController < ApplicationController
     @schedule         = Schedule.new(safe_schedule_params)
     @schedule.user_id = current_user.id
 
-    if !params.include?(:actions)
-      @schedule.errors[:base] << 'At least one action must exists'
+    puts @schedule.schedule_events.inspect
+
+    if !params.include?(:schedule_events)
+      @schedule.errors[:base] << 'At least one event must exists'
       respond_to do |format|
-        set_available_devices
-        set_repeat_every_list
-        set_selected_device_attributes
+        set_repeat_every_list()
         format.html {render :new}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
       return
     end
 
-    params[:actions].each do |key, action|
-      @schedule.actions.build(safe_schedule_action_params(action))
+    errors_exists = false
+    params[:schedule_events].each do |key, schedule_event|
+      puts key.inspect
+      puts schedule_event.inspect
+      current_schedule_event = @schedule.schedule_events.build(safe_schedule_event_params(schedule_event))
+      if !schedule_event.include?(:actions)
+        errors_exists = true
+        @schedule.errors.add(:schedule_events, 'At least one action must exists')
+        current_schedule_event.errors.add(:base, 'At least one action must exists')
+      else
+        schedule_event[:actions].each do |key, action|
+          puts key
+          puts action.inspect
+          current_schedule_event.actions.build(safe_schedule_action_params(action))
+        end
+      end
+    end
+
+    if errors_exists
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :new}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end and return
     end
 
     respond_to do |format|
@@ -63,9 +73,7 @@ class SchedulesController < ApplicationController
         format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
         format.json {render :show, status: :created, location: @schedule}
       else
-        set_available_devices
         set_repeat_every_list
-        set_selected_device_attributes
         format.html {render :new}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -76,7 +84,6 @@ class SchedulesController < ApplicationController
   # PATCH/PUT /schedules/1
   # PATCH/PUT /schedules/1.json
   def update
-
     if !params.include?(:actions)
       @schedule.errors[:base] << 'At least one action must exist'
       respond_to do |format|
@@ -163,25 +170,6 @@ class SchedulesController < ApplicationController
     @schedule = Schedule.find(params[:id])
   end
 
-  private def set_available_devices
-    devices             = current_user.devices
-    @availiable_devices = []
-    if !devices.empty?
-      devices.each do |device|
-        @availiable_devices << [device.name, device.uid]
-      end
-    end
-  end
-
-  private def set_selected_device_attributes
-    @selected_device_attributes = []
-    if @schedule.device_uid
-      @schedule.device.device_attributes.each do |device_attribute|
-        @selected_device_attributes << [device_attribute.name, device_attribute.id]
-      end
-    end
-  end
-
   private def set_repeat_every_list
     @repeat_every_list = []
     Schedule::REPEAT_EVERY.each do |key, value|
@@ -191,7 +179,11 @@ class SchedulesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   private def safe_schedule_params
-    params.require(:schedule).permit(:device_uid, :title, :datetime, :is_recurrent, :repeat_every, :recurrence_period)
+    params.require(:schedule).permit(:title, :description, :start_datetime, :end_datetime, :is_recurrent, :repeat_every, :recurrence_period)
+  end
+
+  private def safe_schedule_event_params(unsafe_schedule_event)
+    unsafe_schedule_event.permit(:device_uid)
   end
 
   private def safe_schedule_action_params(unsafe_action)

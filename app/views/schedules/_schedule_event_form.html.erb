@@ -1,10 +1,14 @@
 <% schedule_event_index = (defined? schedule_event_counter) ? schedule_event_counter : 'SCHEDULE_EVENT_INDEX' %>
-<% current_form_prefix = 'schedule_event' %>
+<% current_form_prefix = 'schedule_events' %>
 <% prefix_for_subform = current_form_prefix + "[#{schedule_event_index}]" %>
 
 <div class="schedule-event form-row <%= ((schedule_event_index % 2) == 1) ? 'odd' : 'even' %>" data-index="<%= schedule_event_index %>" data-device-uid="<%= schedule_event.device_uid %>">
 
+  <div class="schedule-event-form-prefix-for-subform hidden" data-prefix="<%= prefix_for_subform %>"></div>
+
   <%= fields_for current_form_prefix, schedule_event, index: schedule_event_index do |schedule_event_form| %>
+
+    <%= schedule_event.errors.inspect %>
 
     <% if schedule_event.errors.any? %>
       <div id="error_explanation">
@@ -19,8 +23,7 @@
     <% end %>
 
     <%= schedule_event_form.hidden_field :id %>
-
-    <div class="schedule-event-form-prefix-for-subform hidden" data-prefix="<%= prefix_for_subform %>"></div>
+    <%= schedule_event_form.hidden_field(:device_uid, { class: 'schedule-event-device-uid' }) %>
 
     <div class="row">
       <div class="col-xs-4">
