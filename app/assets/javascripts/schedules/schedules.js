@@ -91,7 +91,7 @@ function initAddNewEventSelect2() {
             },
             delay: 250
         },
-        minimumInputLength: 2,
+        minimumInputLength: 1,
         dropdownParent: $addNewEventToScheduleContainer,
         placeholder: 'Select device',
         allowClear: true,
