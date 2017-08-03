@@ -11,8 +11,5 @@ json.schedule_events schedule.schedule_events.each do |event|
   end
 end
 
-
 # json.actions schedule.actions
-
-
 # json.url schedule_url(schedule, format: :json)
