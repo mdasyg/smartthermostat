@@ -8,6 +8,10 @@
 #include <MemoryFree.h>
 #include <ArduinoJson.h>
 
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
 #include "ProccessCallbacks.h"
@@ -25,15 +29,54 @@ deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
 unsigned int localPort = 8888;  // local port to listen for UDP packets
 bool printResponse = false;
 time_t prevDeviceStatusDisplayTime = 0; // when the digital clock was displayed
-unsigned long lastAttrUpdateTimestamp;
+uint32_t lastAttrUpdateTimestamp;
 
 StaticJsonBuffer<100> jsonBuffer;
 
+uint32_t minDelayBeforeNextDHT22Query_ms;
+uint32_t lastDHT22QueryTimestamp;
+DHT_Unified dht22(tempSensorPin1, DHTTYPE);
+
 void setup() {
-  // wdt_enable(WDTO_8S);
   lastAttrUpdateTimestamp = millis();
+  lastDHT22QueryTimestamp = millis();
 
   Serial.begin(115200);
+
+  /// including DHT sensor
+
+  // initialize the DHT22 sensor
+  dht22.begin();
+
+  sensor_t sensor;
+  dht22.temperature().getSensor(&sensor);
+  Serial.println("------------------------------------");
+  Serial.println("Temperature");
+  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
+  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
+  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" *C");
+  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" *C");
+  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" *C");
+  Serial.print  ("Min Delay:    "); Serial.print(sensor.min_delay); Serial.println(" us");
+  Serial.println("------------------------------------");
+  // Print humidity sensor details.
+  dht22.humidity().getSensor(&sensor);
+  Serial.println("------------------------------------");
+  Serial.println("Humidity");
+  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
+  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
+  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println("%");
+  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println("%");
+  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println("%");
+  Serial.print  ("Min Delay:    "); Serial.print(sensor.min_delay); Serial.println(" us");
+  Serial.println("------------------------------------");
+  // Set delay between sensor readings based on sensor details.
+  minDelayBeforeNextDHT22Query_ms = sensor.min_delay / 1000; // return value in microseconds
+  Serial.print("Min Delay: "); Serial.print(minDelayBeforeNextDHT22Query_ms); Serial.println(" ms");
+  Serial.println("------------------------------------");
+  //// DHT
 
   pinMode(boilerRelayPin, OUTPUT);
   digitalWrite(boilerRelayPin, LOW);
@@ -63,6 +106,8 @@ void setup() {
   Serial.println(F("Device Info Status Update"));
   prepareDeviceStatusRequestData(postRequestData);
   sendPostRequest(ethClient, deviceStatusUrl, postRequestData);
+
+  // wdt_enable(WDTO_8S);
 
 }
 
@@ -106,8 +151,8 @@ void loop() {
     isEthClientConnectedToServer = false;
   }
 
-  // attribute1ProccessCallback(stateOfAttributes[0]);
-  // attribute2ProccessCallback(properties_state[1]);
+  // system callback
+  thermostatProccessCallback(stateOfAttributes, dht22, lastDHT22QueryTimestamp, minDelayBeforeNextDHT22Query_ms);
 
   // Send statistics to app
   if (millis() - lastAttrUpdateTimestamp > attrUpdateInterval ) {

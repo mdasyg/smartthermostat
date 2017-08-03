@@ -3,6 +3,10 @@
 
 #include "DataStructures.h"
 
+#ifndef DHTTYPE
+#define DHTTYPE DHT22     // DHT 22 (AM2302)
+#endif
+
 #ifndef DEVICE_CONFIGS_H
 #define DEVICE_CONFIGS_H
 
@@ -15,7 +19,7 @@ const char NUMBER_OF_ATTRIBUTES = 1;
 const char MQTT_USERNAME[] = { "asdf" };
 const char MQTT_PASSWORD[] = { "foobar" };
 
-const unsigned int attrUpdateInterval = 20000L; // in milliseconds
+const unsigned int attrUpdateInterval = 5000L; // in milliseconds
 
 const char applicationServerUrl[] = "home-auto.eu";
 const int applicationServerPort = 1026;
@@ -27,7 +31,7 @@ const char deviceAttributesUpdateUrl[] = "/api/v1/devices/attributes_status";
 
 // system variables
 const int boilerRelayPin = 7;
-const int tempSensorPin1 = 4;
+const int tempSensorPin1 = 2;
 
 int initDeviceAttributes(deviceAttribute states[]);
 
