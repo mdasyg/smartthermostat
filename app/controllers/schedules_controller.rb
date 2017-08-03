@@ -175,13 +175,17 @@ class SchedulesController < ApplicationController
       @schedule.transaction do
         # First delete the deleted ones
         if schedule_events_ids_to_delete
-          ScheduleEvent.destroy(schedule_events_ids_to_delete)
+          schedule_events_ids_to_delete.each do |se_id|
+            schedule_event = ScheduleEvent.find(se_id)
+            action_ids     = schedule_event.actions.ids
+            schedule_event.destroy
+            Action.destroy(action_ids)
+          end
         end
         # schedule_action_ids_to_delete.each do |action_id|
         #   @schedule.actions.find(action_id).destroy!
         # end
         @schedule.update!(safe_schedule_params)
-        # @schedule.save!
         respond_to do |format|
           format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
           format.json {render :show, status: :ok, location: @schedule}
@@ -200,14 +204,28 @@ class SchedulesController < ApplicationController
   # DELETE /schedules/1
   # DELETE /schedules/1.json
   def destroy
-
-    puts @schedule.inspect
-
-    @schedule.destroy
-    respond_to do |format|
-      format.html {redirect_to schedules_url, notice: 'Schedule was successfully destroyed.'}
-      format.json {head :no_content}
+    begin
+      @schedule.transaction do
+        @schedule.schedule_events.each do |se|
+          action_ids = se.actions.ids
+          se.destroy
+          Action.destroy(action_ids)
+        end
+        @schedule.destroy
+        respond_to do |format|
+          format.html {redirect_to schedules_url, notice: 'Schedule was successfully destroyed.'}
+          format.json {head :no_content}
+        end
+      end
+    rescue
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :index}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end
     end
+
+
   end
 
   # Use callbacks to share common setup or constraints between actions.

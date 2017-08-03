@@ -14,6 +14,6 @@ class Schedule < ApplicationRecord
 
   belongs_to :user, inverse_of: :schedules
 
-  has_many :schedule_events, autosave: true
+  has_many :schedule_events, dependent: :destroy, autosave: true
 
 end

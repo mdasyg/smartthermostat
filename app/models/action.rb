@@ -4,7 +4,7 @@ class Action < ApplicationRecord
 
   belongs_to :device_attribute
 
-  has_one :schedule_event_action, dependent: :destroy
+  has_one :schedule_event_action
   has_one :schedule_event, through: :schedule_event_action
 
 end
