@@ -79,7 +79,7 @@ function initializeFullCalendar() {
             $calendar.fullCalendar('unselect');
         },
         eventClick: function (calEvent, jsEvent, view) {
-            console.log(calEvent);
+            // console.log(calEvent);
             loadScheduleValues(calEvent);
             $scheduleModal.modal('show');
             return false;
@@ -192,6 +192,40 @@ function scheduleRecurrenceFieldsVisibilityToggle(event) {
     }
 }
 
+function deleteSchedule($thisClick) {
+    let url = null;
+    let scheduleId = $scheduleForm.find('#schedule_id').val();
+    if (scheduleId) {
+        url = $scheduleForm.data('delete-url');
+        let data = {
+            scheduleId: scheduleId
+        };
+        url = replaceUrlParams(url, data);
+    } else {
+        console.log('Error, schedule id missing.');
+        return false;
+    }
+    let request = $.ajax({
+        url: url,
+        // beforeSend: function (xhr) {
+        //     xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        // },
+        type: 'delete',
+        dataType: 'json'
+    });
+
+    request.done(function (responseData, textStatus, jqXHR) {
+        console.log(responseData)
+    });
+
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+        // alert(errorThrown + ': ' + textStatus);
+    });
+}
+
 $(document).on('turbolinks:load', function () {
     $scheduleFormContainer = $('#schedule-form-container');
     $scheduleModal = $('#schedule-modal');
@@ -221,6 +255,8 @@ $(document).on('turbolinks:load', function () {
                 addNewScheduleEvent($thisClick);
             } else if ($thisClick.hasClass('save-schedule')) {
                 submitScheduleForm($thisClick);
+            } else if ($thisClick.hasClass('delete-schedule')) {
+                deleteSchedule($thisClick);
             }
         }
     });
@@ -228,5 +264,4 @@ $(document).on('turbolinks:load', function () {
     $scheduleModal.on('hidden.bs.modal', function (event) {
         resetScheduleModal();
     });
-
 });

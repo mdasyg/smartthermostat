@@ -32,16 +32,22 @@ function initScheduleDatetimePickers() {
     $scheduleEndDatetime.datetimepicker({
         // locale: 'en',
         // debug: true,
+        useCurrent: false, //Important! See issue #1075
         format: 'DD/MM/YYYY HH:mm',
         extraFormats: ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD HH:mm:ss'],
         showClear: true,
         sideBySide: true,
-        defaultDate: moment()
+        defaultDate: $scheduleStartDatetime.data('DateTimePicker').date().add(1, 'm'),
+    });
+
+    $scheduleStartDatetime.on('dp.change', function (event) {
+        $scheduleEndDatetime.data('DateTimePicker').minDate(event.date.add(1, 'm'));
+        $scheduleEndDatetime.data('DateTimePicker').date(event.date.add(1, 'm'));
     });
 }
 
 function loadScheduleValues(data) {
-    console.log(data);
+    // console.log(data);
     $scheduleForm.find('#schedule_id').val(data.id);
     $scheduleForm.find('#schedule_device_uid').val(data.device_uid);
     $scheduleForm.find('#schedule_title').val(data.name);
@@ -61,14 +67,23 @@ function loadScheduleValues(data) {
 }
 
 function submitScheduleForm($thicClick) {
-    let url = $scheduleForm.data('create-url');
-
+    let url = null;
+    let scheduleId = $scheduleForm.find('#schedule_id').val();
+    if (scheduleId) {
+        url = $scheduleForm.data('update-url');
+        let data = {
+            scheduleId: scheduleId
+        };
+        url = replaceUrlParams(url, data);
+    } else {
+        url = $scheduleForm.data('create-url');
+    }
     let request = $.ajax({
         url: url,
         // beforeSend: function (xhr) {
         //     xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
         // },
-        type: 'post',
+        type: (scheduleId ? 'put' : 'post'),
         dataType: 'json',
         data: $scheduleForm.serialize()
     });
@@ -83,5 +98,4 @@ function submitScheduleForm($thicClick) {
         console.log(errorThrown);
         // alert(errorThrown + ': ' + textStatus);
     });
-
 }
