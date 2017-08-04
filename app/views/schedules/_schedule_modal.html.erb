@@ -13,7 +13,11 @@
       </div>
 
       <div class="modal-footer">
-        <%= button_to 'Delete', schedule, :method => :delete, form_class: 'btn', class: 'btn' %>
+        <span class="action-buttons-wrapper">
+          <span class="action-button active delete-schedule btn">
+            <span class="glyphicon glyphicon-trash"></span>
+          </span>
+        </span>
         <button type="button" class="btn" data-dismiss="modal">Close</button>
         <button type="button" class="action-button active save-schedule btn">Save
           changes
