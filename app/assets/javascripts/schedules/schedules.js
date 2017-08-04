@@ -33,6 +33,7 @@ function getDeviceAttributes(deviceUid, callback) {
     };
     let url = $('#get-device-attributes-list-url').data('url');
     url = replaceUrlParams(url, data);
+
     // attributes request
     let request = $.ajax({
         url: url,
@@ -58,67 +59,6 @@ function getDeviceAttributes(deviceUid, callback) {
         console.log(errorThrown);
         // alert(errorThrown + ': ' + textStatus);
     });
-
-}
-
-function loadScheduleEventValues(data) {
-    // console.log(data);
-    $scheduleForm.find('#schedule_id').val(data.id);
-    $scheduleForm.find('#schedule_device_uid').val(data.device_uid);
-    $scheduleForm.find('#schedule_title').val(data.name);
-    $scheduleForm.find('#schedule_description').val(data.description);
-    $scheduleForm.find('#schedule_start_datetime').data('DateTimePicker').date(data.start);
-    $scheduleForm.find('#schedule_end_datetime').data('DateTimePicker').date(data.end);
-
-    data.schedule_events.forEach(function (schedule_event) {
-        let scheduleEventData = {
-            device_name: schedule_event.device_name
-        };
-        appendScheduleEventWithActions(schedule_event.actions, scheduleEventData);
-    });
-
-}
-
-function initAddNewEventSelect2() {
-    $scheduleEventDeviceSelector.select2({
-        ajax: {
-            dataType: 'json',
-            url: $('#devices-search-url').data('url'),
-            processResults: function (data, params) {
-                return {
-                    results: data
-                };
-            },
-            delay: 250
-        },
-        minimumInputLength: 1,
-        dropdownParent: $addNewEventToScheduleContainer,
-        placeholder: 'Select device',
-        allowClear: true,
-        width: '100%' // responsive workaround
-    });
-}
-
-function initScheduleDatetimePickers() {
-    $scheduleStartDatetime.datetimepicker({
-        // locale: 'en',
-        // debug: true,
-        format: 'DD/MM/YYYY HH:mm',
-        extraFormats: ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD HH:mm:ss'],
-        showClear: true,
-        sideBySide: true,
-        defaultDate: moment()
-    });
-
-    $scheduleEndDatetime.datetimepicker({
-        // locale: 'en',
-        // debug: true,
-        format: 'DD/MM/YYYY HH:mm',
-        extraFormats: ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD HH:mm:ss'],
-        showClear: true,
-        sideBySide: true,
-        defaultDate: moment()
-    });
 }
 
 function initializeFullCalendar() {
@@ -139,8 +79,8 @@ function initializeFullCalendar() {
             $calendar.fullCalendar('unselect');
         },
         eventClick: function (calEvent, jsEvent, view) {
-            // console.log(calEvent);
-            loadScheduleEventValues(calEvent);
+            console.log(calEvent);
+            loadScheduleValues(calEvent);
             $scheduleModal.modal('show');
             return false;
         },
@@ -167,7 +107,16 @@ function addNewScheduleEventAction($scheduleEventArea, scheduleEventAction) {
 }
 
 function appendScheduleEventWithActions(dataForScheduleEventActions, dataForScheduleEvent = {}) {
-    let deviceUid = $scheduleEventDeviceSelector.val();
+    let deviceUid = null;
+    if (dataForScheduleEvent && dataForScheduleEvent.device_uid) {
+        deviceUid = dataForScheduleEvent.device_uid;
+    } else {
+        deviceUid = $scheduleEventDeviceSelector.val();
+    }
+    if (!deviceUid) {
+        console.log('Device uid missing');
+        return false;
+    }
 
     let lastScheduleEventDomId = parseInt($scheduleEventsContainer.find('.schedule-event').last().attr('data-index'));
     if (!lastScheduleEventDomId) {
@@ -180,6 +129,7 @@ function appendScheduleEventWithActions(dataForScheduleEventActions, dataForSche
     $newScheduleEvent.attr('data-index', nextScheduleEventDomId);
     $newScheduleEvent.attr('data-device-uid', deviceUid);
     let deviceName = (dataForScheduleEvent.device_name) ? dataForScheduleEvent.device_name : $scheduleEventDeviceSelector.find('option:selected').text();
+    $newScheduleEvent.find('.schedule-event-id').val(dataForScheduleEvent.id);
     $newScheduleEvent.find('.schedule-event-device-name-placeholder').text(deviceName);
     $newScheduleEvent.find('.schedule-event-device-uid').val(deviceUid);
 
@@ -269,6 +219,8 @@ $(document).on('turbolinks:load', function () {
         if ($thisClick.hasClass('active')) {
             if ($thisClick.hasClass('add-new-event-to-schedule')) {
                 addNewScheduleEvent($thisClick);
+            } else if ($thisClick.hasClass('save-schedule')) {
+                submitScheduleForm($thisClick);
             }
         }
     });

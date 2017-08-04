@@ -20,7 +20,7 @@
       </div>
     <% end %>
 
-    <%= schedule_event_form.hidden_field :id %>
+    <%= schedule_event_form.hidden_field(:id, { class: 'schedule-event-id' }) %>
     <%= schedule_event_form.hidden_field(:device_uid, { class: 'schedule-event-device-uid' }) %>
 
     <div class="row">
