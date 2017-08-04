@@ -38,7 +38,17 @@ class SchedulesController < ApplicationController
     @schedule         = Schedule.new(safe_schedule_params)
     @schedule.user_id = current_user.id
 
-    puts @schedule.schedule_events.inspect
+    puts @schedule.start_datetime
+    puts @schedule.end_datetime
+    if (@schedule.end_datetime <= @schedule.start_datetime)
+      @schedule.errors[:end_datetime] << 'Must be bigger than start datetime'
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :new}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end
+      return
+    end
 
     if !params.include?(:schedule_events)
       @schedule.errors[:base] << 'At least one event must exists'
@@ -52,8 +62,6 @@ class SchedulesController < ApplicationController
 
     errors_exists = false
     params[:schedule_events].each do |key, schedule_event|
-      puts key.inspect
-      puts schedule_event.inspect
       current_schedule_event = @schedule.schedule_events.build(safe_schedule_event_params(schedule_event))
       if !schedule_event.include?(:actions)
         errors_exists = true
@@ -61,8 +69,6 @@ class SchedulesController < ApplicationController
         current_schedule_event.errors.add(:base, 'At least one action must exists')
       else
         schedule_event[:actions].each do |key, action|
-          puts key
-          puts action.inspect
           current_schedule_event.actions.build(safe_schedule_action_params(action))
         end
       end
@@ -133,10 +139,6 @@ class SchedulesController < ApplicationController
     end
 
     schedule_events_ids_to_delete = stored_schedule_events_ids - posted_schedule_events_ids
-
-    # puts "STORED: #{stored_schedule_events_ids}"
-    # puts "POSTED: #{posted_schedule_events_ids}"
-    # puts "TO DELETE: #{schedule_events_ids_to_delete}"
 
     # Update the existing objects
     errors_exists = false
