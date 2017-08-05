@@ -1,5 +1,3 @@
-puts schedule.inspect
-
 json.id schedule.id.to_s
 json.title schedule.title
 json.description schedule.description

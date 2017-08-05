@@ -38,8 +38,15 @@ class SchedulesController < ApplicationController
     @schedule         = Schedule.new(safe_schedule_params)
     @schedule.user_id = current_user.id
 
-    puts @schedule.start_datetime
-    puts @schedule.end_datetime
+    overlapping_schedules = overlap_check(@schedule.start_datetime, @schedule.end_datetime)
+    if (overlapping_schedules.any?)
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :new}
+        format.json {render json: { data: overlapping_schedules, status: :overlaps }, status: :ok}
+      end and return
+    end
+
     if (@schedule.end_datetime <= @schedule.start_datetime)
       @schedule.errors[:end_datetime] << 'Must be bigger than start datetime'
       respond_to do |format|
@@ -231,6 +238,17 @@ class SchedulesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   private def set_schedule
     @schedule = Schedule.find(params[:id])
+  end
+
+  private def overlap_check(start_datetime, end_datetime)
+    overlapping_schedules = Schedule.select('*').where(
+        ['user_id = :user_id AND end_datetime >= :start_datetime AND start_datetime <= :end_datetime',
+         {
+             user_id:        current_user.id,
+             start_datetime: start_datetime,
+             end_datetime:   end_datetime,
+         }]).find_each
+    return overlapping_schedules
   end
 
   private def set_repeat_every_list

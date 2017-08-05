@@ -1,6 +1,3 @@
-var $scheduleFormContainer = null;
-var $scheduleForm = null;
-var $scheduleModal = null;
 var $addNewEventToScheduleContainer = null;
 var $scheduleEventsContainer = null;
 var $scheduleStartDatetime = null;
@@ -10,6 +7,7 @@ var $scheduleSubFormsTemplates = null;
 var $scheduleEventSubFormTemplate = null;
 var $scheduleEventActionSubFormTemplate = null;
 var $scheduleEventDeviceSelector = null;
+var $overlapScheduleTemplate = null;
 var $fullCalendar = null;
 
 function replaceUrlParams(url, data = {}) {
@@ -231,9 +229,6 @@ function deleteSchedule($thisClick) {
 }
 
 $(document).on('turbolinks:load', function () {
-    $scheduleFormContainer = $('#schedule-form-container');
-    $scheduleModal = $('#schedule-modal');
-    $scheduleForm = $scheduleFormContainer.find('#schedule-form');
     $scheduleEventDeviceSelector = $scheduleForm.find('#schedule-event-device-selector');
     $scheduleEventsContainer = $scheduleForm.find('.schedule-events-container');
     $addNewEventToScheduleContainer = $('#add-new-event-to-schedule-container');
@@ -243,6 +238,7 @@ $(document).on('turbolinks:load', function () {
     $scheduleSubFormsTemplates = $('#schedule-subforms-templates');
     $scheduleEventSubFormTemplate = $scheduleSubFormsTemplates.find('.shcedule-event-template .schedule-event');
     $scheduleEventActionSubFormTemplate = $scheduleSubFormsTemplates.find('.schedule-event-action-template .action');
+    $overlapScheduleTemplate = $scheduleSubFormsTemplates.find('.overlap-schedule-template .overlap-schedule');
     $fullCalendar = $('.calendar');
 
     initAddNewEventSelect2();

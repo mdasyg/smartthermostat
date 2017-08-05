@@ -1,3 +1,7 @@
+var $scheduleFormContainer = null;
+var $scheduleForm = null;
+var $overlappingSchedulesList = null;
+
 function initAddNewEventSelect2() {
     $scheduleEventDeviceSelector.select2({
         ajax: {
@@ -85,13 +89,32 @@ function submitScheduleForm($thicClick) {
     });
 
     request.done(function (responseData, textStatus, jqXHR) {
-        // console.log(responseData);
-        if (scheduleId) {
-            $fullCalendar.fullCalendar('refetchEvents');
-        } else {
-            $fullCalendar.fullCalendar('renderEvent', responseData);
+        status = responseData.status;
+        if (status == 'overlaps') {
+            $overlappingSchedulesList.empty();
+            responseData.data.forEach(function (schedule) {
+
+                console.log(schedule);
+
+                let $newOverlap = $overlapScheduleTemplate.clone();
+
+                $newOverlap.find('.schedule-id').val(schedule.id);
+                $newOverlap.find('.schedule-title').text(schedule.title);
+                $newOverlap.find('.schedule-start-datetime').text(schedule.start_datetime);
+                $newOverlap.find('.schedule-end-datetime').text(schedule.end_datetime);
+                $newOverlap.find('.schedule-priority').val(schedule.priority);
+
+                $overlappingSchedulesList.append($newOverlap);
+
+            });
         }
-        $scheduleModal.modal('hide');
+        // console.log(responseData);
+        // if (scheduleId) {
+        //     $fullCalendar.fullCalendar('refetchEvents');
+        // } else {
+        //     $fullCalendar.fullCalendar('renderEvent', responseData.data);
+        // }
+        // $scheduleModal.modal('hide');
     });
 
     request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -101,3 +124,9 @@ function submitScheduleForm($thicClick) {
         // alert(errorThrown + ': ' + textStatus);
     });
 }
+
+$(document).on('turbolinks:load', function () {
+    $scheduleFormContainer = $('#schedule-form-container');
+    $scheduleForm = $scheduleFormContainer.find('#schedule-form');
+    $overlappingSchedulesList = $scheduleForm.find('#ovelapping-schedules-container .ovelapping-schedules-list');
+});
