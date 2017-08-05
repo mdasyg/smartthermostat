@@ -95,6 +95,38 @@
 
     <hr>
 
+    <div id="ovelapping-schedules-container">
+      <span>overlap schedules</span>
+      <div class="ovelapping-schedules-header">
+        <div class="row">
+          <div class="col-xs-3">
+            <div class="form-group">
+              <%= label_tag 'Name' %>
+            </div>
+          </div>
+          <div class="col-xs-3">
+            <div class="form-group">
+              <%= label_tag 'Start Datetime' %>
+            </div>
+          </div>
+          <div class="col-xs-3">
+            <div class="form-group">
+              <%= label_tag 'End Datetime' %>
+            </div>
+          </div>
+          <div class="col-xs-3">
+            <div class="form-group">
+              <%= label_tag 'Priority' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ovelapping-schedules-list">
+      </div>
+    </div>
+
+    <hr>
+
     <div id="add-new-event-to-schedule-container">
       <div class="row">
         <div class="col-xs-6">
@@ -129,5 +161,34 @@
   </div>
   <div class="schedule-event-action-template">
     <%= render partial: '/actions/action_form_element', locals: { action: Action.new, prefix_for_subform: 'REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX' } %>
+  </div>
+  <div class="overlap-schedule-template">
+    <div class="overlap-schedule">
+      <div class="row">
+
+        <input class="schedule-id" type="hidden">
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <span class="schedule-title"></span>
+          </div>
+        </div>
+        <div class="col-xs-3">
+          <div class="form-group">
+            <span class="schedule-start-datetime"></span>
+          </div>
+        </div>
+        <div class="col-xs-3">
+          <div class="form-group">
+            <span class="schedule-end-datetime"></span>
+          </div>
+        </div>
+        <div class="col-xs-3">
+          <div class="form-group">
+            <input class="form-control schedule-priority" type="text">
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
