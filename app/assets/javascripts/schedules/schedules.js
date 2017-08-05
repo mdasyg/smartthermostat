@@ -265,6 +265,12 @@ $(document).on('turbolinks:load', function () {
         }
     });
 
+    $scheduleStartDatetime.on('dp.change', function (event) {
+        if (!$scheduleEndDatetime.data('DateTimePicker').date().isAfter($scheduleStartDatetime.data('DateTimePicker').date())) {
+            $scheduleEndDatetime.data('DateTimePicker').date(event.date.add(1, 'd'));
+        }
+    });
+
     $scheduleModal.on('hidden.bs.modal', function (event) {
         resetScheduleModal();
     });
