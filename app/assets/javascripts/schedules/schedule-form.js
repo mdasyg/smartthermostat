@@ -37,20 +37,20 @@ function initScheduleDatetimePickers() {
         extraFormats: ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD HH:mm:ss'],
         showClear: true,
         sideBySide: true,
-        defaultDate: $scheduleStartDatetime.data('DateTimePicker').date().add(1, 'm'),
+        defaultDate: moment()
     });
 
-    $scheduleStartDatetime.on('dp.change', function (event) {
-        $scheduleEndDatetime.data('DateTimePicker').minDate(event.date.add(1, 'm'));
-        $scheduleEndDatetime.data('DateTimePicker').date(event.date.add(1, 'm'));
-    });
+    // $scheduleStartDatetime.on('dp.change', function (event) {
+    //     $scheduleEndDatetime.data('DateTimePicker').minDate(event.date.add(1, 'm'));
+    //     $scheduleEndDatetime.data('DateTimePicker').date(event.date.add(1, 'm'));
+    // });
 }
 
 function loadScheduleValues(data) {
     // console.log(data);
     $scheduleForm.find('#schedule_id').val(data.id);
     $scheduleForm.find('#schedule_device_uid').val(data.device_uid);
-    $scheduleForm.find('#schedule_title').val(data.name);
+    $scheduleForm.find('#schedule_title').val(data.title);
     $scheduleForm.find('#schedule_description').val(data.description);
     $scheduleForm.find('#schedule_start_datetime').data('DateTimePicker').date(data.start);
     $scheduleForm.find('#schedule_end_datetime').data('DateTimePicker').date(data.end);
@@ -80,16 +80,22 @@ function submitScheduleForm($thicClick) {
     }
     let request = $.ajax({
         url: url,
-        // beforeSend: function (xhr) {
-        //     xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
-        // },
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        },
         type: (scheduleId ? 'put' : 'post'),
         dataType: 'json',
         data: $scheduleForm.serialize()
     });
 
     request.done(function (responseData, textStatus, jqXHR) {
-        console.log(responseData)
+        // console.log(responseData);
+        if (scheduleId) {
+            $fullCalendar.fullCalendar('refetchEvents');
+        } else {
+            $fullCalendar.fullCalendar('renderEvent', responseData);
+        }
+        $scheduleModal.modal('hide');
     });
 
     request.fail(function (jqXHR, textStatus, errorThrown) {

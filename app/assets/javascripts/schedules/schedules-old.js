@@ -18,7 +18,7 @@
 //     request.done(function (responseData, textStatus, jqXHR) {
 //         console.log(responseData);
 //
-//         $calendar.fullCalendar('renderEvent', responseData);
+//         $fullCalendar.fullCalendar('renderEvent', responseData);
 //         $scheduleModal.modal('hide');
 //
 //     });
