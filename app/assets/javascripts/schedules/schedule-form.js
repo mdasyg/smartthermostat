@@ -1,5 +1,6 @@
 var $scheduleFormContainer = null;
 var $scheduleForm = null;
+var $overlappingSchedulesContainer = null;
 var $overlappingSchedulesList = null;
 
 function initAddNewEventSelect2() {
@@ -66,6 +67,16 @@ function loadScheduleValues(data) {
     });
 }
 
+function resetScheduleForm() {
+    $scheduleForm.trigger('reset');
+    $scheduleForm.find('#schedule_id').val('');
+    $scheduleForm.find('#recurrent-entries').addClass('hidden')
+    $scheduleEventsContainer.empty();
+    $scheduleEventDeviceSelector.val(null).trigger('change');
+    $overlappingSchedulesContainer.addClass('hidden');
+    $overlappingSchedulesList.empty();
+}
+
 function submitScheduleForm($thicClick) {
     let url = null;
     let scheduleId = $scheduleForm.find('#schedule_id').val();
@@ -106,6 +117,8 @@ function submitScheduleForm($thicClick) {
 
                 $overlappingSchedulesList.append($newOverlap);
 
+                $overlappingSchedulesContainer.removeClass('hidden');
+
             });
         }
         // console.log(responseData);
@@ -128,5 +141,6 @@ function submitScheduleForm($thicClick) {
 $(document).on('turbolinks:load', function () {
     $scheduleFormContainer = $('#schedule-form-container');
     $scheduleForm = $scheduleFormContainer.find('#schedule-form');
-    $overlappingSchedulesList = $scheduleForm.find('#ovelapping-schedules-container .ovelapping-schedules-list');
+    $overlappingSchedulesContainer = $scheduleForm.find('#ovelapping-schedules-container');
+    $overlappingSchedulesList = $overlappingSchedulesContainer.find('.ovelapping-schedules-list');
 });
