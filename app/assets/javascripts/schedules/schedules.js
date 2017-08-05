@@ -10,7 +10,7 @@ var $scheduleSubFormsTemplates = null;
 var $scheduleEventSubFormTemplate = null;
 var $scheduleEventActionSubFormTemplate = null;
 var $scheduleEventDeviceSelector = null;
-var $calendar = null;
+var $fullCalendar = null;
 
 function replaceUrlParams(url, data = {}) {
     if (!url) {
@@ -62,7 +62,7 @@ function getDeviceAttributes(deviceUid, callback) {
 }
 
 function initializeFullCalendar() {
-    $calendar.fullCalendar({
+    $fullCalendar.fullCalendar({
         timezone: false,
         header: {
             left: 'prev,next today',
@@ -73,10 +73,13 @@ function initializeFullCalendar() {
         selectHelper: true,
         editable: true,
         eventLimit: true,
+        displayEventEnd: true,
         events: '/schedules.json',
         select: function (start, end, jsEvent) {
+            $scheduleForm.find('#schedule_start_datetime').data('DateTimePicker').date(start);
+            $scheduleForm.find('#schedule_end_datetime').data('DateTimePicker').date(end);
             $scheduleModal.modal('show');
-            $calendar.fullCalendar('unselect');
+            $fullCalendar.fullCalendar('unselect');
         },
         eventClick: function (calEvent, jsEvent, view) {
             // console.log(calEvent);
@@ -215,7 +218,8 @@ function deleteSchedule($thisClick) {
     });
 
     request.done(function (responseData, textStatus, jqXHR) {
-        console.log(responseData)
+        $fullCalendar.fullCalendar('removeEvents', scheduleId);
+        $scheduleModal.modal('hide');
     });
 
     request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -239,7 +243,7 @@ $(document).on('turbolinks:load', function () {
     $scheduleSubFormsTemplates = $('#schedule-subforms-templates');
     $scheduleEventSubFormTemplate = $scheduleSubFormsTemplates.find('.shcedule-event-template .schedule-event');
     $scheduleEventActionSubFormTemplate = $scheduleSubFormsTemplates.find('.schedule-event-action-template .action');
-    $calendar = $('.calendar');
+    $fullCalendar = $('.calendar');
 
     initAddNewEventSelect2();
     initScheduleDatetimePickers();

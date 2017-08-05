@@ -1,7 +1,7 @@
 puts schedule.inspect
 
 json.id schedule.id.to_s
-json.name schedule.title
+json.title schedule.title
 json.description schedule.description
 json.start schedule.start_datetime
 json.end schedule.end_datetime

@@ -3,8 +3,6 @@
 
 <div class="device-attribute form-row" data-index="<%= device_attribute_index %>">
 
-  <%= device_attribute.errors.inspect %>
-
   <% if device_attribute.errors.any? %>
     <div id="error-explanation">
       <h2><%= pluralize(device_attribute.errors.count, 'error') %> prohibited
