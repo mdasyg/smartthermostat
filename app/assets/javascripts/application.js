@@ -12,6 +12,7 @@
 //
 //= require jquery/dist/jquery
 //= require jquery-ujs/src/rails
+//= require select2/dist/js/select2
 //= require turbolinks
 //= require moment/min/moment.min
 //= require moment-timezone-all/builds/moment-timezone-with-data
