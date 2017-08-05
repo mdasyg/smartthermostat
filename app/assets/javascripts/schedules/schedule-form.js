@@ -40,10 +40,6 @@ function initScheduleDatetimePickers() {
         defaultDate: moment()
     });
 
-    // $scheduleStartDatetime.on('dp.change', function (event) {
-    //     $scheduleEndDatetime.data('DateTimePicker').minDate(event.date.add(1, 'm'));
-    //     $scheduleEndDatetime.data('DateTimePicker').date(event.date.add(1, 'm'));
-    // });
 }
 
 function loadScheduleValues(data) {
