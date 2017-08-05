@@ -169,6 +169,24 @@ class DevicesController < ApplicationController
     end
   end
 
+  def search
+    if !params.has_key?(:term)
+      render json: [] and return
+    else
+      search_term = params[:term]
+    end
+
+    results = Device.select('uid, name').where(['name LIKE :name', { name: '%' + search_term + '%' }])
+
+    formated_results = []
+    results.each do |device|
+      formated_results << { id: device.uid.to_s, text: device.name }
+    end
+
+    render json: formated_results
+
+  end
+
   # GET /devices/1/get_device_attributes_list
   def get_device_attributes_list
     render json: @device.device_attributes

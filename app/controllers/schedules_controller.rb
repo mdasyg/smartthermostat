@@ -1,17 +1,21 @@
 class SchedulesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_schedule, only: [:show, :edit, :update, :destroy]
-  before_action :set_available_devices, only: [:new, :edit]
-  before_action :set_repeat_every_list, only: [:new, :edit]
+  before_action :set_repeat_every_list, only: [:new, :edit, :index]
 
   # GET /schedules
   # GET /schedules.json
   def index
-    @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
-    @schedule  = Schedule.new
-    set_available_devices
-    set_selected_device_attributes
-    set_repeat_every_list
+    if params.include?(:start)
+      if params.include?(:end)
+        @schedules = Schedule.select('*').where(['user_id = :user_id AND start_datetime >= :start_datetime AND end_datetime <= :end_datetime', { user_id: current_user.id, start_datetime: params[:start], end_datetime: params[:end] }]).find_each
+      else
+        @schedules = Schedule.select('*').where(['user_id = :user_id AND start_datetime >= :start_datetime', { user_id: current_user.id, start_datetime: params[:start] }]).find_each
+      end
+    else
+      @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
+    end
+    @schedule = Schedule.new
   end
 
   # GET /schedules/1
@@ -21,16 +25,11 @@ class SchedulesController < ApplicationController
 
   # GET /schedules/new
   def new
-    if @availiable_devices.empty?
-      redirect_to new_device_path
-    end
     @schedule = Schedule.new
-    set_selected_device_attributes
   end
 
   # GET /schedules/1/edit
   def edit
-    set_selected_device_attributes
   end
 
   # POST /schedules
@@ -39,20 +38,48 @@ class SchedulesController < ApplicationController
     @schedule         = Schedule.new(safe_schedule_params)
     @schedule.user_id = current_user.id
 
-    if !params.include?(:actions)
-      @schedule.errors[:base] << 'At least one action must exists'
+    puts @schedule.start_datetime
+    puts @schedule.end_datetime
+    if (@schedule.end_datetime <= @schedule.start_datetime)
+      @schedule.errors[:end_datetime] << 'Must be bigger than start datetime'
       respond_to do |format|
-        set_available_devices
-        set_repeat_every_list
-        set_selected_device_attributes
+        set_repeat_every_list()
         format.html {render :new}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
       return
     end
 
-    params[:actions].each do |key, action|
-      @schedule.actions.build(safe_schedule_action_params(action))
+    if !params.include?(:schedule_events)
+      @schedule.errors[:base] << 'At least one event must exists'
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :new}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end
+      return
+    end
+
+    errors_exists = false
+    params[:schedule_events].each do |key, schedule_event|
+      current_schedule_event = @schedule.schedule_events.build(safe_schedule_event_params(schedule_event))
+      if !schedule_event.include?(:actions)
+        errors_exists = true
+        @schedule.errors.add(:schedule_events, 'At least one action must exists')
+        current_schedule_event.errors.add(:base, 'At least one action must exists')
+      else
+        schedule_event[:actions].each do |key, action|
+          current_schedule_event.actions.build(safe_schedule_action_params(action))
+        end
+      end
+    end
+
+    if errors_exists
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :new}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end and return
     end
 
     respond_to do |format|
@@ -60,9 +87,7 @@ class SchedulesController < ApplicationController
         format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
         format.json {render :show, status: :created, location: @schedule}
       else
-        set_available_devices
-        set_repeat_every_list
-        set_selected_device_attributes
+        set_repeat_every_list()
         format.html {render :new}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -74,59 +99,94 @@ class SchedulesController < ApplicationController
   # PATCH/PUT /schedules/1.json
   def update
 
-    if !params.include?(:actions)
-      @schedule.errors[:base] << 'At least one action must exist'
+    if !params.include?(:schedule_events)
+      @schedule.errors[:base] << 'At least one event must exists'
       respond_to do |format|
-        set_available_devices
-        set_repeat_every_list
-        set_selected_device_attributes
+        set_repeat_every_list()
         format.html {render :edit}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
-      end
-      return
+      end and return
     end
 
-    stored_schedule_actions_ids = @schedule.actions.ids
+    stored_schedule_events_ids = @schedule.schedule_events.ids
 
-    posted_schedule_actions_ids = []
-    schedule_actions_post       = params[:actions]
-    schedule_actions_post.each do |key, action|
-      if action[:id].empty?
-        @schedule.actions.build(safe_schedule_action_params(action))
+    posted_schedule_events_ids = []
+    schedule_events_post       = params[:schedule_events]
+    errors_exists              = false
+    schedule_events_post.each do |key, schedule_event|
+      if schedule_event[:id].empty?
+        current_schedule_event = @schedule.schedule_events.build(safe_schedule_event_params(schedule_event))
+        if !schedule_event.include?(:actions)
+          errors_exists = true
+          @schedule.errors.add(:schedule_events, 'At least one action must exists')
+          current_schedule_event.errors.add(:base, 'At least one action must exists')
+        else
+          schedule_event[:actions].each do |key, action|
+            current_schedule_event.actions.build(safe_schedule_action_params(action))
+          end
+        end
       else
-        posted_schedule_actions_ids << action[:id].to_i
+        posted_schedule_events_ids << schedule_event[:id].to_i
       end
     end
 
-    # schedule action ids to delete
-    schedule_action_ids_to_delete = stored_schedule_actions_ids - posted_schedule_actions_ids
+    if errors_exists
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :edit}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end and return
+    end
 
-    # puts "STORED: #{stored_schedule_actions_ids}"
-    # puts "POSTED: #{posted_schedule_actions_ids}"
-    # puts "TO DELETE: #{schedule_action_ids_to_delete}"
+    schedule_events_ids_to_delete = stored_schedule_events_ids - posted_schedule_events_ids
 
-    # UPdate the existing objects
-    if !posted_schedule_actions_ids.empty? # This mean, that someone made an update request, where there are some actions on it
-      if @schedule.actions.any? # It's a double-check that the schedule has actions on DB
-        @schedule.actions.each do |stored_action|
-          schedule_actions_post.each do |key, posted_action|
-            if stored_action[:id].to_i == posted_action[:id].to_i
-              stored_action.attributes = safe_schedule_action_params(posted_action)
+    # Update the existing objects
+    errors_exists = false
+    if !posted_schedule_events_ids.empty? # This mean, that someone made an update request, where there are some stored schedule events on it
+      @schedule.schedule_events.each do |stored_schedule_event|
+        schedule_events_post.each do |key, posted_shcedule_event|
+          if !stored_schedule_event[:id].nil? && (stored_schedule_event[:id].to_i == posted_shcedule_event[:id].to_i)
+            # stored_schedule_event.attributes = safe_schedule_event_params(posted_shcedule_event)
+            if !posted_shcedule_event.include?(:actions)
+              errors_exists = true
+              @schedule.errors.add(:schedule_events, 'At least one action must exists')
+              stored_schedule_event.errors.add(:base, 'At least one action must exists')
+            else
+              stored_schedule_event.actions.each do |stored_action|
+                posted_shcedule_event[:actions].each do |key, posted_action|
+                  if stored_action[:id].to_i == posted_action[:id].to_i
+                    stored_action.attributes = safe_schedule_action_params(posted_action)
+                  end
+                end
+              end
             end
           end
         end
       end
     end
 
+    if errors_exists
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :edit}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end and return
+    end
+
     begin
       @schedule.transaction do
-        # # First delete the deleted ones
-        # if schedule_action_ids_to_delete
-        #   Action.destroy(schedule_action_ids_to_delete)
-        # end
-        schedule_action_ids_to_delete.each do |action_id|
-          @schedule.actions.find(action_id).destroy!
+        # First delete the deleted ones
+        if schedule_events_ids_to_delete
+          schedule_events_ids_to_delete.each do |se_id|
+            schedule_event = ScheduleEvent.find(se_id)
+            action_ids     = schedule_event.actions.ids
+            schedule_event.destroy
+            Action.destroy(action_ids)
+          end
         end
+        # schedule_action_ids_to_delete.each do |action_id|
+        #   @schedule.actions.find(action_id).destroy!
+        # end
         @schedule.update!(safe_schedule_params)
         respond_to do |format|
           format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
@@ -135,9 +195,7 @@ class SchedulesController < ApplicationController
       end
     rescue
       respond_to do |format|
-        set_available_devices
-        set_repeat_every_list
-        set_selected_device_attributes
+        set_repeat_every_list()
         format.html {render :edit}
         format.json {render json: @schedule.errors, status: :unprocessable_entity}
       end
@@ -148,35 +206,31 @@ class SchedulesController < ApplicationController
   # DELETE /schedules/1
   # DELETE /schedules/1.json
   def destroy
-    @schedule.destroy
-    respond_to do |format|
-      format.html {redirect_to schedules_url, notice: 'Schedule was successfully destroyed.'}
-      format.json {head :no_content}
+    begin
+      @schedule.transaction do
+        @schedule.schedule_events.each do |se|
+          action_ids = se.actions.ids
+          se.destroy
+          Action.destroy(action_ids)
+        end
+        @schedule.destroy
+        respond_to do |format|
+          format.html {redirect_to schedules_url, notice: 'Schedule was successfully destroyed.'}
+          format.json {head :no_content}
+        end
+      end
+    rescue
+      respond_to do |format|
+        set_repeat_every_list()
+        format.html {render :index}
+        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+      end
     end
   end
 
   # Use callbacks to share common setup or constraints between actions.
   private def set_schedule
     @schedule = Schedule.find(params[:id])
-  end
-
-  private def set_available_devices
-    devices             = current_user.devices
-    @availiable_devices = []
-    if !devices.empty?
-      devices.each do |device|
-        @availiable_devices << [device.name, device.uid]
-      end
-    end
-  end
-
-  private def set_selected_device_attributes
-    @selected_device_attributes = []
-    if @schedule.device_uid
-      @schedule.device.device_attributes.each do |device_attribute|
-        @selected_device_attributes << [device_attribute.name, device_attribute.id]
-      end
-    end
   end
 
   private def set_repeat_every_list
@@ -188,10 +242,14 @@ class SchedulesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   private def safe_schedule_params
-    params.require(:schedule).permit(:device_uid, :title, :datetime, :is_recurrent, :repeat_every, :recurrence_period)
+    params.require(:schedule).permit(:title, :description, :start_datetime, :end_datetime, :is_recurrent, :repeat_every, :recurrence_period)
+  end
+
+  private def safe_schedule_event_params(unsafe_schedule_event)
+    unsafe_schedule_event.permit(:device_uid)
   end
 
   private def safe_schedule_action_params(unsafe_action)
-    unsafe_action.permit(:device_attribute_id, :device_attribute_value)
+    unsafe_action.permit(:device_attribute_id, :device_attribute_start_value, :device_attribute_end_value)
   end
 end

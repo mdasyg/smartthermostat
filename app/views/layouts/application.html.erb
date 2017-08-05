@@ -8,6 +8,7 @@
   <%= render 'layouts/shim' %>
 </head>
 <body>
+
 <%= render 'layouts/header' %>
 
 <div class="container">
@@ -20,6 +21,7 @@
   <%= render 'layouts/footer' %>
 
   <div>
+    <%= debug(I18n.t('hello')) if Rails.env.development? %>
     <%= debug(Time.new.zone) if Rails.env.development? %>
     <%= debug(RUBY_VERSION) if Rails.env.development? %>
     <%= debug(user_signed_in?.inspect) if Rails.env.development? %>

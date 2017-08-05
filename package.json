@@ -13,6 +13,7 @@
     "jquery-ujs": "^1.2.2",
     "moment": "^2.18.1",
     "moment-timezone-all": "^0.5.5",
+    "select2": "^4.0.3",
     "x-editable": "^1.5.1"
   }
 }

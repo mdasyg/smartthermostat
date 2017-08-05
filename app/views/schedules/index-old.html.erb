@@ -1,0 +1,39 @@
+<div class="well">
+  <h1>Schedules</h1>
+</div>
+
+<div class="row">
+  <div class="col-xs-4"><b>Title</b></div>
+  <div class="col-xs-3"><b>Start Datetime</b></div>
+  <div class="col-xs-3"><b>End Datetime</b></div>
+  <div class="col-xs-2"><b>Actions</b></div>
+</div>
+
+<hr/>
+
+<% @schedules.each do |schedule| %>
+
+  <div class="row">
+    <div class="col-xs-4"><%= schedule.title %></div>
+    <div class="col-xs-3"><%= schedule.start_datetime %></div>
+    <div class="col-xs-3"><%= schedule.end_datetime %></div>
+
+    <div class="col-xs-2">
+      <%= link_to(schedule) do %>
+        <span class="glyphicon glyphicon-zoom-in"></span>
+      <% end %> |
+      <%= link_to edit_schedule_path(schedule) do %>
+        <span class="glyphicon glyphicon-pencil"></span>
+      <% end %>  |
+      <%= link_to schedule, method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <span class="glyphicon glyphicon-remove"></span>
+      <% end %>
+    </div>
+
+  </div>
+
+<% end %>
+
+<br>
+
+<%= link_to 'New Schedule', new_schedule_path %>

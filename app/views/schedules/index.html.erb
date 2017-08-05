@@ -1,43 +1,5 @@
 <% provide(:title, 'Schedules List') %>
 
-<div class="well">
-  <h1>Schedules</h1>
-</div>
-
-<%= render 'schedule_modal', schedule: @schedule %>
-
-<div class="row">
-  <div class="col-xs-5"><b>Device</b></div>
-  <div class="col-xs-5"><b>Datetime</b></div>
-  <div class="col-xs-2"><b>Actions</b></div>
-</div>
-
-<hr/>
-
-<% @schedules.each do |schedule| %>
-
-  <div class="row">
-    <div class="col-xs-5"><%= schedule.device.name %></div>
-    <div class="col-xs-5"><%= schedule.datetime %></div>
-    <div class="col-xs-2">
-      <%= link_to(schedule) do %>
-        <span class="glyphicon glyphicon-zoom-in"></span>
-      <% end %> |
-      <%= link_to edit_schedule_path(schedule) do %>
-        <span class="glyphicon glyphicon-pencil"></span>
-      <% end %>  |
-      <%= link_to schedule, method: :delete, data: { confirm: 'Are you sure?' } do %>
-        <span class="glyphicon glyphicon-remove"></span>
-      <% end %>
-    </div>
-  </div>
-
-  <hr/>
-
-<% end %>
-
-<br>
-
-<%= link_to 'New Schedule', new_schedule_path %>
+<%= render 'schedule_modal', schedule: @schedule, repeat_every_list: @repeat_every_list %>
 
 <div class="calendar"></div>
