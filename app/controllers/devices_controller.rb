@@ -178,12 +178,12 @@ class DevicesController < ApplicationController
 
     results = Device.select('uid, name').where(['name LIKE :name', { name: '%' + search_term + '%' }])
 
-    formated_results = []
+    formatted_results = []
     results.each do |device|
-      formated_results << { id: device.uid.to_s, text: device.name }
+      formatted_results << { id: device.uid.to_s, text: device.name }
     end
 
-    render json: formated_results
+    render json: formatted_results
 
   end
 
