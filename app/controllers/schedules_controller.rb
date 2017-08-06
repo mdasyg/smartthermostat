@@ -56,7 +56,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :new}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
       return
     end
@@ -66,7 +66,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :new}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
       return
     end
@@ -89,7 +89,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :new}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
 
@@ -100,7 +100,7 @@ class SchedulesController < ApplicationController
       else
         set_repeat_every_list()
         format.html {render :new}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
 
@@ -129,7 +129,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :edit}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
 
@@ -159,7 +159,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :edit}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
 
@@ -194,7 +194,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :edit}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
 
@@ -222,7 +222,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :edit}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
 
@@ -248,7 +248,7 @@ class SchedulesController < ApplicationController
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :index}
-        format.json {render json: { messages: @schedule.errors, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
   end
@@ -326,7 +326,7 @@ class SchedulesController < ApplicationController
       puts 'edw1'
       @schedule.errors[:base] << 'Not all priorities has been set'
       respond_to do |format|
-        format.json {render json: { messages: @schedule.errors, overlaps: overlapping_schedules, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, overlaps: overlapping_schedules, result: :error }}
       end and return true
     end
 
@@ -334,7 +334,7 @@ class SchedulesController < ApplicationController
       puts 'edw2'
       @schedule.errors[:base] << 'Duplicate priorities'
       respond_to do |format|
-        format.json {render json: { messages: @schedule.errors, overlaps: overlapping_schedules, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, overlaps: overlapping_schedules, result: :error }}
       end and return true
     end
 

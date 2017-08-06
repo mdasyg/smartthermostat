@@ -175,7 +175,30 @@ function scheduleRecurrenceFieldsVisibilityToggle(event) {
     }
 }
 
+function displayErrors(errorMessages) {
+
+    $scheduleForm.find('#error-explanation').remove();
+
+    let $errorsDomBlock = $('<div/>').attr('id', 'error-explanation');
+    $errorsDomBlock.append($('<h2/>').text('Erorrs'));
+    $errorsDomBlock.append('<ul/>');
+
+    $(errorMessages).each(function (index, errorMsg) {
+        $errorsDomBlock.find('ul').append($('<li/>').text(errorMsg));
+    });
+
+    $scheduleForm.prepend($errorsDomBlock);
+
+
+    //
+    //     $('<div/>').attr("id", "errors-explanation").append(
+    //         $("<h2/>").text("Erorrs!!!!")
+    //     ).append($('<ul/>').append($('<li/>').text('asdf')))
+    // );
+}
+
 function displayOverlappingSchedules(scheduleData) {
+    $overlappingSchedulesList.empty();
     scheduleData.forEach(function (schedule) {
         let $newOverlap = $overlapScheduleTemplate.clone();
         $newOverlap.find('.schedule-id').val(schedule.id);
@@ -206,8 +229,9 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
     });
     request.done(function (responseData, textStatus, jqXHR) {
         if (responseData.result === 'error') {
-            $overlappingSchedulesList.empty();
-            displayOverlappingSchedules(responseData.overlaps);
+            if (responseData.overlaps) {
+                displayOverlappingSchedules(responseData.overlaps);
+            }
             // display errors
         } else if (responseData.result === 'ok') {
             if (responseData.overlaps) {
@@ -278,9 +302,13 @@ function submitScheduleForm($thicClick) {
     request.done(function (responseData, textStatus, jqXHR) {
         // console.log(responseData);
         if (responseData.result === 'error') {
-            $overlappingSchedulesList.empty();
-            displayOverlappingSchedules(responseData.overlaps);
-            //must display errors also
+            if (responseData.overlaps) {
+                displayOverlappingSchedules(responseData.overlaps);
+            }
+            if (responseData.messages) {
+                //must display errors also
+                displayErrors(responseData.messages);
+            }
         } else if (responseData.result === 'ok') {
             if (scheduleId) {
                 $fullCalendar.fullCalendar('refetchEvents');
