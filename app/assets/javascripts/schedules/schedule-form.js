@@ -229,8 +229,6 @@ function updateOverlapSchedulesPriorities() {
     $overlappingSchedulesList.find('.overlap-schedule').each(function (index, overlapSchedule) {
         let scheduleId = $(overlapSchedule).find('.schedule-id').val();
         let schedulePriority = $(overlapSchedule).find('.schedule-priority').val();
-        console.log(scheduleId);
-        console.log(schedulePriority);
         overlapSchedulesWithPriorities['overlap_schedules'].push({
             id: scheduleId,
             priority: schedulePriority
