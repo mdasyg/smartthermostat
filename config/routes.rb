@@ -1,15 +1,16 @@
 Rails.application.routes.draw do
   root to: 'static_pages#home'
 
-  get '/devices/search', to: 'devices#search'
-
   resources :schedules
   resources :devices, param: :uid
 
+  get '/devices/search', to: 'devices#search'
 
   get '/devices/:uid/get_device_attributes_list', to: 'devices#get_device_attributes_list'
   post '/devices/:uid/update_device_attribute_value', to: 'devices#update_device_attribute_value'
 
+  get 'schedules/:id/get_overlapping_schedules', to: 'schedules#get_overlapping_schedules'
+  post 'schedules/update_overlapping_schedules_priorities', to: 'schedules#update_overlapping_schedules_priorities'
 
   get '/admin', to: 'admin#index'
 

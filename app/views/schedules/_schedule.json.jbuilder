@@ -3,6 +3,7 @@ json.title schedule.title
 json.description schedule.description
 json.start schedule.start_datetime
 json.end schedule.end_datetime
+json.priority schedule.priority
 
 json.schedule_events schedule.schedule_events.each do |schedule_event|
   json.id schedule_event.id.to_s

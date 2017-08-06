@@ -22,6 +22,21 @@
 //= require fullcalendar/dist/fullcalendar
 //= require_tree .
 
+function replaceUrlParams(url, data = {}) {
+    if (!url) {
+        return false;
+    }
+
+    if (data.deviceUid) {
+        url = url.replace('DEVICE_ID', data.deviceUid);
+    }
+    if (data.scheduleId) {
+        url = url.replace('SCHEDULE_ID', data.scheduleId);
+    }
+
+    return url;
+}
+
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
 
     $(document.body).on('click', '.action-button', function (event) {
