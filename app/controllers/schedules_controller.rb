@@ -241,14 +241,14 @@ class SchedulesController < ApplicationController
         @schedule.destroy
         respond_to do |format|
           format.html {redirect_to schedules_url, notice: 'Schedule was successfully destroyed.'}
-          format.json {head :no_content}
+          format.json {render json: { result: :ok }}
         end
       end
     rescue
       respond_to do |format|
         set_repeat_every_list()
         format.html {render :index}
-        format.json {render json: @schedule.errors, status: :unprocessable_entity}
+        format.json {render json: { messages: @schedule.errors, result: :error }}
       end
     end
   end
@@ -267,7 +267,7 @@ class SchedulesController < ApplicationController
   def update_overlapping_schedules_priorities
     if !params.include?(:overlap_schedules)
       respond_to do |format|
-        format.json {render json: 'no overlaps', status: :ok}
+        format.json {render json: { messages: 'No overlaps', result: :error }}
       end and return
     end
 
@@ -275,7 +275,15 @@ class SchedulesController < ApplicationController
       schedule = current_user.schedules.where(['id = :schedule_id', { schedule_id: overlap_schedule[:id] }]).take
       if !schedule.nil?
         schedule.priority = overlap_schedule[:priority]
-        schedule.save
+        if schedule.save
+          respond_to do |format|
+            format.json {render json: { result: :ok }}
+          end
+        else
+          respond_to do |format|
+            format.json {render json: { messages: schedule.errors, result: :error }}
+          end
+        end
       end
     end
   end
