@@ -205,11 +205,14 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
         dataType: 'json',
     });
     request.done(function (responseData, textStatus, jqXHR) {
-        let status = responseData.status;
-        let data = responseData.data;
-        if (status === 'overlaps') {
+        if (responseData.result === 'error') {
             $overlappingSchedulesList.empty();
-            displayOverlappingSchedules(data);
+            displayOverlappingSchedules(responseData.overlaps);
+            // display errors
+        } else if (responseData.result === 'ok') {
+            if (responseData.overlaps) {
+                displayOverlappingSchedules(responseData.overlaps);
+            }
         }
     });
     request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -275,12 +278,12 @@ function submitScheduleForm($thicClick) {
     });
 
     request.done(function (responseData, textStatus, jqXHR) {
-        let status = responseData.status;
-        let data = responseData.data;
-        if (status === 'overlaps') {
+        // console.log(responseData);
+        if (responseData.result === 'error') {
             $overlappingSchedulesList.empty();
-            displayOverlappingSchedules(data);
-        } else if (status === 'ok') {
+            displayOverlappingSchedules(responseData.overlaps);
+            //must display errors also
+        } else if (responseData.result === 'ok') {
             if (scheduleId) {
                 $fullCalendar.fullCalendar('refetchEvents');
             } else {

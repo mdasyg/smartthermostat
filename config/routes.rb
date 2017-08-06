@@ -1,10 +1,12 @@
 Rails.application.routes.draw do
   root to: 'static_pages#home'
 
+  get '/devices/search', to: 'devices#search' # must be placed before resources
+
   resources :schedules
   resources :devices, param: :uid
 
-  get '/devices/search', to: 'devices#search'
+
 
   get '/devices/:uid/get_device_attributes_list', to: 'devices#get_device_attributes_list'
   post '/devices/:uid/update_device_attribute_value', to: 'devices#update_device_attribute_value'
