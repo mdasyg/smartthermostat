@@ -1,6 +1,6 @@
 class SchedulesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_schedule, only: [:show, :edit, :update, :destroy]
+  before_action :set_schedule, only: [:show, :edit, :update, :destroy, :get_overlapping_schedules]
   before_action :set_repeat_every_list, only: [:new, :edit, :index]
 
   # GET /schedules
@@ -38,11 +38,11 @@ class SchedulesController < ApplicationController
     @schedule         = Schedule.new(safe_schedule_params)
     @schedule.user_id = current_user.id
 
-    overlapping_schedules = overlap_check(@schedule.start_datetime, @schedule.end_datetime)
+    overlapping_schedules = schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime)
     if (overlapping_schedules.any?)
       respond_to do |format|
-        set_repeat_every_list()
-        format.html {render :new}
+        # set_repeat_every_list()
+        # format.html {render :new}
         format.json {render json: { data: overlapping_schedules, status: :overlaps }, status: :ok}
       end and return
     end
@@ -105,6 +105,14 @@ class SchedulesController < ApplicationController
   # PATCH/PUT /schedules/1
   # PATCH/PUT /schedules/1.json
   def update
+    overlapping_schedules = schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime)
+    if (overlapping_schedules.any?)
+      respond_to do |format|
+        # set_repeat_every_list()
+        # format.html {render :edit}
+        format.json {render json: { data: overlapping_schedules, status: :overlaps }, status: :ok}
+      end and return
+    end
 
     if !params.include?(:schedule_events)
       @schedule.errors[:base] << 'At least one event must exists'
@@ -235,20 +243,60 @@ class SchedulesController < ApplicationController
     end
   end
 
-  # Use callbacks to share common setup or constraints between actions.
-  private def set_schedule
-    @schedule = Schedule.find(params[:id])
+  def get_overlapping_schedules
+    overlapping_schedules = schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime)
+    if (overlapping_schedules.any?)
+      respond_to do |format|
+        format.json {render json: { data: overlapping_schedules, status: :overlaps }, status: :ok}
+      end and return
+    end
   end
 
-  private def overlap_check(start_datetime, end_datetime)
-    overlapping_schedules = Schedule.select('*').where(
-        ['user_id = :user_id AND end_datetime >= :start_datetime AND start_datetime <= :end_datetime',
-         {
-             user_id:        current_user.id,
-             start_datetime: start_datetime,
-             end_datetime:   end_datetime,
-         }]).find_each
-    return overlapping_schedules
+  def update_overlapping_schedules_priorities
+    if !params.include?(:overlap_schedules)
+      respond_to do |format|
+        format.json {render json: 'no overlaps', status: :ok}
+      end and return
+    end
+
+    params[:overlap_schedules].each do |index, overlap_schedule|
+      schedule = current_user.schedules.where(['id = :schedule_id', { schedule_id: overlap_schedule[:id] }]).take
+      if !schedule.nil?
+        schedule.priority = overlap_schedule[:priority].to_i
+        schedule.save
+      end
+    end
+  end
+
+  ##############################################################################
+  # Use callbacks to share common setup or constraints between actions.
+  ##############################################################################
+  private def set_schedule
+    @schedule = current_user.schedules.find(params[:id])
+  end
+
+  private def schedules_overlaps?(start_datetime, end_datetime)
+    query_string = ''
+    query_string += 'user_id = :user_id'
+    query_string += ' AND '
+    query_string += 'end_datetime >= :start_datetime'
+    query_string += ' AND '
+    query_string += 'start_datetime <= :end_datetime'
+
+    query_params = {
+        user_id:        current_user.id,
+        start_datetime: start_datetime,
+        end_datetime:   end_datetime,
+    }
+
+    if (@schedule.id)
+      query_string += ' AND '
+      query_string += 'id <> :schedule_id'
+
+      query_params[:schedule_id] = @schedule.id
+    end
+
+    overlapping_schedules = Schedule.select('*').where([query_string, query_params]).find_each
   end
 
   private def set_repeat_every_list

@@ -1,5 +1,8 @@
 <div id="get-device-attributes-list-url" class="hidden" data-url="<%= device_url('DEVICE_ID') + '/get_device_attributes_list' %>"></div>
+<div id="get-schedule-overlaps-url" class="hidden" data-url="<%= schedule_url('SCHEDULE_ID') + '/get_overlapping_schedules' %>"></div>
+<div id="update-schedule-overlaps-priorities-url" class="hidden" data-url="<%= schedules_update_overlapping_schedules_priorities_path %>"></div>
 <div id="devices-search-url" class="hidden" data-url="<%= devices_search_url %>"></div>
+
 <%
   form_options = {
       id:                'schedule-form',
@@ -101,9 +104,9 @@
 
     <hr>
 
-    <div id="ovelapping-schedules-container" class="hidden">
+    <div id="overlapping-schedules-container" class="hidden">
       <h3>Overlapping Schedules</h3>
-      <div class="ovelapping-schedules-header">
+      <div class="overlapping-schedules-header">
         <div class="row">
           <div class="col-xs-3">
             <div class="form-group">
@@ -127,10 +130,12 @@
           </div>
         </div>
       </div>
-      <div class="ovelapping-schedules-list">
+      <div class="overlapping-schedules-list">
       </div>
 
-      <button type="button" class="btn">Update Priorities</button>
+      <button type="button" class="action-button active update-overlapping-schedules-priorities btn">Update
+        Priorities
+      </button>
 
       <hr>
 
