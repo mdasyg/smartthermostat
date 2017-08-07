@@ -76,6 +76,7 @@ function resetScheduleForm() {
     $scheduleEventDeviceSelector.val(null).trigger('change');
     $overlappingSchedulesContainer.addClass('hidden');
     $overlappingSchedulesList.empty();
+    $scheduleForm.find('#errors-explanation').remove();
 }
 
 function addNewScheduleEventAction($scheduleEventArea, scheduleEventAction) {
@@ -175,10 +176,9 @@ function scheduleRecurrenceFieldsVisibilityToggle(event) {
 }
 
 function displayErrors(errorMessages) {
+    $scheduleForm.find('#errors-explanation').remove();
 
-    $scheduleForm.find('#error-explanation').remove();
-
-    let $errorsDomBlock = $('<div/>').attr('id', 'error-explanation');
+    let $errorsDomBlock = $('<div/>').attr('id', 'errors-explanation');
     $errorsDomBlock.append($('<h2/>').text('Erorrs'));
     $errorsDomBlock.append('<ul/>');
 
@@ -187,12 +187,6 @@ function displayErrors(errorMessages) {
     });
 
     $scheduleForm.prepend($errorsDomBlock);
-
-    //
-    //     $('<div/>').attr("id", "errors-explanation").append(
-    //         $("<h2/>").text("Erorrs!!!!")
-    //     ).append($('<ul/>').append($('<li/>').text('asdf')))
-    // );
 }
 
 function displayOverlappingSchedules(scheduleData) {
@@ -220,9 +214,6 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
     } else {
         return false;
     }
-
-    console.log(url)
-
     let request = $.ajax({
         url: url,
         type: 'get',
@@ -233,7 +224,9 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
             if (responseData.overlaps) {
                 displayOverlappingSchedules(responseData.overlaps);
             }
-            // display errors
+            if (responseData.messages) {
+                displayErrors(responseData.messages);
+            }
         } else if (responseData.result === 'ok') {
             if (responseData.overlaps) {
                 displayOverlappingSchedules(responseData.overlaps);
@@ -246,7 +239,6 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
         console.log(errorThrown);
         // alert(errorThrown + ': ' + textStatus);
     });
-
 }
 
 function updateOverlapSchedulesPriorities() {
@@ -272,7 +264,7 @@ function updateOverlapSchedulesPriorities() {
         data: overlapSchedulesWithPriorities
     });
     request.done(function (responseData, textStatus, jqXHR) {
-        console.log(responseData);
+        // console.log(responseData);
     });
     request.fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);
@@ -303,7 +295,6 @@ function submitScheduleForm($thicClick) {
         dataType: 'json',
         data: $scheduleForm.serialize()
     });
-
     request.done(function (responseData, textStatus, jqXHR) {
         if (responseData.result === 'error') {
             if (responseData.overlaps) {
@@ -322,7 +313,6 @@ function submitScheduleForm($thicClick) {
         }
 
     });
-
     request.fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);
         console.log(textStatus);
