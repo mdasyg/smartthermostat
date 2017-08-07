@@ -30,7 +30,6 @@ function initializeFullCalendar() {
             $fullCalendar.fullCalendar('unselect');
         },
         eventClick: function (calEvent, jsEvent, view) {
-            // console.log(calEvent);
             loadScheduleValues(calEvent);
             fetchAndDisplayOverlappingEvents(calEvent.id);
             $scheduleModal.modal('show');
@@ -94,18 +93,13 @@ function deleteSchedule($thisClick) {
     }
     let request = $.ajax({
         url: url,
-        // beforeSend: function (xhr) {
-        //     xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
-        // },
         type: 'delete',
         dataType: 'json'
     });
-
     request.done(function (responseData, textStatus, jqXHR) {
         $fullCalendar.fullCalendar('removeEvents', scheduleId);
         $scheduleModal.modal('hide');
     });
-
     request.fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);
         console.log(textStatus);

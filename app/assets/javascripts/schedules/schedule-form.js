@@ -49,7 +49,6 @@ function initScheduleDatetimePickers() {
 }
 
 function loadScheduleValues(data) {
-    // console.log(data);
     $scheduleForm.find('#schedule_id').val(data.id);
     $scheduleForm.find('#schedule_device_uid').val(data.device_uid);
     $scheduleForm.find('#schedule_title').val(data.title);
@@ -189,7 +188,6 @@ function displayErrors(errorMessages) {
 
     $scheduleForm.prepend($errorsDomBlock);
 
-
     //
     //     $('<div/>').attr("id", "errors-explanation").append(
     //         $("<h2/>").text("Erorrs!!!!")
@@ -222,6 +220,9 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
     } else {
         return false;
     }
+
+    console.log(url)
+
     let request = $.ajax({
         url: url,
         type: 'get',
@@ -261,7 +262,6 @@ function updateOverlapSchedulesPriorities() {
 
     // get url
     let url = $('#update-schedule-overlaps-priorities-url').data('url');
-
     let request = $.ajax({
         url: url,
         beforeSend: function (xhr) {
@@ -271,9 +271,14 @@ function updateOverlapSchedulesPriorities() {
         dataType: 'json',
         data: overlapSchedulesWithPriorities
     });
-
     request.done(function (responseData, textStatus, jqXHR) {
         console.log(responseData);
+    });
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+        // alert(errorThrown + ': ' + textStatus);
     });
 }
 
@@ -300,20 +305,18 @@ function submitScheduleForm($thicClick) {
     });
 
     request.done(function (responseData, textStatus, jqXHR) {
-        // console.log(responseData);
         if (responseData.result === 'error') {
             if (responseData.overlaps) {
                 displayOverlappingSchedules(responseData.overlaps);
             }
             if (responseData.messages) {
-                //must display errors also
                 displayErrors(responseData.messages);
             }
         } else if (responseData.result === 'ok') {
             if (scheduleId) {
                 $fullCalendar.fullCalendar('refetchEvents');
             } else {
-                $fullCalendar.fullCalendar('renderEvent', data);
+                $fullCalendar.fullCalendar('renderEvent', responseData.data);
             }
             $scheduleModal.modal('hide');
         }

@@ -8,14 +8,15 @@ class SchedulesController < ApplicationController
   def index
     if params.include?(:start)
       if params.include?(:end)
-        @schedules = Schedule.select('*').where(['user_id = :user_id AND start_datetime >= :start_datetime AND end_datetime <= :end_datetime', { user_id: current_user.id, start_datetime: params[:start], end_datetime: params[:end] }]).find_each
+        @schedules = current_user.schedules.select('*').where(['start_datetime >= :start_datetime AND end_datetime <= :end_datetime', { start_datetime: params[:start], end_datetime: params[:end] }]).find_each
       else
-        @schedules = Schedule.select('*').where(['user_id = :user_id AND start_datetime >= :start_datetime', { user_id: current_user.id, start_datetime: params[:start] }]).find_each
+        @schedules = current_user.schedules.select('*').where(['start_datetime >= :start_datetime', { start_datetime: params[:start] }]).find_each
       end
     else
-      @schedules = Schedule.select('*').where(user_id: current_user.id).find_each
+      @schedules = current_user.schedules.find_each
     end
-    @schedule = Schedule.new
+
+    @schedule = Schedule.new # it's for the modal
   end
 
   # GET /schedules/1
@@ -38,27 +39,17 @@ class SchedulesController < ApplicationController
     @schedule         = Schedule.new(safe_schedule_params)
     @schedule.user_id = current_user.id
 
-    if schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime)
+    if schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime, false)
       return false
     end
 
-    # overlapping_schedules = schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime)
-    # if (overlapping_schedules.any?)
-    #   respond_to do |format|
-    #     # set_repeat_every_list()
-    #     # format.html {render :new}
-    #     format.json {render json: { data: overlapping_schedules, status: :overlaps }, status: :ok}
-    #   end and return
-    # end
-
+    # maybe add this to model validations
     if (@schedule.end_datetime <= @schedule.start_datetime)
       @schedule.errors[:end_datetime] << 'Must be bigger than start datetime'
       respond_to do |format|
-        set_repeat_every_list()
-        format.html {render :new}
+        format.html {set_repeat_every_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
-      end
-      return
+      end and return
     end
 
     if !params.include?(:schedule_events)
@@ -67,8 +58,7 @@ class SchedulesController < ApplicationController
         set_repeat_every_list()
         format.html {render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
-      end
-      return
+      end and return
     end
 
     errors_exists = false
@@ -87,8 +77,7 @@ class SchedulesController < ApplicationController
 
     if errors_exists
       respond_to do |format|
-        set_repeat_every_list()
-        format.html {render :new}
+        format.html {set_repeat_every_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -96,10 +85,12 @@ class SchedulesController < ApplicationController
     respond_to do |format|
       if @schedule.save # this will also save the schedule and event actions
         format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
-        format.json {render :show, status: :created, location: @schedule}
+        format.json {
+          full_schedule = render_to_string partial: 'schedules/schedule', locals: { schedule: @schedule }
+          render json: { data: JSON::parse(full_schedule), result: :ok }
+        }
       else
-        set_repeat_every_list()
-        format.html {render :new}
+        format.html {set_repeat_every_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
@@ -111,24 +102,14 @@ class SchedulesController < ApplicationController
   def update
     @schedule.attributes = safe_schedule_params
 
-    if schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime)
+    if schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime, false)
       return false
     end
-
-    # overlapping_schedules = schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime)
-    # if (overlapping_schedules.any?)
-    #   respond_to do |format|
-    #     # set_repeat_every_list()
-    #     # format.html {render :edit}
-    #     format.json {render json: { data: overlapping_schedules, status: :overlaps }, status: :ok}
-    #   end and return
-    # end
 
     if !params.include?(:schedule_events)
       @schedule.errors[:base] << 'At least one event must exists'
       respond_to do |format|
-        set_repeat_every_list()
-        format.html {render :edit}
+        format.html {set_repeat_every_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -157,8 +138,7 @@ class SchedulesController < ApplicationController
 
     if errors_exists
       respond_to do |format|
-        set_repeat_every_list()
-        format.html {render :edit}
+        format.html {set_repeat_every_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -192,8 +172,7 @@ class SchedulesController < ApplicationController
 
     if errors_exists
       respond_to do |format|
-        set_repeat_every_list()
-        format.html {render :edit}
+        format.html {set_repeat_every_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -215,13 +194,15 @@ class SchedulesController < ApplicationController
         @schedule.save
         respond_to do |format|
           format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
-          format.json {render json: { result: :ok }}
+          format.json {
+            full_schedule = render_to_string partial: 'schedules/schedule', locals: { schedule: @schedule }
+            render json: { data: JSON::parse(full_schedule), result: :ok }
+          }
         end
       end
     rescue
       respond_to do |format|
-        set_repeat_every_list()
-        format.html {render :edit}
+        format.html {set_repeat_every_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
@@ -255,13 +236,6 @@ class SchedulesController < ApplicationController
 
   def get_overlapping_schedules
     schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime, true)
-
-    # overlapping_schedules = schedules_overlaps?(@schedule.start_datetime, @schedule.end_datetime)
-    # if (overlapping_schedules.any?)
-    #   respond_to do |format|
-    #     format.json {render json: { data: overlapping_schedules, status: :overlaps }, status: :ok}
-    #   end and return
-    # end
   end
 
   def update_overlapping_schedules_priorities
@@ -295,7 +269,7 @@ class SchedulesController < ApplicationController
     @schedule = current_user.schedules.find(params[:id])
   end
 
-  private def schedules_overlaps?(start_datetime, end_datetime, send_results_back_if_ok = false)
+  private def schedules_overlaps?(start_datetime, end_datetime, send_results_back_if_ok)
     query_string = ''
     query_string += 'end_datetime >= :start_datetime'
     query_string += ' AND '
@@ -314,16 +288,14 @@ class SchedulesController < ApplicationController
     end
 
     overlapping_schedules = current_user.schedules.select('*').where([query_string, query_params]).find_each
-
-    puts 'kala eimai?'
+    if !overlapping_schedules.many?
+      return false
+    end
 
     priorities = overlapping_schedules.pluck(:priority)
     priorities << @schedule.priority
 
-    puts priorities
-
     if !priorities.index(nil).nil? # This means that nil does exists on array
-      puts 'edw1'
       @schedule.errors[:base] << 'Not all priorities has been set'
       respond_to do |format|
         format.json {render json: { messages: @schedule.errors.full_messages, overlaps: overlapping_schedules, result: :error }}
@@ -331,7 +303,6 @@ class SchedulesController < ApplicationController
     end
 
     if priorities.uniq != priorities
-      puts 'edw2'
       @schedule.errors[:base] << 'Duplicate priorities'
       respond_to do |format|
         format.json {render json: { messages: @schedule.errors.full_messages, overlaps: overlapping_schedules, result: :error }}
@@ -341,7 +312,7 @@ class SchedulesController < ApplicationController
     if send_results_back_if_ok
       respond_to do |format|
         format.json {render json: { overlaps: overlapping_schedules, result: :ok }}
-      end and return false
+      end and return
     end
 
     return false
