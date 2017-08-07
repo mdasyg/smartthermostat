@@ -3,7 +3,7 @@
   <%= form_for(device, html: { id: 'device-form' }) do |device_form| %>
 
     <% if device.errors.any? %>
-      <div id="error-explanation">
+      <div id="errors-explanation">
         <h2><%= pluralize(device.errors.count, 'error') %> prohibited this
           device from being saved:</h2>
         <ul>

@@ -9,7 +9,7 @@
   <%= fields_for current_form_prefix, schedule_event, index: schedule_event_index do |schedule_event_form| %>
 
     <% if schedule_event.errors.any? %>
-      <div id="error_explanation">
+      <div id="errors-explanation">
         <h2><%= pluralize(schedule_event.errors.count, 'error') %> prohibited
           this schedule from being saved:</h2>
         <ul>

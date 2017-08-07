@@ -4,7 +4,7 @@
 <div class="device-attribute form-row" data-index="<%= device_attribute_index %>">
 
   <% if device_attribute.errors.any? %>
-    <div id="error-explanation">
+    <div id="errors-explanation">
       <h2><%= pluralize(device_attribute.errors.count, 'error') %> prohibited
         this device attribute from being valid:</h2>
       <ul>

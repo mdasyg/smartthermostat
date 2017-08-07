@@ -6,7 +6,7 @@
   <%= fields_for current_form_prefix, action, index: action_index do |action_form| %>
 
     <% if action.errors.any? %>
-      <div id="error_explanation">
+      <div id="errors-explanation">
         <h2><%= pluralize(action.errors.count, 'error') %> prohibited this
           schedule from being saved:</h2>
         <ul>
