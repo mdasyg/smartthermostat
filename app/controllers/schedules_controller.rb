@@ -6,15 +6,20 @@ class SchedulesController < ApplicationController
   # GET /schedules
   # GET /schedules.json
   def index
-    if params.include?(:start)
-      if params.include?(:end)
-        @schedules = current_user.schedules.select('*').where(['start_datetime >= :start_datetime AND end_datetime <= :end_datetime', { start_datetime: params[:start], end_datetime: params[:end] }]).find_each
-      else
-        @schedules = current_user.schedules.select('*').where(['start_datetime >= :start_datetime', { start_datetime: params[:start] }]).find_each
-      end
-    else
-      @schedules = current_user.schedules.find_each
-    end
+
+    # TODO: FIX IT
+
+    # if params.include?(:start)
+    #   if params.include?(:end)
+    #     @schedules = current_user.schedules.select('*').where(['start_datetime >= :start_datetime AND end_datetime <= :end_datetime', { start_datetime: params[:start], end_datetime: params[:end] }]).find_each
+    #   else
+    #     @schedules = current_user.schedules.select('*').where(['start_datetime >= :start_datetime', { start_datetime: params[:start] }]).find_each
+    #   end
+    # else
+    #   @schedules = current_user.schedules.find_each
+    # end
+
+    @schedules = current_user.schedules.find_each
 
     @schedule = Schedule.new # it's for the modal
   end
