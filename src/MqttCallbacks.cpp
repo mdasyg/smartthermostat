@@ -3,9 +3,9 @@
 
 void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
   digitalClockDisplay(true);
-  Serial.print(F("Message arrived on MQTT topic ["));
+  Serial.print(F("MQTT msg on topic ["));
   Serial.print(topic);
-  Serial.print(F("] with payload size ["));
+  Serial.print(F("], size ["));
   Serial.print(length);
   Serial.print("] msg: ");
   Serial.write(payload, length);
@@ -20,7 +20,7 @@ void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
 
 void mqttConnectToBrokerCallback(PubSubClient &mqttClient) {
   digitalClockDisplay(true);
-  Serial.println(F("Attempting connection to MQTT server..."));
+  Serial.println(F("Connecting to MQTT server"));
   if (mqttClient.connect(DEVICE_FRIENDLY_NAME, MQTT_USERNAME, MQTT_PASSWORD)) {
     digitalClockDisplay(true);
     Serial.println(F("Connected to MQTT broker"));

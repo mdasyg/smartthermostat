@@ -1,8 +1,9 @@
 #include <Arduino.h>
-
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <TimeLib.h>
+
+#include "DataStructures.h"
 
 #ifndef SYSTEM_TIME_H
 #define SYSTEM_TIME_H
@@ -14,6 +15,6 @@ void sendNTPpacket(IPAddress &address);
 time_t getNtpTime();
 void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
-void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime);
+void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]);
 
 #endif

@@ -5,6 +5,7 @@
 int initDeviceAttributes(deviceAttribute states[]) {
   // attribute 1 init
   states[0].id = 1; // temperature
+  states[0].name = F("asdfasdf");
 
   // // attribute 2 init
   // states[1].id = 5; // ON-OFF

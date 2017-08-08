@@ -38,11 +38,14 @@ uint16_t minDelayBeforeNextDHT22Query_ms;
 uint32_t lastDHT22QueryTimestamp;
 DHT_Unified dht22(tempSensorPin1, DHTTYPE);
 
-// buffers
-char URIBuffer[40];
 
-void readFromFlash(const char *src, char *dest) {
-  if (strlen_P(src) > 40) {
+#define readFromFlash(src, dest) rff(src, dest, sizeof(URIBuffer)/sizeof(char))
+
+// buffers
+char URIBuffer[35];
+
+void rff(const char src[], char dest[], unsigned int destSize) {
+  if (strlen_P(src) > destSize) {
     Serial.println(F("URI bigger than the buf. Aborting execution of program"));
     while(true);
   }
@@ -72,9 +75,9 @@ void setup() {
   Serial.println(DEVICE_SERIAL_NUMBER);
   Serial.print(F("Device Firmware: "));
   Serial.println(DEVICE_FIRMWARE_VERSION);
-  Serial.print(F("Free RAM = "));
-  Serial.print(freeMemory());
-  Serial.println(F(" kb"));
+
+  // initial status update
+  statusUpdateToSerial(prevDeviceStatusDisplayTime, stateOfAttributes);
 
   // Init EthernetClient
   initEthernetShieldNetwork();
@@ -156,7 +159,7 @@ void loop() {
   }
 
   // device status update to Serial
-  statusUpdateToSerial(prevDeviceStatusDisplayTime);
+  statusUpdateToSerial(prevDeviceStatusDisplayTime, stateOfAttributes);
 
   // wdt_reset();
 

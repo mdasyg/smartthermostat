@@ -30,7 +30,7 @@ void initEthernetShieldNetwork() {
   } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
   digitalClockDisplay(true);
   if(isEthernetShieldConnected) {
-    Serial.print(F("My IP address: "));
+    Serial.print(F("IP: "));
     Serial.println(Ethernet.localIP());
   } else {
     Serial.print(F("Keep going w/o netwrok"));
@@ -110,7 +110,7 @@ void digitalClockDisplay(bool brackets) {
   }
 }
 
-void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime) {
+void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]) {
   // Device status in serial
   if (timeStatus() != timeNotSet) {
     if ((now() - prevDeviceStatusDisplayTime) >= 30) { // in seconds
@@ -121,14 +121,14 @@ void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime) {
       Serial.print(F("Free RAM = "));
       Serial.print(freeMemory());
       Serial.println(" kb");
-      // for(int i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-      //   Serial.print(stateOfAttributes[i].name);
-      //   Serial.print(": Current value = ");
-      //   Serial.print(stateOfAttributes[i].currentValue);
-      //   Serial.print(", Set value = ");
-      //   Serial.print(stateOfAttributes[i].setValue);
-      //   Serial.println();
-      // }
+      for(int i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+        Serial.print(stateOfAttributes[i].name);
+        Serial.print(F(": Current value = "));
+        Serial.print(stateOfAttributes[i].currentValue);
+        Serial.print(F(", Set value = "));
+        Serial.print(stateOfAttributes[i].setValue);
+        Serial.println();
+      }
       Serial.println();
     }
   }
