@@ -20,9 +20,8 @@
 #include "Requests.h"
 #include "System.h"
 
-#define readFromFlash(src, dest) rff(src, dest, sizeof(URIBuffer)/sizeof(char))
 // buffers
-char URIBuffer[35];
+String flashReadBuffer;
 
 bool isEthClientConnectedToServer = false;
 String postRequestData;
@@ -45,6 +44,8 @@ DHT_Unified dht22(tempSensorPin1, DHTTYPE);
 void setup() {
   Serial.begin(115200);
 
+  // flashReadBuffer.reserve(FLASH_READ_BUFFER_MAX_SIZE);
+
   lastAttrUpdateTimestamp = millis();
   lastDHT22QueryTimestamp = millis();
 
@@ -53,6 +54,7 @@ void setup() {
   sensor_t sensor;
   dht22.temperature().getSensor(&sensor);
   minDelayBeforeNextDHT22Query_ms = sensor.min_delay / 1000; // return value in microseconds
+  Serial.println(minDelayBeforeNextDHT22Query_ms);
 
   pinMode(boilerRelayPin, OUTPUT);
   digitalWrite(boilerRelayPin, LOW);
@@ -81,8 +83,8 @@ void setup() {
   digitalClockDisplay(true);
   Serial.println(F("Device Status Update"));
   prepareDeviceStatusRequestData(postRequestData);
-  readFromFlash(deviceStatusUri, URIBuffer);
-  sendPostRequest(ethClient, URIBuffer, postRequestData);
+  readFromFlash(deviceStatusUri, flashReadBuffer);
+  sendPostRequest(ethClient, flashReadBuffer, postRequestData);
 
   // wdt_enable(WDTO_8S);
 
@@ -136,8 +138,8 @@ void loop() {
     digitalClockDisplay(true);
     Serial.println(F("Device Attributes Status Update"));
     prepareDeviceAtributesStatusUpdateRequestData(postRequestData, stateOfAttributes);
-    readFromFlash(deviceAttributesUpdateUri, URIBuffer);
-    sendPostRequest(ethClient, URIBuffer, postRequestData);
+    readFromFlash(deviceAttributesUpdateUri, flashReadBuffer);
+    sendPostRequest(ethClient, flashReadBuffer, postRequestData);
     lastAttrUpdateTimestamp = millis();
   }
 

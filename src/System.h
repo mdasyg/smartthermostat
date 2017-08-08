@@ -8,14 +8,15 @@
 #ifndef SYSTEM_TIME_H
 #define SYSTEM_TIME_H
 
-const int NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
+const byte NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
+const byte FLASH_READ_BUFFER_MAX_SIZE = 50;
 
 void initEthernetShieldNetwork();
 void sendNTPpacket(IPAddress &address);
 time_t getNtpTime();
 void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
-void rff(const char src[], char dest[], unsigned int destSize);
+void readFromFlash(const char src[], String &flashReadBuffer);
 void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]);
 
 #endif

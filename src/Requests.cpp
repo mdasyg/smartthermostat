@@ -27,7 +27,7 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   return true;
 }
 
-bool sendPostRequest(EthernetClient &ethClient, const char *uri, const String &postRequestData) {
+bool sendPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData) {
   if(!connectToApplicationServer(ethClient)) {
     digitalClockDisplay(true);
     Serial.println(F("Abort request send"));

@@ -110,12 +110,21 @@ void digitalClockDisplay(bool brackets) {
   }
 }
 
-void rff(const char src[], char dest[], unsigned int destSize) {
-  if (strlen_P(src) > destSize) {
-    Serial.println(F("URI bigger than the buf. Aborting execution of program"));
+void readFromFlash(const char src[], String &flashReadBuffer) {
+  if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
+    Serial.println(F("Src bigger than the flash buf. Aborting execution of program"));
     while(true);
   }
-  memccpy_P(dest, src, 0, strlen_P(src));
+  // memccpy_P(dest, src, 0, strlen_P(src));
+
+  char tempCharBuffer;
+  unsigned int i;
+  flashReadBuffer = "";
+  for (i=0; i<strlen_P(src); i++) {
+      tempCharBuffer = pgm_read_byte_near(src + i);
+      flashReadBuffer += tempCharBuffer;
+    }
+
 }
 
 void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]) {
@@ -128,7 +137,7 @@ void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute s
       digitalClockDisplay(false);
       Serial.print(F("Free RAM = "));
       Serial.print(freeMemory());
-      Serial.println(" kb");
+      Serial.println(F(" bytes"));
       for(int i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
         Serial.print(stateOfAttributes[i].name);
         Serial.print(F(": Current value = "));

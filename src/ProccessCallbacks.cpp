@@ -4,6 +4,9 @@
 
 int thermostatProccessCallback(deviceAttribute attributesStates[], DHT_Unified &dht22, uint32_t &lastDHT22QueryTimestamp, uint32_t minDelayBeforeNextDHT22Query_ms) {
   if((millis() - lastDHT22QueryTimestamp) > minDelayBeforeNextDHT22Query_ms) {
+
+    Serial.println("Let's get temp & hum");
+
     // Get temperature event and print its value.
     sensors_event_t event;
     dht22.temperature().getEvent(&event);
@@ -28,9 +31,11 @@ int thermostatProccessCallback(deviceAttribute attributesStates[], DHT_Unified &
 
       // attributesStates[2].currentValue = event.relative_humidity;
     }
+
+    lastDHT22QueryTimestamp = millis();
   }
 
-  lastDHT22QueryTimestamp = millis();
+
 
   // if(temperatureCelsius < attributeState.setValue.toFloat()) {
   //   digitalWrite(boilerRelayPin, HIGH);
