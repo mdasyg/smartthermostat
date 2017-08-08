@@ -1,12 +1,10 @@
 Rails.application.routes.draw do
   root to: 'static_pages#home'
 
-  get '/devices/search', to: 'devices#search' # must be placed before resources
+  get '/devices/search', to: 'devices#search' # must be placed before 'devices' resources
 
   resources :schedules
   resources :devices, param: :uid
-
-
 
   get '/devices/:uid/get_device_attributes_list', to: 'devices#get_device_attributes_list'
   post '/devices/:uid/update_device_attribute_value', to: 'devices#update_device_attribute_value'
@@ -15,23 +13,17 @@ Rails.application.routes.draw do
   post 'schedules/update_overlapping_schedules_priorities', to: 'schedules#update_overlapping_schedules_priorities'
 
   get '/admin', to: 'admin#index'
-
   get '/admin/manage_value_types', to: redirect('/admin')
   post '/admin/manage_value_types', to: 'admin#manage_value_types'
 
-  devise_for :users
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  devise_for :users # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  # api
+  # api routes
   namespace(:api) do
     namespace(:v1) do
       post '/devices/attributes_list', to: 'devices#attributes_list'
-
-      post '/devices/status', to: 'devices#status'
+      post '/devices/:uid/status', to: 'devices#status'
       post '/devices/attributes_status', to: 'devices#attributes_status'
     end
   end
-
-  # get 'mqtt', to: 'mqtt#index'
-  # post 'test', to: 'static_pages#test'
 end
