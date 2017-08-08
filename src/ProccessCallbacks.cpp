@@ -8,11 +8,11 @@ int thermostatProccessCallback(deviceAttribute attributesStates[], DHT_Unified &
     sensors_event_t event;
     dht22.temperature().getEvent(&event);
     if (isnan(event.temperature)) {
-      Serial.println(F("Error reading temperature!"));
+      Serial.println(F("Error reading temperature"));
     } else {
       Serial.print(F("Temperature: "));
       Serial.print(event.temperature);
-      Serial.println(" *C");
+      Serial.println(F(" *C"));
 
       attributesStates[0].currentValue = event.temperature;
     }
@@ -20,11 +20,11 @@ int thermostatProccessCallback(deviceAttribute attributesStates[], DHT_Unified &
     // Get humidity event and print its value.
     dht22.humidity().getEvent(&event);
     if (isnan(event.relative_humidity)) {
-      Serial.println(F("Error reading humidity!"));
+      Serial.println(F("Error reading humidity"));
     } else {
       Serial.print(F("Humidity: "));
       Serial.print(event.relative_humidity);
-      Serial.println("%");
+      Serial.println('%');
 
       // attributesStates[2].currentValue = event.relative_humidity;
     }
@@ -39,10 +39,6 @@ int thermostatProccessCallback(deviceAttribute attributesStates[], DHT_Unified &
   // }
   //
   // attributeState.currentValue = temperatureCelsius;
-
-
-
-
 
   return 0;
 }

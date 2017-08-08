@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <avr/pgmspace.h>
 #include <avr/wdt.h>
 #include <SPI.h>
 #include <Ethernet.h>
@@ -26,57 +27,39 @@ EthernetClient ethClientForMqtt;
 EthernetUDP udpClient;
 PubSubClient mqttClient(mqttServerUrl, mqttServerPort, mqttReceiveMsgCallback, ethClientForMqtt);
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
-unsigned int localPort = 8888;  // local port to listen for UDP packets
+unsigned int localUdpPort = 8888;  // local port to listen for UDP packets
 bool printResponse = false;
 time_t prevDeviceStatusDisplayTime = 0; // when the digital clock was displayed
 uint32_t lastAttrUpdateTimestamp;
 
 StaticJsonBuffer<100> jsonBuffer;
 
-uint32_t minDelayBeforeNextDHT22Query_ms;
+uint16_t minDelayBeforeNextDHT22Query_ms;
 uint32_t lastDHT22QueryTimestamp;
 DHT_Unified dht22(tempSensorPin1, DHTTYPE);
 
+// buffers
+char URIBuffer[40];
+
+void readFromFlash(const char *src, char *dest) {
+  if (strlen_P(src) > 40) {
+    Serial.println(F("URI bigger than the buf. Aborting execution of program"));
+    while(true);
+  }
+  memccpy_P(dest, src, 0, strlen_P(src));
+}
+
 void setup() {
+  Serial.begin(115200);
+
   lastAttrUpdateTimestamp = millis();
   lastDHT22QueryTimestamp = millis();
 
-  Serial.begin(115200);
-
-  /// including DHT sensor
-
   // initialize the DHT22 sensor
   dht22.begin();
-
   sensor_t sensor;
   dht22.temperature().getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.println("Temperature");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" *C");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" *C");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" *C");
-  Serial.print  ("Min Delay:    "); Serial.print(sensor.min_delay); Serial.println(" us");
-  Serial.println("------------------------------------");
-  // Print humidity sensor details.
-  dht22.humidity().getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.println("Humidity");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println("%");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println("%");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println("%");
-  Serial.print  ("Min Delay:    "); Serial.print(sensor.min_delay); Serial.println(" us");
-  Serial.println("------------------------------------");
-  // Set delay between sensor readings based on sensor details.
   minDelayBeforeNextDHT22Query_ms = sensor.min_delay / 1000; // return value in microseconds
-  Serial.print("Min Delay: "); Serial.print(minDelayBeforeNextDHT22Query_ms); Serial.println(" ms");
-  Serial.println("------------------------------------");
-  //// DHT
 
   pinMode(boilerRelayPin, OUTPUT);
   digitalWrite(boilerRelayPin, LOW);
@@ -96,16 +79,17 @@ void setup() {
   // Init EthernetClient
   initEthernetShieldNetwork();
   // Init UDP
-  udpClient.begin(localPort);
+  udpClient.begin(localUdpPort);
   // Init NTP system
   setSyncProvider(getNtpTime);
   // Init PubSubClient
   mqttConnectToBrokerCallback(mqttClient);
   // Send device info to application server
   digitalClockDisplay(true);
-  Serial.println(F("Device Info Status Update"));
+  Serial.println(F("Device Status Update"));
   prepareDeviceStatusRequestData(postRequestData);
-  sendPostRequest(ethClient, deviceStatusUrl, postRequestData);
+  readFromFlash(deviceStatusUri, URIBuffer);
+  sendPostRequest(ethClient, URIBuffer, postRequestData);
 
   // wdt_enable(WDTO_8S);
 
@@ -137,7 +121,7 @@ void loop() {
     }
     if (counter == 4) {
       digitalClockDisplay(true);
-      Serial.println(F("Response Data..."));
+      Serial.println(F("Response Data"));
       printResponse = true;
       counter = 0;
     }
@@ -146,7 +130,7 @@ void loop() {
   // if the server's disconnected, stop the client:
   if (isEthClientConnectedToServer && !ethClient.connected()) {
     digitalClockDisplay(true);
-    Serial.println(F("Disconnecting..."));
+    Serial.println(F("Disconnecting"));
     ethClient.stop();
     isEthClientConnectedToServer = false;
   }
@@ -159,7 +143,8 @@ void loop() {
     digitalClockDisplay(true);
     Serial.println(F("Device Attributes Status Update"));
     prepareDeviceAtributesStatusUpdateRequestData(postRequestData, stateOfAttributes);
-    sendPostRequest(ethClient, deviceAttributesUpdateUrl, postRequestData);
+    readFromFlash(deviceAttributesUpdateUri, URIBuffer);
+    sendPostRequest(ethClient, URIBuffer, postRequestData);
     lastAttrUpdateTimestamp = millis();
   }
 
