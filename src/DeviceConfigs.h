@@ -1,3 +1,4 @@
+#include <avr/pgmspace.h>
 #include <Arduino.h>
 #include <EthernetUdp.h>
 
@@ -19,15 +20,15 @@ const char NUMBER_OF_ATTRIBUTES = 1;
 const char MQTT_USERNAME[] = { "asdf" };
 const char MQTT_PASSWORD[] = { "foobar" };
 
-const unsigned int attrUpdateInterval = 5000L; // in milliseconds
+const unsigned int attrUpdateInterval = 10000L; // in milliseconds
 
 const char applicationServerUrl[] = "home-auto.eu";
 const int applicationServerPort = 1026;
 const char mqttServerUrl[] = "home-auto.eu";
 const int mqttServerPort = 1883;
 
-const char deviceStatusUrl[] = "/api/v1/devices/status";
-const char deviceAttributesUpdateUrl[] = "/api/v1/devices/attributes_status";
+const PROGMEM char deviceStatusUri[] = "/api/v1/devices/status";
+const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/attributes_status";
 
 // system variables
 const int boilerRelayPin = 7;
