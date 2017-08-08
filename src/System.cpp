@@ -110,6 +110,14 @@ void digitalClockDisplay(bool brackets) {
   }
 }
 
+void rff(const char src[], char dest[], unsigned int destSize) {
+  if (strlen_P(src) > destSize) {
+    Serial.println(F("URI bigger than the buf. Aborting execution of program"));
+    while(true);
+  }
+  memccpy_P(dest, src, 0, strlen_P(src));
+}
+
 void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]) {
   // Device status in serial
   if (timeStatus() != timeNotSet) {

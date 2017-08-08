@@ -20,6 +20,10 @@
 #include "Requests.h"
 #include "System.h"
 
+#define readFromFlash(src, dest) rff(src, dest, sizeof(URIBuffer)/sizeof(char))
+// buffers
+char URIBuffer[35];
+
 bool isEthClientConnectedToServer = false;
 String postRequestData;
 EthernetClient ethClient;
@@ -37,20 +41,6 @@ StaticJsonBuffer<100> jsonBuffer;
 uint16_t minDelayBeforeNextDHT22Query_ms;
 uint32_t lastDHT22QueryTimestamp;
 DHT_Unified dht22(tempSensorPin1, DHTTYPE);
-
-
-#define readFromFlash(src, dest) rff(src, dest, sizeof(URIBuffer)/sizeof(char))
-
-// buffers
-char URIBuffer[35];
-
-void rff(const char src[], char dest[], unsigned int destSize) {
-  if (strlen_P(src) > destSize) {
-    Serial.println(F("URI bigger than the buf. Aborting execution of program"));
-    while(true);
-  }
-  memccpy_P(dest, src, 0, strlen_P(src));
-}
 
 void setup() {
   Serial.begin(115200);

@@ -11,19 +11,19 @@
 #ifndef DEVICE_CONFIGS_H
 #define DEVICE_CONFIGS_H
 
-const char DEVICE_SERIAL_NUMBER[] = { "113702278392778921" };
-const char DEVICE_FIRMWARE_VERSION[] = { "0.0.1" };
-const char DEVICE_FRIENDLY_NAME[] = { "home-auto-dev534" };
+const char DEVICE_SERIAL_NUMBER[] =  "113702278392778921";
+const char DEVICE_FIRMWARE_VERSION[] = "0.0.1";
+const char DEVICE_FRIENDLY_NAME[] =  "home-auto-dev534";
 
 const char NUMBER_OF_ATTRIBUTES = 1;
 
-const char MQTT_USERNAME[] = { "asdf" };
-const char MQTT_PASSWORD[] = { "foobar" };
+const char MQTT_USERNAME[] =  "asdf";
+const char MQTT_PASSWORD[] = "foobar";
 
-const unsigned int attrUpdateInterval = 10000L; // in milliseconds
+const unsigned int attrUpdateInterval = 30000L; // in milliseconds
 
 const char applicationServerUrl[] = "home-auto.eu";
-const int applicationServerPort = 1026;
+const int applicationServerPort = 1026; // to unsigned anevazei poly thn xrhsh tis flash, gt?
 const char mqttServerUrl[] = "home-auto.eu";
 const int mqttServerPort = 1883;
 

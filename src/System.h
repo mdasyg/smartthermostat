@@ -15,6 +15,7 @@ void sendNTPpacket(IPAddress &address);
 time_t getNtpTime();
 void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
+void rff(const char src[], char dest[], unsigned int destSize);
 void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]);
 
 #endif
