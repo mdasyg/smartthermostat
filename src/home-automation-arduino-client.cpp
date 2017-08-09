@@ -68,13 +68,14 @@ void setup() {
   setSyncProvider(getNtpTime);
   // Init PubSubClient
   mqttConnectToBrokerCallback(mqttClient);
+
+  wdt_enable(WDTO_8S);
+
   // Send device info to application server
   // digitalClockDisplay(true); Serial.println(F("Device Status Update"));
   readFromFlash(deviceStatsUpdateUri, flashReadBufferStr);
   flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
   sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBufferStr);
-
-  wdt_enable(WDTO_8S);
 
 }
 
