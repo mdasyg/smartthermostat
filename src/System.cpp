@@ -14,25 +14,23 @@ extern EthernetUDP udpClient;
 // ethernet shield initialization
 void initEthernetShieldNetwork() {
   byte etherShieldConnectionRetryCount = 0;
-  digitalClockDisplay(true);
-  Serial.println(F("Trying DHCP"));
+  digitalClockDisplay(true); Serial.println(F("Trying DHCP"));
   bool isEthernetShieldConnected = false;
   do {
     if (Ethernet.begin(mac) == 0) {
       etherShieldConnectionRetryCount++;
-      digitalClockDisplay(true);
-      Serial.println(F("DHCP failed, Retry later"));
+      digitalClockDisplay(true); Serial.println(F("DHCP failed, Retry later"));
       delay(5000);
     } else {
       isEthernetShieldConnected = true;
     }
   } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
-  digitalClockDisplay(true);
   if(isEthernetShieldConnected) {
+    digitalClockDisplay(true);
     Serial.print(F("IP: "));
     Serial.println(Ethernet.localIP());
   } else {
-    Serial.print(F("Keep going w/o netwrok"));
+    digitalClockDisplay(true); Serial.print(F("Keep going w/o netwrok"));
   }
 
 }
@@ -124,6 +122,18 @@ void readFromFlash(const char src[], String &flashReadBufferStr) {
       flashReadBufferStr += tempCharBuffer;
     }
 
+}
+
+void intialDeviceInfoToSerial() {
+  Serial.println();
+  Serial.println(F("Device Info"));
+  Serial.print(F("Name: "));
+  Serial.println(DEVICE_FRIENDLY_NAME);
+  Serial.print(F("S/N:  "));
+  Serial.println(DEVICE_SERIAL_NUMBER);
+  Serial.print(F("F/W:  "));
+  Serial.println(DEVICE_FIRMWARE_VERSION);
+  Serial.println();
 }
 
 void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]) {

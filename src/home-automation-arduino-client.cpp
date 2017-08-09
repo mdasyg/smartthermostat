@@ -55,15 +55,7 @@ void setup() {
 
   initDeviceAttributes(stateOfAttributes);
 
-  Serial.println();
-  Serial.println(F("Device Info"));
-  Serial.print(F("Name: "));
-  Serial.println(DEVICE_FRIENDLY_NAME);
-  Serial.print(F("S/N:  "));
-  Serial.println(DEVICE_SERIAL_NUMBER);
-  Serial.print(F("F/W:  "));
-  Serial.println(DEVICE_FIRMWARE_VERSION);
-  Serial.println();
+  intialDeviceInfoToSerial();
 
   // initial status update
   statusUpdateToSerial(prevDeviceStatusDisplayTime, stateOfAttributes);
@@ -77,21 +69,19 @@ void setup() {
   // Init PubSubClient
   mqttConnectToBrokerCallback(mqttClient);
   // Send device info to application server
-  digitalClockDisplay(true);
-  Serial.println(F("Device Status Update"));
+  // digitalClockDisplay(true); Serial.println(F("Device Status Update"));
   readFromFlash(deviceStatsUpdateUri, flashReadBufferStr);
   flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
   sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBufferStr);
 
-  // wdt_enable(WDTO_8S);
+  wdt_enable(WDTO_8S);
 
 }
 
 void loop() {
 
   if (!mqttClient.connected()) {
-    digitalClockDisplay(true);
-    Serial.println(F("Disconected from MQTT broker"));
+    digitalClockDisplay(true); Serial.println(F("Disconected from MQTT broker"));
     mqttConnectToBrokerCallback(mqttClient);
   }
 
@@ -103,8 +93,7 @@ void loop() {
 
   // if the server's disconnected, stop the client:
   if (isEthClientConnectedToServer && !ethClient.connected()) {
-    digitalClockDisplay(true);
-    Serial.println(F("Disconnecting from app server"));
+    digitalClockDisplay(true); Serial.println(F("Disconnecting from app server"));
     ethClient.stop();
     isEthClientConnectedToServer = false;
   }
@@ -123,13 +112,12 @@ void loop() {
   Ethernet.maintain();
 
   if (mqttClient.loop() == false) {
-    digitalClockDisplay(true);
-    Serial.println(F("MQTT con err when calling loop"));
+    digitalClockDisplay(true); Serial.println(F("MQTT connection error when calling 'MQTT::loop()'"));
   }
 
   // device status update to Serial
   statusUpdateToSerial(prevDeviceStatusDisplayTime, stateOfAttributes);
 
-  // wdt_reset();
+  wdt_reset();
 
 }

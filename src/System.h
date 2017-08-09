@@ -17,6 +17,7 @@ time_t getNtpTime();
 void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
 void readFromFlash(const char src[], String &flashReadBufferStr);
+void intialDeviceInfoToSerial();
 void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]);
 
 #endif

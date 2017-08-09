@@ -5,8 +5,9 @@
 bool connectToApplicationServer(EthernetClient &ethClient) {
   int result;
   ethClient.stop();
-  digitalClockDisplay(true);
-  Serial.println(F("Connecting to app server"));
+
+  // digitalClockDisplay(true); Serial.println(F("Connecting to app server"));
+
   result = ethClient.connect(applicationServerUrl, applicationServerPort);
   if(result != 1) {
     digitalClockDisplay(true);
@@ -34,8 +35,7 @@ bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const Str
     return false;
   }
   String httpRequestStr;
-  digitalClockDisplay(true);
-  Serial.println(F("Start post request"));
+  // digitalClockDisplay(true); Serial.println(F("Start post request"));
 
   // SET POST REQUEST
   httpRequestStr = F("POST ");
@@ -65,8 +65,7 @@ bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const Str
   // print post data
   ethClient.print(postRequestData);
 
-  digitalClockDisplay(true);
-  Serial.println(F("Post request send"));
+  // digitalClockDisplay(true); Serial.println(F("Post request send"));
 
   return true;
 }
@@ -78,10 +77,8 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
 
   ipAddress = Ethernet.localIP();
 
-  digitalClockDisplay(true);
-  Serial.println(F("Preparing device status request data"));
-  postRequestData = "";
-  postRequestData += F("sn=");
+  // digitalClockDisplay(true); Serial.println(F("Preparing device status request data"));
+  postRequestData = F("sn=");
   postRequestData += DEVICE_SERIAL_NUMBER;
   postRequestData += AMPERSAND;
   postRequestData += F("fw=");
@@ -92,13 +89,12 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
   postRequestData += AMPERSAND;
   postRequestData += F("ip=");
   for (i=0; i<4; i++) {
-    postRequestData += String(ipAddress[i]);
+    postRequestData += ipAddress[i];
     if (i !=3) {
       postRequestData += '.';
     }
   }
-  digitalClockDisplay(true);
-  Serial.println(F("Device status request data ready"));
+  // digitalClockDisplay(true); Serial.println(F("Device status request data ready"));
 
   sendHttpPostRequest(ethClient, uri, postRequestData);
 
@@ -107,8 +103,7 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
 void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const String &uri, deviceAttribute states[]) {
   String postRequestData;
 
-  digitalClockDisplay(true);
-  Serial.println(F("Device attributes status update"));
+  // digitalClockDisplay(true); Serial.println(F("Device attributes status update"));
 
   byte i;
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
@@ -125,9 +120,7 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
 
     sendHttpPostRequest(ethClient, uri, postRequestData);
   }
-
-  digitalClockDisplay(true);
-  Serial.println(F("Device attributes status update sent"));
+  // digitalClockDisplay(true); Serial.println(F("Device attributes status update sent"));
 
   return;
 
@@ -189,7 +182,7 @@ int httpResponseReader(EthernetClient &ethClient) {
       Serial.print(c);
       counter++;
     } else {
-      Serial.println(F("Http response error"));
+      digitalClockDisplay(true); Serial.println(F("Http response error"));
     }
   }
   return counter;
