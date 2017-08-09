@@ -6,7 +6,7 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   int result;
   ethClient.stop();
   digitalClockDisplay(true);
-  Serial.println(F("Connecting to the application server"));
+  Serial.println(F("Connecting to app server"));
   result = ethClient.connect(applicationServerUrl, applicationServerPort);
   if(result != 1) {
     digitalClockDisplay(true);
@@ -18,16 +18,16 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   if (ethClient.connected()) {
     isEthClientConnectedToServer = true;
     digitalClockDisplay(true);
-    Serial.println(F("Connected to the application server"));
+    Serial.println(F("Connected to app server"));
   } else {
     digitalClockDisplay(true);
-    Serial.println(F("Connection to the application server failed"));
+    Serial.println(F("Failed to connect to app server"));
     return false;
   }
   return true;
 }
 
-bool sendPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData) {
+bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData) {
   if(!connectToApplicationServer(ethClient)) {
     digitalClockDisplay(true);
     Serial.println(F("Abort request send"));
@@ -36,6 +36,7 @@ bool sendPostRequest(EthernetClient &ethClient, const String &uri, const String 
   String httpRequestStr;
   digitalClockDisplay(true);
   Serial.println(F("Start post request"));
+
   // SET POST REQUEST
   httpRequestStr = F("POST ");
   httpRequestStr += uri;
@@ -50,6 +51,8 @@ bool sendPostRequest(EthernetClient &ethClient, const String &uri, const String 
   }
   httpRequestStr += F("\r\n");
   ethClient.print(httpRequestStr);
+  // set Accept request header
+  ethClient.print(F("Accept: application/json\r\n"));
   // set content length
   httpRequestStr = F("Content-length: ");
   httpRequestStr += postRequestData.length();
@@ -62,44 +65,54 @@ bool sendPostRequest(EthernetClient &ethClient, const String &uri, const String 
   // print post data
   ethClient.print(postRequestData);
 
-  // Serial.print(F("Post data length: "));
-  // Serial.println(postRequestData.length());
-
   digitalClockDisplay(true);
   Serial.println(F("Post request send"));
 
   return true;
 }
 
-void prepareDeviceStatusRequestData(String &postRequestData) {
-  IPAddress ipAddress = Ethernet.localIP();
+void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const String &uri) {
+  String postRequestData;
+  IPAddress ipAddress;
+  int i;
+
+  ipAddress = Ethernet.localIP();
+
   digitalClockDisplay(true);
   Serial.println(F("Preparing device status request data"));
   postRequestData = "";
-  postRequestData += F("serial_number=");
+  postRequestData += F("sn=");
   postRequestData += DEVICE_SERIAL_NUMBER;
   postRequestData += AMPERSAND;
-  postRequestData += F("firmware=");
+  postRequestData += F("fw=");
   postRequestData += DEVICE_FIRMWARE_VERSION;
   postRequestData += AMPERSAND;
   postRequestData += F("friendly_name=");
   postRequestData += DEVICE_FRIENDLY_NAME;
   postRequestData += AMPERSAND;
-  postRequestData += F("current_ip=");
-  postRequestData += String(ipAddress[0]) + String(".") +String(ipAddress[1]) + String(".") +String(ipAddress[2]) + String(".") + String(ipAddress[3]);
+  postRequestData += F("ip=");
+  for (i=0; i<4; i++) {
+    postRequestData += String(ipAddress[i]);
+    if (i !=3) {
+      postRequestData += '.';
+    }
+  }
   digitalClockDisplay(true);
   Serial.println(F("Device status request data ready"));
+
+  sendHttpPostRequest(ethClient, uri, postRequestData);
+
 }
 
-void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, deviceAttribute states[]) {
+void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const String &uri, deviceAttribute states[]) {
+  String postRequestData;
+
   digitalClockDisplay(true);
-  Serial.println(F("Preparing device attributes status update request"));
-  int i;
-  postRequestData = "";
+  Serial.println(F("Device attributes status update"));
+
+  byte i;
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-    if (i>0) {
-      postRequestData += AMPERSAND;
-    }
+    postRequestData = "";
     postRequestData += F("dev_attr[");
     postRequestData += i;
     postRequestData += F("][id]=");
@@ -109,10 +122,12 @@ void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, devi
     postRequestData += i;
     postRequestData += F("][curVal]=");
     postRequestData += states[i].currentValue;
+
+    sendHttpPostRequest(ethClient, uri, postRequestData);
   }
 
   digitalClockDisplay(true);
-  Serial.println(F("Device attributes status update data ready"));
+  Serial.println(F("Device attributes status update sent"));
 
   return;
 
@@ -127,11 +142,8 @@ void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, devi
 //     httpRequestStr += applicationServerPort;
 //   }
 //   httpRequestStr += "\r\n\r\n";
-//
 //   sendHttpRequest(ethClient, httpRequestStr);
-//
 //   return;
-//
 // }
 
 // void buildDeviceAttributesRequest(String &httpRequestStr) {

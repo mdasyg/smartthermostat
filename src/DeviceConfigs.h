@@ -15,10 +15,10 @@ const char DEVICE_SERIAL_NUMBER[] =  "113702278392778921";
 const char DEVICE_FIRMWARE_VERSION[] = "0.0.1";
 const char DEVICE_FRIENDLY_NAME[] =  "home-auto-dev534";
 
-const char NUMBER_OF_ATTRIBUTES = 1;
+const byte NUMBER_OF_ATTRIBUTES = 3;
 
-const char MQTT_USERNAME[] =  "asdf";
-const char MQTT_PASSWORD[] = "foobar";
+const char MQTT_USERNAME[] =  "";
+const char MQTT_PASSWORD[] = "";
 
 const unsigned int attrUpdateInterval = 30000L; // in milliseconds
 
@@ -27,8 +27,8 @@ const int applicationServerPort = 1026; // to unsigned anevazei poly thn xrhsh t
 const char mqttServerUrl[] = "home-auto.eu";
 const int mqttServerPort = 1883;
 
-const PROGMEM char deviceStatusUri[] = "/api/v1/devices/DEV_UID/status";
-const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/DEV_UID/attributes_status";
+const PROGMEM char deviceStatsUpdateUri[] = "/api/v1/devices/DEV_UID/stats_update";
+const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/DEV_UID/attributes_status_update";
 
 // system variables
 const int boilerRelayPin = 7;

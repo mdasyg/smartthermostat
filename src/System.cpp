@@ -21,8 +21,7 @@ void initEthernetShieldNetwork() {
     if (Ethernet.begin(mac) == 0) {
       etherShieldConnectionRetryCount++;
       digitalClockDisplay(true);
-      Serial.println(F("DHCP failed"));
-      Serial.println(F("Retry later"));
+      Serial.println(F("DHCP failed, Retry later"));
       delay(5000);
     } else {
       isEthernetShieldConnected = true;
@@ -113,10 +112,9 @@ void digitalClockDisplay(bool brackets) {
 
 void readFromFlash(const char src[], String &flashReadBufferStr) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
-    Serial.println(F("Src bigger than the flash buf. Aborting execution of program"));
+    Serial.println(F("Src bigger than buf. Aborting execution"));
     while(true);
   }
-  // memccpy_P(dest, src, 0, strlen_P(src));
 
   char tempCharBuffer;
   unsigned int i;
@@ -132,14 +130,16 @@ void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute s
   // Device status in serial
   if (timeStatus() != timeNotSet) {
     if ((now() - prevDeviceStatusDisplayTime) >= 30) { // in seconds
+      byte i;
       prevDeviceStatusDisplayTime = now();
-      Serial.println(F("\nDevice Status Update"));
+      Serial.println();
+      Serial.println(F("Device Status Update"));
       Serial.print(F("Time: "));
       digitalClockDisplay(false);
       Serial.print(F("Free RAM = "));
       Serial.print(freeMemory());
       Serial.println(F(" bytes"));
-      for(int i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+      for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
         Serial.print(stateOfAttributes[i].name);
         Serial.print(F(": Current value = "));
         Serial.print(stateOfAttributes[i].currentValue);

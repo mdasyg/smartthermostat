@@ -24,7 +24,6 @@
 String flashReadBufferStr;
 
 bool isEthClientConnectedToServer = false;
-String postRequestData;
 EthernetClient ethClient;
 EthernetClient ethClientForMqtt;
 EthernetUDP udpClient;
@@ -54,13 +53,10 @@ void setup() {
   sensor_t sensor;
   dht22.temperature().getSensor(&sensor);
   minDelayBeforeNextDHT22Query_ms = sensor.min_delay / 1000; // return value in microseconds
-  Serial.println(minDelayBeforeNextDHT22Query_ms);
-
-  pinMode(boilerRelayPin, OUTPUT);
-  digitalWrite(boilerRelayPin, LOW);
 
   initDeviceAttributes(stateOfAttributes);
 
+  Serial.println();
   Serial.println(F("Device Info"));
   Serial.print(F("Name: "));
   Serial.println(DEVICE_FRIENDLY_NAME);
@@ -68,6 +64,7 @@ void setup() {
   Serial.println(DEVICE_SERIAL_NUMBER);
   Serial.print(F("F/W:  "));
   Serial.println(DEVICE_FIRMWARE_VERSION);
+  Serial.println();
 
   // initial status update
   statusUpdateToSerial(prevDeviceStatusDisplayTime, stateOfAttributes);
@@ -83,10 +80,9 @@ void setup() {
   // Send device info to application server
   digitalClockDisplay(true);
   Serial.println(F("Device Status Update"));
-  prepareDeviceStatusRequestData(postRequestData);
-  readFromFlash(deviceStatusUri, flashReadBufferStr);
+  readFromFlash(deviceStatsUpdateUri, flashReadBufferStr);
   flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
-  sendPostRequest(ethClient, flashReadBufferStr, postRequestData);
+  sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBufferStr);
 
   // wdt_enable(WDTO_8S);
 
@@ -127,7 +123,7 @@ void loop() {
   // if the server's disconnected, stop the client:
   if (isEthClientConnectedToServer && !ethClient.connected()) {
     digitalClockDisplay(true);
-    Serial.println(F("Disconnecting"));
+    Serial.println(F("Disconnecting from app server"));
     ethClient.stop();
     isEthClientConnectedToServer = false;
   }
@@ -138,11 +134,9 @@ void loop() {
   // Send statistics to app
   if (millis() - lastAttrUpdateTimestamp > attrUpdateInterval ) {
     digitalClockDisplay(true);
-    Serial.println(F("Device Attributes Status Update"));
-    prepareDeviceAtributesStatusUpdateRequestData(postRequestData, stateOfAttributes);
     readFromFlash(deviceAttributesUpdateUri, flashReadBufferStr);
     flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
-    sendPostRequest(ethClient, flashReadBufferStr, postRequestData);
+    sendDeviceAtributesStatusUpdateToApplicationServer(ethClient, flashReadBufferStr, stateOfAttributes);
     lastAttrUpdateTimestamp = millis();
   }
 
@@ -150,7 +144,7 @@ void loop() {
 
   if (mqttClient.loop() == false) {
     digitalClockDisplay(true);
-    Serial.println(F("MQTT Connection Error when calling loop"));
+    Serial.println(F("MQTT con err when calling loop"));
   }
 
   // device status update to Serial
