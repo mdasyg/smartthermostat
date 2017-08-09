@@ -35,6 +35,7 @@ void initEthernetShieldNetwork() {
   } else {
     Serial.print(F("Keep going w/o netwrok"));
   }
+
 }
 
 // send an NTP request to the time server at the given address
@@ -110,7 +111,7 @@ void digitalClockDisplay(bool brackets) {
   }
 }
 
-void readFromFlash(const char src[], String &flashReadBuffer) {
+void readFromFlash(const char src[], String &flashReadBufferStr) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
     Serial.println(F("Src bigger than the flash buf. Aborting execution of program"));
     while(true);
@@ -119,10 +120,10 @@ void readFromFlash(const char src[], String &flashReadBuffer) {
 
   char tempCharBuffer;
   unsigned int i;
-  flashReadBuffer = "";
+  flashReadBufferStr = "";
   for (i=0; i<strlen_P(src); i++) {
       tempCharBuffer = pgm_read_byte_near(src + i);
-      flashReadBuffer += tempCharBuffer;
+      flashReadBufferStr += tempCharBuffer;
     }
 
 }

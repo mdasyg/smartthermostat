@@ -21,7 +21,7 @@
 #include "System.h"
 
 // buffers
-String flashReadBuffer;
+String flashReadBufferStr;
 
 bool isEthClientConnectedToServer = false;
 String postRequestData;
@@ -44,7 +44,7 @@ DHT_Unified dht22(tempSensorPin1, DHTTYPE);
 void setup() {
   Serial.begin(115200);
 
-  // flashReadBuffer.reserve(FLASH_READ_BUFFER_MAX_SIZE);
+  flashReadBufferStr.reserve(FLASH_READ_BUFFER_MAX_SIZE);
 
   lastAttrUpdateTimestamp = millis();
   lastDHT22QueryTimestamp = millis();
@@ -61,11 +61,12 @@ void setup() {
 
   initDeviceAttributes(stateOfAttributes);
 
-  Serial.print(F("Device Name: "));
+  Serial.println(F("Device Info"));
+  Serial.print(F("Name: "));
   Serial.println(DEVICE_FRIENDLY_NAME);
-  Serial.print(F("Device S/N: "));
+  Serial.print(F("S/N:  "));
   Serial.println(DEVICE_SERIAL_NUMBER);
-  Serial.print(F("Device Firmware: "));
+  Serial.print(F("F/W:  "));
   Serial.println(DEVICE_FIRMWARE_VERSION);
 
   // initial status update
@@ -83,8 +84,9 @@ void setup() {
   digitalClockDisplay(true);
   Serial.println(F("Device Status Update"));
   prepareDeviceStatusRequestData(postRequestData);
-  readFromFlash(deviceStatusUri, flashReadBuffer);
-  sendPostRequest(ethClient, flashReadBuffer, postRequestData);
+  readFromFlash(deviceStatusUri, flashReadBufferStr);
+  flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
+  sendPostRequest(ethClient, flashReadBufferStr, postRequestData);
 
   // wdt_enable(WDTO_8S);
 
@@ -138,8 +140,9 @@ void loop() {
     digitalClockDisplay(true);
     Serial.println(F("Device Attributes Status Update"));
     prepareDeviceAtributesStatusUpdateRequestData(postRequestData, stateOfAttributes);
-    readFromFlash(deviceAttributesUpdateUri, flashReadBuffer);
-    sendPostRequest(ethClient, flashReadBuffer, postRequestData);
+    readFromFlash(deviceAttributesUpdateUri, flashReadBufferStr);
+    flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
+    sendPostRequest(ethClient, flashReadBufferStr, postRequestData);
     lastAttrUpdateTimestamp = millis();
   }
 

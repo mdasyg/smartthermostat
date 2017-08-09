@@ -72,12 +72,10 @@ bool sendPostRequest(EthernetClient &ethClient, const String &uri, const String 
 }
 
 void prepareDeviceStatusRequestData(String &postRequestData) {
+  IPAddress ipAddress = Ethernet.localIP();
   digitalClockDisplay(true);
   Serial.println(F("Preparing device status request data"));
   postRequestData = "";
-  postRequestData += F("dev_uid=");
-  postRequestData += DEVICE_SERIAL_NUMBER;
-  postRequestData += AMPERSAND;
   postRequestData += F("serial_number=");
   postRequestData += DEVICE_SERIAL_NUMBER;
   postRequestData += AMPERSAND;
@@ -88,7 +86,7 @@ void prepareDeviceStatusRequestData(String &postRequestData) {
   postRequestData += DEVICE_FRIENDLY_NAME;
   postRequestData += AMPERSAND;
   postRequestData += F("current_ip=");
-  postRequestData += "XXX.YYY.ZZZ.WWW";
+  postRequestData += String(ipAddress[0]) + String(".") +String(ipAddress[1]) + String(".") +String(ipAddress[2]) + String(".") + String(ipAddress[3]);
   digitalClockDisplay(true);
   Serial.println(F("Device status request data ready"));
 }
@@ -98,9 +96,6 @@ void prepareDeviceAtributesStatusUpdateRequestData(String &postRequestData, devi
   Serial.println(F("Preparing device attributes status update request"));
   int i;
   postRequestData = "";
-  postRequestData += F("dev_uid=");
-  postRequestData += DEVICE_SERIAL_NUMBER;
-  postRequestData += AMPERSAND;
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
     if (i>0) {
       postRequestData += AMPERSAND;

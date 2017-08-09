@@ -35,8 +35,6 @@ int thermostatProccessCallback(deviceAttribute attributesStates[], DHT_Unified &
     lastDHT22QueryTimestamp = millis();
   }
 
-
-
   // if(temperatureCelsius < attributeState.setValue.toFloat()) {
   //   digitalWrite(boilerRelayPin, HIGH);
   // } else {

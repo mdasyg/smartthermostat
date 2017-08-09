@@ -27,8 +27,8 @@ const int applicationServerPort = 1026; // to unsigned anevazei poly thn xrhsh t
 const char mqttServerUrl[] = "home-auto.eu";
 const int mqttServerPort = 1883;
 
-const PROGMEM char deviceStatusUri[] = "/api/v1/devices/:DEV_UID/status";
-const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/attributes_status";
+const PROGMEM char deviceStatusUri[] = "/api/v1/devices/DEV_UID/status";
+const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/DEV_UID/attributes_status";
 
 // system variables
 const int boilerRelayPin = 7;

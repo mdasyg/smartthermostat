@@ -16,7 +16,7 @@ void sendNTPpacket(IPAddress &address);
 time_t getNtpTime();
 void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
-void readFromFlash(const char src[], String &flashReadBuffer);
+void readFromFlash(const char src[], String &flashReadBufferStr);
 void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]);
 
 #endif
