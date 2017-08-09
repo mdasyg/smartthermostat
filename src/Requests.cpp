@@ -133,7 +133,7 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
 
 }
 
-// void buildAndSendGetRequest(EthernetClient &ethClient) {
+// bool buildAndSendGetRequest(EthernetClient &ethClient) {
 //   httpRequestStr += "GET /api/v1/devices/721367462351557606/attributes.json HTTP/1.1\r\n";
 //   httpRequestStr += "HOST: ";
 //   httpRequestStr += applicationServerUrl;
@@ -146,18 +146,51 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
 //   return;
 // }
 
-// void buildDeviceAttributesRequest(String &httpRequestStr) {
-//
-// }
-
-// int httpResponseData(EthernetClient &ethClient, char *httpResponseBuffer) {
-//   int readLength = 0;
-//   if(ethClient.available()) {
-//     while (ethClient.available()) {
-//       Serial.println("ASDF");
-//       httpRequestBuffer[readLength] = ethClient.read();
-//       readLength++;
-//     }
-//   }
-//   return readLength;
-// }
+int httpResponseReader(EthernetClient &ethClient) {
+  byte httpResponseBlock = 0; // 0: in headers, 1, length, 2: size check, 3: data
+  httpResponseBlock = 0;
+  byte counter = 0;
+  String responseJsonLength = "";
+  char c;
+  while (ethClient.available()) {
+    c = ethClient.read();
+    if (httpResponseBlock == 0) {
+      // this tries to find out the response data, excluding headers
+      // we are in header block
+      if (c == '\r' || c == '\n') {
+        counter++;
+      } else {
+        counter = 0;
+      }
+      if (counter == 4) {
+        httpResponseBlock = 1;
+        counter = 0;
+      }
+    } else if (httpResponseBlock == 1) {
+      // we are on json legnth block
+      // read until new line
+      if (c == '\r' || c == '\n') {
+        httpResponseBlock = 2;
+      } else {
+        responseJsonLength += c;
+      }
+    } else if (httpResponseBlock == 2) {
+      // check for valid size
+      if (strtol(responseJsonLength.c_str(), NULL, 16) > 0) {
+        httpResponseBlock = 3;
+      } else {
+        break;
+      }
+    } else if (httpResponseBlock == 3) {
+      if (c == '\r' || c == '\n') {
+        Serial.println();
+        break;
+      }
+      Serial.print(c);
+      counter++;
+    } else {
+      Serial.println(F("Http response error"));
+    }
+  }
+  return counter;
+}

@@ -20,25 +20,24 @@
 #include "Requests.h"
 #include "System.h"
 
+// device attributesStates
+deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
 // buffers
 String flashReadBufferStr;
-
-bool isEthClientConnectedToServer = false;
+StaticJsonBuffer<100> jsonBuffer;
+// clients
 EthernetClient ethClient;
 EthernetClient ethClientForMqtt;
 EthernetUDP udpClient;
 PubSubClient mqttClient(mqttServerUrl, mqttServerPort, mqttReceiveMsgCallback, ethClientForMqtt);
-deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
-unsigned int localUdpPort = 8888;  // local port to listen for UDP packets
-bool printResponse = false;
-time_t prevDeviceStatusDisplayTime = 0; // when the digital clock was displayed
-uint32_t lastAttrUpdateTimestamp;
-
-StaticJsonBuffer<100> jsonBuffer;
-
-uint16_t minDelayBeforeNextDHT22Query_ms;
+bool isEthClientConnectedToServer = false;
+// timers
 uint32_t lastDHT22QueryTimestamp;
+uint32_t lastAttrUpdateTimestamp;
+time_t prevDeviceStatusDisplayTime = 0; // when the digital clock was displayed
+// DHT
 DHT_Unified dht22(tempSensorPin1, DHTTYPE);
+uint16_t minDelayBeforeNextDHT22Query_ms;
 
 void setup() {
   Serial.begin(115200);
@@ -99,26 +98,8 @@ void loop() {
   // ask for data from server
   // buildDeviceAttributesRequest(postRequestData);
 
-  // reads server response
-  printResponse = false;
-  byte counter = 0;
-  while (ethClient.available()) {
-    char c = ethClient.read();
-    if(printResponse) {
-      Serial.print(c);
-    }
-    if (c == '\r' || c == '\n') {
-      counter++;
-    } else {
-      counter = 0;
-    }
-    if (counter == 4) {
-      digitalClockDisplay(true);
-      Serial.println(F("Response Data"));
-      printResponse = true;
-      counter = 0;
-    }
-  }
+  // read server response
+  httpResponseReader(ethClient);
 
   // if the server's disconnected, stop the client:
   if (isEthClientConnectedToServer && !ethClient.connected()) {
@@ -133,7 +114,6 @@ void loop() {
 
   // Send statistics to app
   if (millis() - lastAttrUpdateTimestamp > attrUpdateInterval ) {
-    digitalClockDisplay(true);
     readFromFlash(deviceAttributesUpdateUri, flashReadBufferStr);
     flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
     sendDeviceAtributesStatusUpdateToApplicationServer(ethClient, flashReadBufferStr, stateOfAttributes);
