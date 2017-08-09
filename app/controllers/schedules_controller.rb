@@ -60,8 +60,7 @@ class SchedulesController < ApplicationController
     if !params.include?(:schedule_events)
       @schedule.errors[:base] << 'At least one event must exists'
       respond_to do |format|
-        set_repeat_every_list()
-        format.html {render :new}
+        format.html {set_repeat_every_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
