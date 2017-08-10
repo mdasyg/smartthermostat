@@ -16,10 +16,10 @@ const byte NUMBER_OF_ATTRIBUTES = 3;
 const char MQTT_USERNAME[] =  "";
 const char MQTT_PASSWORD[] = "";
 
-const unsigned long attrUpdateInterval = 30000L; // in milliseconds
+const unsigned long attrUpdateInterval = 10000L; // in milliseconds
 
 const char applicationServerUrl[] = "home-auto.eu";
-const unsigned int applicationServerPort = 1026; // to unsigned anevazei poly thn xrhsh tis flash, gt?
+const unsigned int applicationServerPort = 8080; // to unsigned anevazei poly thn xrhsh tis flash, gt?
 const char mqttServerUrl[] = "home-auto.eu";
 const unsigned int mqttServerPort = 1883;
 const unsigned int localUdpPort = 8888;  // local port to listen for UDP packets

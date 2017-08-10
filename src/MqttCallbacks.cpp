@@ -18,10 +18,10 @@ void mqttConnectToBrokerCallback(PubSubClient &mqttClient) {
     // digitalClockDisplay(true); Serial.println(F("Connected to MQTT broker"));
     mqttClient.publish("outTopic", DEVICE_FRIENDLY_NAME);
     mqttClient.subscribe(DEVICE_SERIAL_NUMBER);
-    digitalClockDisplay(true);
-    Serial.print(F("Subscribed to ["));
-    Serial.print(DEVICE_SERIAL_NUMBER);
-    Serial.println(F("] topic"));
+    // digitalClockDisplay(true);
+    // Serial.print(F("Subscribed to ["));
+    // Serial.print(DEVICE_SERIAL_NUMBER);
+    // Serial.println(F("] topic"));
   } else {
     digitalClockDisplay(true);
     Serial.print("Failed, rc=");
