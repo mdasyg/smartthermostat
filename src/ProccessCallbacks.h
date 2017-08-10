@@ -8,6 +8,5 @@
 #define PROCCES_CALLBACKS_H
 
 int thermostatProccessCallback(deviceAttribute attributesStates[], DHT_Unified &dht22, uint32_t &lastDHT22QueryTimestamp, uint32_t minDelayBeforeNextDHT22Query_ms);
-// int attribute2ProccessCallback(deviceAttribute &attribute_state);
 
 #endif

@@ -14,4 +14,4 @@ bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const Str
 int httpResponseReader(EthernetClient &ethClient);
 
 void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const String &uri);
-void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const String &uri, deviceAttribute states[]);
+void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const String &uri, deviceAttribute stateOfAttributes[]);

@@ -18,11 +18,9 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
 
   if (ethClient.connected()) {
     isEthClientConnectedToServer = true;
-    digitalClockDisplay(true);
-    Serial.println(F("Connected to app server"));
+    // digitalClockDisplay(true); Serial.println(F("Connected to app server"));
   } else {
-    digitalClockDisplay(true);
-    Serial.println(F("Failed to connect to app server"));
+    digitalClockDisplay(true); Serial.println(F("Connect fail to app server"));
     return false;
   }
   return true;
@@ -30,8 +28,7 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
 
 bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData) {
   if(!connectToApplicationServer(ethClient)) {
-    digitalClockDisplay(true);
-    Serial.println(F("Abort request send"));
+    digitalClockDisplay(true); Serial.println(F("Abort post request send"));
     return false;
   }
   String httpRequestStr;
@@ -73,7 +70,7 @@ bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const Str
 void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const String &uri) {
   String postRequestData;
   IPAddress ipAddress;
-  int i;
+  byte i;
 
   ipAddress = Ethernet.localIP();
 
@@ -100,23 +97,23 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
 
 }
 
-void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const String &uri, deviceAttribute states[]) {
+void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const String &uri, deviceAttribute stateOfAttributes[]) {
   String postRequestData;
+  byte i;
 
   // digitalClockDisplay(true); Serial.println(F("Device attributes status update"));
 
-  byte i;
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
     postRequestData = "";
     postRequestData += F("dev_attr[");
     postRequestData += i;
     postRequestData += F("][id]=");
-    postRequestData += states[i].id;
+    postRequestData += stateOfAttributes[i].id;
     postRequestData += AMPERSAND;
     postRequestData += F("dev_attr[");
     postRequestData += i;
     postRequestData += F("][curVal]=");
-    postRequestData += states[i].currentValue;
+    postRequestData += stateOfAttributes[i].currentValue;
 
     sendHttpPostRequest(ethClient, uri, postRequestData);
   }

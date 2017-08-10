@@ -14,7 +14,7 @@ extern EthernetUDP udpClient;
 // ethernet shield initialization
 void initEthernetShieldNetwork() {
   byte etherShieldConnectionRetryCount = 0;
-  digitalClockDisplay(true); Serial.println(F("Trying DHCP"));
+  // digitalClockDisplay(true); Serial.println(F("Trying DHCP"));
   bool isEthernetShieldConnected = false;
   do {
     if (Ethernet.begin(mac) == 0) {
@@ -26,11 +26,9 @@ void initEthernetShieldNetwork() {
     }
   } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
   if(isEthernetShieldConnected) {
-    digitalClockDisplay(true);
-    Serial.print(F("IP: "));
-    Serial.println(Ethernet.localIP());
+    // digitalClockDisplay(true); Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
   } else {
-    digitalClockDisplay(true); Serial.print(F("Keep going w/o netwrok"));
+    // digitalClockDisplay(true); Serial.print(F("Keep going w/o netwrok"));
   }
 
 }
@@ -59,7 +57,7 @@ void sendNTPpacket(IPAddress &address) {
 
 time_t getNtpTime() {
   while (udpClient.parsePacket() > 0) ; // discard any previously received packets
-  Serial.println(F("NTP Request"));
+  // Serial.println(F("NTP Request"));
   sendNTPpacket(ntpTimeServer);
   uint32_t beginWait = millis();
   while (millis() - beginWait < 1500) {
@@ -76,7 +74,7 @@ time_t getNtpTime() {
       return secsSince1900 - 2208988800UL + timeZone * SECS_PER_HOUR;
     }
   }
-  Serial.println(F("No NTP Response"));
+  // Serial.println(F("No NTP Response"));
   return 0; // return 0 if unable to get the time
 }
 
@@ -84,7 +82,7 @@ void printDigits(int digits) {
   // utility for digital clock display: prints preceding colon and leading 0
   Serial.print(":");
   if(digits < 10)
-  Serial.print('0');
+  Serial.print("0");
   Serial.print(digits);
 }
 
@@ -110,7 +108,7 @@ void digitalClockDisplay(bool brackets) {
 
 void readFromFlash(const char src[], String &flashReadBufferStr) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
-    Serial.println(F("Src bigger than buf. Aborting execution"));
+    digitalClockDisplay(true); Serial.println(F("Src bigger than buf. Aborting execution"));
     while(true);
   }
 
@@ -124,18 +122,6 @@ void readFromFlash(const char src[], String &flashReadBufferStr) {
 
 }
 
-void intialDeviceInfoToSerial() {
-  Serial.println();
-  Serial.println(F("Device Info"));
-  Serial.print(F("Name: "));
-  Serial.println(DEVICE_FRIENDLY_NAME);
-  Serial.print(F("S/N:  "));
-  Serial.println(DEVICE_SERIAL_NUMBER);
-  Serial.print(F("F/W:  "));
-  Serial.println(DEVICE_FIRMWARE_VERSION);
-  Serial.println();
-}
-
 void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]) {
   // Device status in serial
   if (timeStatus() != timeNotSet) {
@@ -144,11 +130,8 @@ void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute s
       prevDeviceStatusDisplayTime = now();
       Serial.println();
       Serial.println(F("Device Status Update"));
-      Serial.print(F("Time: "));
-      digitalClockDisplay(false);
-      Serial.print(F("Free RAM = "));
-      Serial.print(freeMemory());
-      Serial.println(F(" bytes"));
+      Serial.print(F("Time: ")); digitalClockDisplay(false);
+      Serial.print(F("Free RAM: ")); Serial.print(freeMemory()); Serial.println(F(" bytes"));
       for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
         Serial.print(stateOfAttributes[i].name);
         Serial.print(F(": Current value = "));
