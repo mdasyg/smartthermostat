@@ -18,6 +18,6 @@ void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
 void readFromFlash(const char src[], String &flashReadBufferStr);
 void intialDeviceInfoToSerial();
-void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]);
+void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]);
 
 #endif

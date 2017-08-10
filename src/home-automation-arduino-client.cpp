@@ -7,9 +7,7 @@
 #include <TimeLib.h>
 #include <MemoryFree.h>
 
-#include <Adafruit_Sensor.h>
-#include <DHT.h>
-#include <DHT_U.h>
+#include <dht.h>
 
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
@@ -31,10 +29,9 @@ bool isEthClientConnectedToServer = false;
 // timers
 uint32_t lastDHT22QueryTimestamp;
 uint32_t lastAttrUpdateTimestamp;
-time_t prevDeviceStatusDisplayTime = 0; // when the digital clock was displayed
+time_t lastDeviceStatusDisplayUpdateTimestamp; // when the digital clock was displayed
 // DHT
-DHT_Unified dht22(tempSensorPin1, DHTTYPE);
-uint16_t minDelayBeforeNextDHT22Query_ms;
+dht dht22;
 
 void setup() {
   Serial.begin(115200);
@@ -43,10 +40,7 @@ void setup() {
 
   lastAttrUpdateTimestamp = millis();
   lastDHT22QueryTimestamp = millis();
-
-  // initialize the DHT22 sensor
-  dht22.begin();
-  minDelayBeforeNextDHT22Query_ms = 2000;
+  lastDeviceStatusDisplayUpdateTimestamp = millis();
 
   initDeviceAttributes(stateOfAttributes);
 
@@ -61,7 +55,7 @@ void setup() {
   Serial.println();
 
   // initial status update
-  statusUpdateToSerial(prevDeviceStatusDisplayTime, stateOfAttributes);
+  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
   // Init EthernetClient
   initEthernetShieldNetwork();
@@ -100,7 +94,7 @@ void loop() {
   }
 
   // system callback
-  thermostatProccessCallback(stateOfAttributes, dht22, lastDHT22QueryTimestamp, minDelayBeforeNextDHT22Query_ms);
+  thermostatProccessCallback(stateOfAttributes, dht22, lastDHT22QueryTimestamp);
 
   // Send statistics to app
   if (millis() - lastAttrUpdateTimestamp > attrUpdateInterval ) {
@@ -117,6 +111,6 @@ void loop() {
   }
 
   // device status update to Serial
-  statusUpdateToSerial(prevDeviceStatusDisplayTime, stateOfAttributes);
+  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
 }

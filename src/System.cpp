@@ -63,7 +63,7 @@ time_t getNtpTime() {
   while (millis() - beginWait < 1500) {
     int size = udpClient.parsePacket();
     if (size >= NTP_PACKET_SIZE) {
-      Serial.println(F("NTP Response"));
+      // Serial.println(F("NTP Response"));
       udpClient.read(packetBuffer, NTP_PACKET_SIZE);  // read packet into the buffer
       unsigned long secsSince1900;
       // convert four bytes starting at location 40 to a long integer
@@ -122,12 +122,12 @@ void readFromFlash(const char src[], String &flashReadBufferStr) {
 
 }
 
-void statusUpdateToSerial(time_t &prevDeviceStatusDisplayTime, deviceAttribute stateOfAttributes[]) {
+void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
   // Device status in serial
   if (timeStatus() != timeNotSet) {
-    if ((now() - prevDeviceStatusDisplayTime) >= 30) { // in seconds
+    if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 30) { // in seconds
       byte i;
-      prevDeviceStatusDisplayTime = now();
+      lastDeviceStatusDisplayUpdateTimestamp = now();
       Serial.println();
       Serial.println(F("Device Status Update"));
       Serial.print(F("Time: ")); digitalClockDisplay(false);

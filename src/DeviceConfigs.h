@@ -4,10 +4,6 @@
 
 #include "DataStructures.h"
 
-#ifndef DHTTYPE
-#define DHTTYPE DHT22     // DHT 22 (AM2302)
-#endif
-
 #ifndef DEVICE_CONFIGS_H
 #define DEVICE_CONFIGS_H
 
