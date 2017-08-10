@@ -10,12 +10,6 @@ void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
   Serial.print("] msg: ");
   Serial.write(payload, length);
   Serial.println();
-
-  if ((int)payload[0] == 97) {
-    digitalWrite(boilerRelayPin, HIGH);
-  } else if ((int)payload[0] == 107) {
-    digitalWrite(boilerRelayPin, LOW);
-  }
 }
 
 void mqttConnectToBrokerCallback(PubSubClient &mqttClient) {
