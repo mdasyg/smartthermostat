@@ -165,12 +165,12 @@ int httpResponseReader(EthernetClient &ethClient) {
       Serial.println(F("PARSE OK"));
     }
 
-    if(root.containsKey("result")) {
-      const char* result = root["result"];
+    if(root.containsKey("res")) {
+      const char* result = root["res"];
       Serial.print(F("Result: ")); Serial.println(result);
     }
 
-    if(root.containsKey("messages")) {
+    if(root.containsKey("msg")) {
       const char* msgs = root["messages"];
       Serial.print(F("messages: ")); Serial.println(msgs);
     }

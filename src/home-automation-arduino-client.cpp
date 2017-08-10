@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <avr/pgmspace.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>

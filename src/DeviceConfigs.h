@@ -16,7 +16,7 @@ const byte NUMBER_OF_ATTRIBUTES = 3;
 const char MQTT_USERNAME[] =  "";
 const char MQTT_PASSWORD[] = "";
 
-const unsigned long attrUpdateInterval = 10000L; // in milliseconds
+const unsigned long attrUpdateInterval = 30000L; // in milliseconds
 
 const char applicationServerUrl[] = "home-auto.eu";
 const unsigned int applicationServerPort = 8080; // to unsigned anevazei poly thn xrhsh tis flash, gt?
