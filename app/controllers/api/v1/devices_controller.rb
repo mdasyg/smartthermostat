@@ -27,12 +27,12 @@ module Api
           end
         end
 
-        render json: { result: :ok }
+        render plain: ActiveSupport::JSON.encode({ result: :ok })
       end
 
       def attributes_status_update
         if !params.has_key?(:dev_attr)
-          render json: { messages: ['Device attributes missing'], result: :error } and return
+          render plain: ActiveSupport::JSON.encode({ messages: ['Device attributes missing'], result: :error }) and return
         end
 
         device_attributes_post = params[:dev_attr]
@@ -42,7 +42,7 @@ module Api
           dev_attr.save()
         end
 
-        render json: { result: :ok }
+        render plain: ActiveSupport::JSON.encode({ messages: ['Device UID not exists'], result: :ok })
       end
 
       # def attributes_list
@@ -68,20 +68,20 @@ module Api
       ##########################################################################
       private def set_device
         if !params.has_key?(:uid)
-          render json: { messages: ['Device UID is missing'], result: :error } and return
+          render plain: ActiveSupport::JSON.encode({ messages: ['Device UID is missing'], result: :error }) and return
         end
 
         begin
           @device = Device.find(params[:uid])
         rescue ActiveRecord::RecordNotFound
-          render json: { messages: ['Device UID not exists'], result: :error } and return
+          render plain: ActiveSupport::JSON.encode({ messages: ['Device UID not exists'], result: :error }) and return
         end
       end
 
       private def update_last_contact_time
         @device.last_contact_at = Time.now
         if !@device.save
-          render json: { messages: ['Internal server error'], result: :error } and return
+          render plain: ActiveSupport::JSON.encode({ messages: ['Internal server error'], result: :error }) and return
         end
       end
 

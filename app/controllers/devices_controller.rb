@@ -130,10 +130,10 @@ class DevicesController < ApplicationController
         # mqtt_client.publish(nil, device_uid, 'test message', Mosquitto::AT_MOST_ONCE, true)
       }
 
-      asdf = mqtt_client.connect("10.168.10.50", 1883, 10)
+      asdf = mqtt_client.connect('10.168.10.50', 1883, 10)
       puts asdf
 
-      mqtt_client.publish(nil, params[:device_uid], "{'dev_attr': [{ 'id': '69', 'curVal': #{device_attribute.read_attribute(params[:name])} }]}", Mosquitto::AT_MOST_ONCE, false)
+      mqtt_client.publish(nil, params[:device_uid], "{'dev_attr': [{ 'id': #{device_attribute.id}, 'curVal': #{device_attribute.read_attribute(params[:name])} }]}", Mosquitto::AT_MOST_ONCE, false)
 
       mqtt_client.disconnect()
 
