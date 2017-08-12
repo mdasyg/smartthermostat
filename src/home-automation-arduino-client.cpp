@@ -7,6 +7,8 @@
 #include <TimeLib.h>
 #include <MemoryFree.h>
 
+#include <EEPROM.h>
+
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
 #include "ProccessCallbacks.h"
@@ -40,15 +42,15 @@ void setup() {
   lastDHT22QueryTimestamp = millis();
   lastDeviceStatusDisplayUpdateTimestamp = millis();
 
-  Serial.println();
-  Serial.println(F("Device Info"));
-  Serial.print(F("Name: "));
-  Serial.println(DEVICE_FRIENDLY_NAME);
-  Serial.print(F("S/N:  "));
-  Serial.println(DEVICE_SERIAL_NUMBER);
-  Serial.print(F("F/W:  "));
-  Serial.println(DEVICE_FIRMWARE_VERSION);
-  Serial.println();
+  // Serial.println();
+  // Serial.println(F("Device Info"));
+  // Serial.print(F("Name: "));
+  // Serial.println(DEVICE_FRIENDLY_NAME);
+  // Serial.print(F("S/N:  "));
+  // Serial.println(DEVICE_SERIAL_NUMBER);
+  // Serial.print(F("F/W:  "));
+  // Serial.println(DEVICE_FIRMWARE_VERSION);
+  // Serial.println();
 
   // initial device status update to serial
   statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
@@ -70,17 +72,25 @@ void setup() {
   // initial device attributes
   initDeviceAttributes(ethClient, stateOfAttributes);
 
+  // testing eeprom
+  unsigned int address=0;
+  byte value;
+  while(address != EEPROM.length()) {
+    value = EEPROM.read(address);
+    Serial.print(address);
+    Serial.print("\t");
+    Serial.print(value, DEC);
+    Serial.println();
+    address++;
+  }
+
 }
 
 void loop() {
 
   if (!mqttClient.connected()) {
-    Serial.println(F("Disconected from MQTT broker"));
     mqttConnectToBrokerCallback(mqttClient);
   }
-
-  // ask for data from server
-  // buildDeviceAttributesRequest(postRequestData);
 
   // read server response
   httpResponseReader(ethClient);
@@ -104,9 +114,7 @@ void loop() {
 
   Ethernet.maintain();
 
-  if (mqttClient.loop() == false) {
-    Serial.println(F("MQTT connection error"));
-  }
+  mqttClient.loop();
 
   // device status update to Serial
   statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);

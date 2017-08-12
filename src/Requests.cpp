@@ -5,20 +5,14 @@
 #include "System.h"
 
 bool connectToApplicationServer(EthernetClient &ethClient) {
-  int result;
   ethClient.stop();
 
-  result = ethClient.connect(applicationServerUrl, applicationServerPort);
-  if(result != 1) {
-    Serial.print(F("Connection failed: "));
-    Serial.print(result);
-    Serial.println(F(". Retry later"));
-  }
+  ethClient.connect(applicationServerUrl, applicationServerPort);
 
   if (ethClient.connected()) {
     isEthClientConnectedToServer = true;
   } else {
-    Serial.println(F("Connect fail to app server"));
+    Serial.print(F("Connection to the app srv failed: "));
     return false;
   }
   return true;
@@ -124,14 +118,14 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
 
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
     postRequestData = "";
-    postRequestData += F("dev_attr[");
+    postRequestData += F("da[");
     postRequestData += i;
     postRequestData += F("][id]=");
     postRequestData += stateOfAttributes[i].id;
     postRequestData += AMPERSAND;
-    postRequestData += F("dev_attr[");
+    postRequestData += F("da[");
     postRequestData += i;
-    postRequestData += F("][curVal]=");
+    postRequestData += F("][cur]=");
     postRequestData += stateOfAttributes[i].currentValue;
 
     sendHttpPostRequest(ethClient, uri, postRequestData);
@@ -149,7 +143,7 @@ int httpResponseReader(EthernetClient &ethClient) {
     char endOfHeaders[] = "\r\n\r\n";
     bool ok = ethClient.find(endOfHeaders);
     if (!ok) {
-      Serial.println(F("No response or invalid response"));
+      Serial.println(F("No response or invalid http response"));
       return -1;
     }
 
@@ -165,22 +159,15 @@ int httpResponseReader(EthernetClient &ethClient) {
 
     if(root.containsKey("res")) {
       const char* result = root["res"];
-      if (strcmp(result, "ok") == 0) {
-        Serial.print(F("Result: OK"));
-      } else {
+      if (strcmp(result, "ok") != 0) {
         Serial.print(F("Result: ERROR"));
       }
 
-      // Serial.print(F("Result: ")); Serial.println(result);
     }
 
     if(root.containsKey("msg")) {
-      // do something
-      // const char* msgs = root["messages"];
-      // Serial.print(F("messages: ")); Serial.println(msgs);
+      Serial.println(F("Response contains msg"));
     }
-
-    Serial.println();
 
   }
 
