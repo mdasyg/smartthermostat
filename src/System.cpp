@@ -125,7 +125,6 @@ void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, device
       byte i;
       lastDeviceStatusDisplayUpdateTimestamp = now();
       Serial.println();
-      Serial.println(F("Device Status Update"));
       Serial.print(F("Time: ")); digitalClockDisplay(false);
       Serial.print(F("Free RAM: ")); Serial.print(freeMemory()); Serial.println(F(" bytes"));
       for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
