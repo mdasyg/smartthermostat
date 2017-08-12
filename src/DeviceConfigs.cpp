@@ -1,23 +1,24 @@
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
 #include "ProccessCallbacks.h"
+#include "System.h"
+#include "Requests.h"
 
-void initDeviceAttributes(deviceAttribute stateOfAttributes[]) {
+void initDeviceAttributes(EthernetClient &ethClient, deviceAttribute stateOfAttributes[]) {
+  String flashReadBufferStr;
 
   pinMode(boilerRelayPin, OUTPUT);
   digitalWrite(boilerRelayPin, LOW);
 
   // attribute 1 init
-  stateOfAttributes[0].id = 1; // temperature
-  stateOfAttributes[0].name = F("Temperature");
-
+  stateOfAttributes[0].id = 1;
   // attribute 2 init
-  stateOfAttributes[1].id = 5; // ON-OFF
-  stateOfAttributes[1].name = F("ON/OFF");
-
+  stateOfAttributes[1].id = 5;
   // attribute 3 init
-  stateOfAttributes[2].id = 6; // Humidity
-  stateOfAttributes[2].name = F("RH");
+  stateOfAttributes[2].id = 6;
 
-  return;
+  // Request devices attributes list update and wait the reponse on MQTT
+  readFromFlash(deviceAttributesListUri, flashReadBufferStr);
+  flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
+  sendHttpGetRequest(ethClient, flashReadBufferStr);
 }

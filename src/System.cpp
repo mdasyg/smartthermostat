@@ -1,3 +1,4 @@
+#include <ArduinoJson.h>
 #include <MemoryFree.h>
 
 #include "DeviceConfigs.h"
@@ -12,21 +13,21 @@ extern EthernetUDP udpClient;
 // ethernet shield initialization
 void initEthernetShieldNetwork() {
   byte etherShieldConnectionRetryCount = 0;
-  digitalClockDisplay(true); Serial.println(F("Trying DHCP"));
+  Serial.println(F("Trying DHCP"));
   bool isEthernetShieldConnected = false;
   do {
     if (Ethernet.begin(mac) == 0) {
       etherShieldConnectionRetryCount++;
-      digitalClockDisplay(true); Serial.println(F("DHCP failed, Retry later"));
+      Serial.println(F("DHCP failed, Retry later"));
       delay(5000);
     } else {
       isEthernetShieldConnected = true;
     }
   } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
   if(isEthernetShieldConnected) {
-    digitalClockDisplay(true); Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
+    Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
   } else {
-    digitalClockDisplay(true); Serial.print(F("Keep going w/o netwrok"));
+    Serial.print(F("Keep going w/o netwrok"));
   }
 
 }
@@ -74,47 +75,70 @@ time_t getNtpTime() {
   return 0; // return 0 if unable to get the time
 }
 
-void printDigits(int digits) {
-  // utility for digital clock display: prints preceding colon and leading 0
-  Serial.print(":");
-  if(digits < 10)
-  Serial.print("0");
-  Serial.print(digits);
-}
-
-void digitalClockDisplay(bool brackets) {
-  if(brackets) {
-    Serial.print("[");
-  }
-  Serial.print(day());
-  Serial.print("-");
-  Serial.print(month());
-  Serial.print("-");
-  Serial.print(year());
-  Serial.print(" ");
-  Serial.print(hour());
-  printDigits(minute());
-  printDigits(second());
-  if(brackets) {
-    Serial.print("] ");
-  } else {
-    Serial.println();
-  }
-}
+// void printDigits(int digits) {
+//   // utility for digital clock display: prints preceding colon and leading 0
+//   Serial.print(":");
+//   if(digits < 10)
+//   Serial.print("0");
+//   Serial.print(digits);
+// }
+//
+// void digitalClockDisplay(bool brackets) {
+//   if(brackets) {
+//     Serial.print("[");
+//   }
+//   Serial.print(day());
+//   Serial.print("-");
+//   Serial.print(month());
+//   Serial.print("-");
+//   Serial.print(year());
+//   Serial.print(" ");
+//   Serial.print(hour());
+//   printDigits(minute());
+//   printDigits(second());
+//   if(brackets) {
+//     Serial.print("] ");
+//   } else {
+//     Serial.println();
+//   }
+// }
 
 void readFromFlash(const char src[], String &flashReadBufferStr) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
-    digitalClockDisplay(true); Serial.println(F("Src bigger than buf. Aborting execution"));
+    Serial.println(F("Src bigger than buf. Aborting execution"));
     while(true);
   }
-
   char tempCharBuffer;
   unsigned int i;
   flashReadBufferStr = "";
   for (i=0; i<strlen_P(src); i++) {
-      tempCharBuffer = pgm_read_byte_near(src + i);
-      flashReadBufferStr += tempCharBuffer;
+    tempCharBuffer = pgm_read_byte_near(src + i);
+    flashReadBufferStr += tempCharBuffer;
+  }
+}
+
+void updateAppropriateEntityFromJsonResponse(byte *payload) {
+  StaticJsonBuffer<100> jsonBuffer;
+
+  JsonObject& root = jsonBuffer.parseObject(payload);
+
+  if (!root.success()) {
+    Serial.println(F("parseObject() failed"));
+  }
+
+  if(root.containsKey("da")) {
+    byte i;
+    for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+      if(stateOfAttributes[i].id == (int) root["da"]["id"]) {
+        if (strlen(root["da"]["name"]) > 0) {
+          strcpy(stateOfAttributes[i].name, root["da"]["name"]);
+        }
+        if (strlen(root["da"]["set"]) > 0) {
+          strcpy(stateOfAttributes[i].setValue, root["da"]["set"]);
+        }
+      }
     }
+  }
 
 }
 
@@ -125,7 +149,7 @@ void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, device
       byte i;
       lastDeviceStatusDisplayUpdateTimestamp = now();
       Serial.println();
-      Serial.print(F("Time: ")); digitalClockDisplay(false);
+      // Serial.print(F("Time: ")); digitalClockDisplay(false);
       Serial.print(F("Free RAM: ")); Serial.print(freeMemory()); Serial.println(F(" bytes"));
       for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
         Serial.print(stateOfAttributes[i].name);

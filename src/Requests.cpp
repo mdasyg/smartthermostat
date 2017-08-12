@@ -10,7 +10,6 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
 
   result = ethClient.connect(applicationServerUrl, applicationServerPort);
   if(result != 1) {
-    digitalClockDisplay(true);
     Serial.print(F("Connection failed: "));
     Serial.print(result);
     Serial.println(F(". Retry later"));
@@ -19,15 +18,44 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   if (ethClient.connected()) {
     isEthClientConnectedToServer = true;
   } else {
-    digitalClockDisplay(true); Serial.println(F("Connect fail to app server"));
+    Serial.println(F("Connect fail to app server"));
     return false;
   }
   return true;
 }
 
+bool sendHttpGetRequest(EthernetClient &ethClient, const String &uri) {
+  if(!connectToApplicationServer(ethClient)) {
+    Serial.println(F("Abort get request send"));
+    return false;
+  }
+  String httpRequestStr;
+
+  // SET GET REQUEST
+  httpRequestStr = F("GET ");
+  httpRequestStr += uri;
+  httpRequestStr += F(" HTTP/1.1\r\n");
+  ethClient.print(httpRequestStr);
+  // set HOST contents
+  httpRequestStr = F("HOST: ");
+  httpRequestStr += applicationServerUrl;
+  if (applicationServerPort != 80) {
+    httpRequestStr += ":";
+    httpRequestStr += applicationServerPort;
+  }
+  httpRequestStr += F("\r\n");
+  ethClient.print(httpRequestStr);
+  // Connection close
+  ethClient.print(F("Connection: close\r\n"));
+  // finalize request
+  ethClient.print("\r\n\r\n");
+
+  return true;
+}
+
 bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData) {
   if(!connectToApplicationServer(ethClient)) {
-    digitalClockDisplay(true); Serial.println(F("Abort post request send"));
+    Serial.println(F("Abort post request send"));
     return false;
   }
   String httpRequestStr;
@@ -112,19 +140,6 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
   return;
 
 }
-
-// bool buildAndSendGetRequest(EthernetClient &ethClient) {
-//   httpRequestStr += "GET /api/v1/devices/721367462351557606/attributes.json HTTP/1.1\r\n";
-//   httpRequestStr += "HOST: ";
-//   httpRequestStr += applicationServerUrl;
-//   if (applicationServerPort != 80) {
-//     httpRequestStr += ":";
-//     httpRequestStr += applicationServerPort;
-//   }
-//   httpRequestStr += "\r\n\r\n";
-//   sendHttpRequest(ethClient, httpRequestStr);
-//   return;
-// }
 
 int httpResponseReader(EthernetClient &ethClient) {
   if (ethClient.available()) {

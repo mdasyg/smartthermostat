@@ -1,5 +1,6 @@
 #include <avr/pgmspace.h>
 #include <Arduino.h>
+#include <Ethernet.h>
 #include <EthernetUdp.h>
 
 #include "DataStructures.h"
@@ -33,6 +34,6 @@ const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/DEV_UID/attrib
 const byte boilerRelayPin = 7;
 const byte tempSensorPin1 = 2;
 
-void initDeviceAttributes(deviceAttribute stateOfAttributes[]);
+void initDeviceAttributes(EthernetClient &ethClient, deviceAttribute stateOfAttributes[]);
 
 #endif

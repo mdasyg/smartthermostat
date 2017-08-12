@@ -2,7 +2,6 @@
 #include "System.h"
 
 void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
-  digitalClockDisplay(true);
   Serial.print(F("MQTT msg on topic ["));
   Serial.print(topic);
   Serial.print(F("], size ["));
@@ -10,20 +9,21 @@ void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
   Serial.print("] msg: ");
   Serial.write(payload, length);
   Serial.println();
+
+updateAppropriateEntityFromJsonResponse(payload);
+
 }
 
 void mqttConnectToBrokerCallback(PubSubClient &mqttClient) {
-  // digitalClockDisplay(true); Serial.println(F("Connecting to MQTT broker"));
+  // Serial.println(F("Connecting to MQTT broker"));
   if (mqttClient.connect(DEVICE_FRIENDLY_NAME, MQTT_USERNAME, MQTT_PASSWORD)) {
-    // digitalClockDisplay(true); Serial.println(F("Connected to MQTT broker"));
+    // Serial.println(F("Connected to MQTT broker"));
     mqttClient.publish("outTopic", DEVICE_FRIENDLY_NAME);
     mqttClient.subscribe(DEVICE_SERIAL_NUMBER);
-    // digitalClockDisplay(true);
     // Serial.print(F("Subscribed to ["));
     // Serial.print(DEVICE_SERIAL_NUMBER);
     // Serial.println(F("] topic"));
   } else {
-    digitalClockDisplay(true);
     Serial.print("Failed, rc=");
     Serial.println(mqttClient.state());
   }

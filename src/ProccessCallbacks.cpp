@@ -5,6 +5,7 @@
 
 uint32_t minDelayBeforeNextDHT22Query_ms = 2000; // in milliseconds
 int readDht22Result;
+
 int thermostatProccessCallback(deviceAttribute attributesStates[], dht &dht22, uint32_t &lastDHT22QueryTimestamp) {
   if((millis() - lastDHT22QueryTimestamp) > minDelayBeforeNextDHT22Query_ms) {
     // Get temperature event and print its value.

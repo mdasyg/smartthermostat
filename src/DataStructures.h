@@ -5,8 +5,8 @@
 
 struct deviceAttribute {
   int id;
-  String name;
-  String setValue;
+  char name[15];
+  char setValue[10];
   String currentValue;
 };
 

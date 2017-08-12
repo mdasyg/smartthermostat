@@ -2,8 +2,8 @@
 #include <dht.h>
 #include <SPI.h>
 #include <Ethernet.h>
-#include <EthernetUdp.h>
 #include <PubSubClient.h>
+#include <EthernetUdp.h>
 #include <TimeLib.h>
 #include <MemoryFree.h>
 
@@ -68,14 +68,14 @@ void setup() {
   sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBufferStr);
 
   // initial device attributes
-  initDeviceAttributes(stateOfAttributes);
+  initDeviceAttributes(ethClient, stateOfAttributes);
 
 }
 
 void loop() {
 
   if (!mqttClient.connected()) {
-    // digitalClockDisplay(true); Serial.println(F("Disconected from MQTT broker"));
+    Serial.println(F("Disconected from MQTT broker"));
     mqttConnectToBrokerCallback(mqttClient);
   }
 
@@ -105,7 +105,7 @@ void loop() {
   Ethernet.maintain();
 
   if (mqttClient.loop() == false) {
-    digitalClockDisplay(true); Serial.println(F("MQTT connection error"));
+    Serial.println(F("MQTT connection error"));
   }
 
   // device status update to Serial
