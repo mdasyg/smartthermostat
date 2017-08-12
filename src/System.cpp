@@ -142,15 +142,18 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
 
 }
 
-void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
+void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[], const uint32_t loopTimeStat[]) {
   // Device status in serial
   if (timeStatus() != timeNotSet) {
-    if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 30) { // in seconds
+    if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 10) { // in seconds
       byte i;
       lastDeviceStatusDisplayUpdateTimestamp = now();
       Serial.println();
       // Serial.print(F("Time: ")); digitalClockDisplay(false);
-      Serial.print(F("Free RAM: ")); Serial.print(freeMemory()); Serial.println(F(" bytes"));
+      Serial.print(F("Last loop cycle time(us): ")); Serial.println(loopTimeStat[0]);
+      Serial.print(F("Last loop cycle time min(us): ")); Serial.println(loopTimeStat[1]);
+      Serial.print(F("Last loop cycle time max(us): ")); Serial.println(loopTimeStat[2]);
+      Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
       for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
         Serial.print(stateOfAttributes[i].name);
         Serial.print(F(": Current value = "));

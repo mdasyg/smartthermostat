@@ -9,6 +9,8 @@
 
 #include <EEPROM.h>
 
+#include <avr/wdt.h>
+
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
 #include "ProccessCallbacks.h"
@@ -34,6 +36,9 @@ time_t lastDeviceStatusDisplayUpdateTimestamp; // when the digital clock was dis
 dht dht22;
 
 void setup() {
+
+  uint16_t startInit = millis();
+
   Serial.begin(115200);
 
   // flashReadBufferStr.reserve(FLASH_READ_BUFFER_MAX_SIZE);
@@ -53,7 +58,7 @@ void setup() {
   // Serial.println();
 
   // initial device status update to serial
-  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
+  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes, 0);
 
   // Init EthernetClient
   initEthernetShieldNetwork();
@@ -84,9 +89,18 @@ void setup() {
     address++;
   }
 
+  wdt_enable(WDTO_8S);
+
+  Serial.print(F("Time to init(ms): ")); Serial.println(millis() - startInit);
+
 }
 
+uint32_t loopTimeCount;
+uint32_t loopTimeStat[3] = {0, 10000, 0}; // 0: current, 1: min, 2:max
+
 void loop() {
+
+  loopTimeCount = micros();
 
   if (!mqttClient.connected()) {
     mqttConnectToBrokerCallback(mqttClient);
@@ -117,6 +131,17 @@ void loop() {
   mqttClient.loop();
 
   // device status update to Serial
-  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
+  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes, loopTimeStat);
+
+  wdt_reset();
+
+  loopTimeStat[0] = micros() - loopTimeCount;
+  loopTimeCount = micros();
+  if (loopTimeStat[0] < loopTimeStat[1]) {
+    loopTimeStat[1] = loopTimeStat[0];
+  }
+  if (loopTimeStat[0] > loopTimeStat[2]) {
+    loopTimeStat[2] = loopTimeStat[0];
+  }
 
 }
