@@ -34,13 +34,11 @@ dht dht22;
 void setup() {
   Serial.begin(115200);
 
-  flashReadBufferStr.reserve(FLASH_READ_BUFFER_MAX_SIZE);
+  // flashReadBufferStr.reserve(FLASH_READ_BUFFER_MAX_SIZE);
 
   lastAttrUpdateTimestamp = millis();
   lastDHT22QueryTimestamp = millis();
   lastDeviceStatusDisplayUpdateTimestamp = millis();
-
-  initDeviceAttributes(stateOfAttributes);
 
   Serial.println();
   Serial.println(F("Device Info"));
@@ -52,7 +50,7 @@ void setup() {
   Serial.println(DEVICE_FIRMWARE_VERSION);
   Serial.println();
 
-  // initial status update
+  // initial device status update to serial
   statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
   // Init EthernetClient
@@ -65,10 +63,12 @@ void setup() {
   mqttConnectToBrokerCallback(mqttClient);
 
   // Send device info to application server
-  // digitalClockDisplay(true); Serial.println(F("Device Status Update"));
   readFromFlash(deviceStatsUpdateUri, flashReadBufferStr);
   flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
   sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBufferStr);
+
+  // initial device attributes
+  initDeviceAttributes(stateOfAttributes);
 
 }
 

@@ -2,7 +2,7 @@
 #include "DeviceConfigs.h"
 #include "ProccessCallbacks.h"
 
-int initDeviceAttributes(deviceAttribute stateOfAttributes[]) {
+void initDeviceAttributes(deviceAttribute stateOfAttributes[]) {
 
   pinMode(boilerRelayPin, OUTPUT);
   digitalWrite(boilerRelayPin, LOW);
@@ -19,5 +19,5 @@ int initDeviceAttributes(deviceAttribute stateOfAttributes[]) {
   stateOfAttributes[2].id = 6; // Humidity
   stateOfAttributes[2].name = F("RH");
 
-  return 0;
+  return;
 }

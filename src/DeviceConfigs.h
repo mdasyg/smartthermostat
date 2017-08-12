@@ -22,15 +22,17 @@ const char applicationServerUrl[] = "home-auto.eu";
 const unsigned int applicationServerPort = 8080; // to unsigned anevazei poly thn xrhsh tis flash, gt?
 const char mqttServerUrl[] = "home-auto.eu";
 const unsigned int mqttServerPort = 1883;
+
 const unsigned int localUdpPort = 8888;  // local port to listen for UDP packets
 
 const PROGMEM char deviceStatsUpdateUri[] = "/api/v1/devices/DEV_UID/stats_update";
+const PROGMEM char deviceAttributesListUri[] = "/api/v1/devices/DEV_UID/attributes_list";
 const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/DEV_UID/attributes_status_update";
 
 // system variables
 const byte boilerRelayPin = 7;
 const byte tempSensorPin1 = 2;
 
-int initDeviceAttributes(deviceAttribute stateOfAttributes[]);
+void initDeviceAttributes(deviceAttribute stateOfAttributes[]);
 
 #endif
