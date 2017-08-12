@@ -1,12 +1,11 @@
 #include <Arduino.h>
+#include <dht.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <PubSubClient.h>
 #include <TimeLib.h>
 #include <MemoryFree.h>
-
-#include <dht.h>
 
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
@@ -106,7 +105,7 @@ void loop() {
   Ethernet.maintain();
 
   if (mqttClient.loop() == false) {
-    // digitalClockDisplay(true); Serial.println(F("MQTT connection error"));
+    digitalClockDisplay(true); Serial.println(F("MQTT connection error"));
   }
 
   // device status update to Serial

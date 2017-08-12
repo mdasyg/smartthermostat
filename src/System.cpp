@@ -5,8 +5,6 @@
 
 IPAddress ntpTimeServer(10, 168, 10, 60); // TODO REMOVE from here
 byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED }; // TODO REMOVE from here
-
-const int timeZone = 3; // EEST (includes DST)
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
 
 extern EthernetUDP udpClient;
@@ -14,7 +12,7 @@ extern EthernetUDP udpClient;
 // ethernet shield initialization
 void initEthernetShieldNetwork() {
   byte etherShieldConnectionRetryCount = 0;
-  // digitalClockDisplay(true); Serial.println(F("Trying DHCP"));
+  digitalClockDisplay(true); Serial.println(F("Trying DHCP"));
   bool isEthernetShieldConnected = false;
   do {
     if (Ethernet.begin(mac) == 0) {
@@ -26,9 +24,9 @@ void initEthernetShieldNetwork() {
     }
   } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
   if(isEthernetShieldConnected) {
-    // digitalClockDisplay(true); Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
+    digitalClockDisplay(true); Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
   } else {
-    // digitalClockDisplay(true); Serial.print(F("Keep going w/o netwrok"));
+    digitalClockDisplay(true); Serial.print(F("Keep going w/o netwrok"));
   }
 
 }
@@ -57,7 +55,6 @@ void sendNTPpacket(IPAddress &address) {
 
 time_t getNtpTime() {
   while (udpClient.parsePacket() > 0) ; // discard any previously received packets
-  // Serial.println(F("NTP Request"));
   sendNTPpacket(ntpTimeServer);
   uint32_t beginWait = millis();
   while (millis() - beginWait < 1500) {
@@ -74,7 +71,6 @@ time_t getNtpTime() {
       return secsSince1900 - 2208988800UL + timeZone * SECS_PER_HOUR;
     }
   }
-  // Serial.println(F("No NTP Response"));
   return 0; // return 0 if unable to get the time
 }
 
