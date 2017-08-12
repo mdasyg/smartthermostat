@@ -13,11 +13,11 @@ int thermostatProccessCallback(deviceAttribute attributesStates[], dht &dht22, u
       attributesStates[0].currentValue = dht22.temperature;
       attributesStates[1].currentValue = 1;
       attributesStates[2].currentValue = dht22.humidity;
-      lastDHT22QueryTimestamp = millis();
     } else {
       Serial.println(F("Error reading temp & RH"));
     }
 
+    lastDHT22QueryTimestamp = millis();
   }
 
   return 0;
