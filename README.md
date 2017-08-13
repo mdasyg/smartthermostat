@@ -3,18 +3,18 @@
 # Requirements
 
 1. ruby 2.3 or later
-1. ruby-gems manager
-1. bundler
-1. [libmosquitto](https://github.com/xively/mosquitto)
-1. mysql server
-1. web server with phusion passenger module (e.g install passenger gem)
+2. ruby-gems manager
+3. bundler
+4. [libmosquitto](https://github.com/xively/mosquitto)
+5. mysql server
+6. web server with phusion passenger module (e.g install passenger gem)
 
 # Installation
 
 ## Initial setup
 
 1. after all requirements met, run 'bundle install'
-1. copy 'secrets.yml.sample' to 'secrets.yml' and change the appropriate values
+2. copy 'secrets.yml.sample' to 'secrets.yml' and change the appropriate values
 
 ## Database
 
@@ -23,9 +23,9 @@
 	+ config.active_record.table_name_prefix
 	+ config.active_record.table_name_suffix
 
-1. setup a database on your DB
-1. setup a user and give him access
-1. run 'rails db:migrate'
+2. setup a database on your DB
+3. setup a user and give him access
+4. run 'rails db:migrate'
 
 ## Mailer
 
@@ -43,9 +43,9 @@ config.action_mailer.smtp_settings = {
   enable_starttls_auto: true
 }
 ```
-1. Be sure to set a domain, otherwise email failing to send
+2. Be sure to set a domain, otherwise email failing to send
 
-1. change accordingly the from adress where needed
+3. change accordingly the from adress where needed
 	+ eg: app/mailers/application_mailer.rb
 
 Test emails with:
@@ -56,6 +56,10 @@ ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com
 1. config.web_console.whitelisted_ips = '10.168.10.40'
 
 # Notes
+
++ In production machines run `rake assets:precompile` in order to precompile assets and work properly
+
++ When using modules(e.g x-editable, bootstrap) because of assets some url/links doesnot work so yoy have to override them (see application.scss for example)
 
 + On "app/assets/javascripts/application.js" consider using "//= require bootstrap" instead of "//= require bootstrap-sprockets" when in production
 

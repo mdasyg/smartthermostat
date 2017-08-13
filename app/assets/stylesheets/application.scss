@@ -11,7 +11,7 @@
  * It is generally better to create a new file per style scope.
  *
  */
-@import 'bootstrap';
+@import 'bootstrap/dist/css/bootstrap';
 @import 'select2/dist/css/select2';
 @import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker';
 @import 'fullcalendar/dist/fullcalendar';
@@ -23,7 +23,7 @@
   display: block;
 }
 
-/* Override Bootstrap 3 font locations */
+/* Override Bootstrap 3 font locations (tasloum) */
 @font-face {
   font-family: 'Glyphicons Halflings';
   src: asset-url('bootstrap/fonts/glyphicons-halflings-regular.eot');
@@ -31,6 +31,15 @@
   asset-url('bootstrap/fonts/glyphicons-halflings-regular.woff') format('woff'),
   asset-url('bootstrap/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
   asset-url('bootstrap/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+/* Override x-editable urls */
+.editableform-loading {
+  background: asset-url("x-editable/dist/bootstrap3-editable/img/loading.gif") center center no-repeat;
+}
+
+.editable-clear-x {
+  background: asset-url("x-editable/dist/bootstrap3-editable/img/clear.png") center center no-repeat;
 }
 
 /* mixins, variables, etc. */
