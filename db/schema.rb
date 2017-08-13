@@ -22,7 +22,10 @@ ActiveRecord::Schema.define(version: 20170527060931) do
   create_table "device_attributes", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
     t.string "name", null: false
-    t.integer "value_type_id", limit: 1, null: false, unsigned: true
+    t.integer "primitive_type_c_id", limit: 1, null: false, unsigned: true
+    t.boolean "unsigned", null: false
+    t.integer "direction_c_id", limit: 1, null: false, unsigned: true
+    t.string "unit", limit: 5, null: false
     t.string "min_value"
     t.string "max_value"
     t.string "set_value"
@@ -30,7 +33,6 @@ ActiveRecord::Schema.define(version: 20170527060931) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["device_uid"], name: "fk_rails_69a3134aba"
-    t.index ["value_type_id"], name: "fk_rails_2a67338edb"
   end
 
   create_table "device_stats", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -108,17 +110,8 @@ ActiveRecord::Schema.define(version: 20170527060931) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  create_table "value_types", id: :integer, limit: 1, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "primitive_type_id", limit: 1, null: false, unsigned: true
-    t.string "name", null: false
-    t.boolean "unsigned", null: false
-    t.integer "min_value"
-    t.integer "max_value"
-  end
-
   add_foreign_key "actions", "device_attributes"
   add_foreign_key "device_attributes", "devices", column: "device_uid", primary_key: "uid"
-  add_foreign_key "device_attributes", "value_types"
   add_foreign_key "device_stats", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "devices", "users"
   add_foreign_key "schedule_events", "devices", column: "device_uid", primary_key: "uid"

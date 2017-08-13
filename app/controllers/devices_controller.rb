@@ -1,7 +1,8 @@
 class DevicesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_device, only: [:show, :edit, :update, :destroy, :get_device_attributes_list]
-  before_action :set_value_types, only: [:new, :edit]
+  before_action :set_primitive_types, only: [:new, :edit]
+  before_action :set_directions, only: [:new, :edit]
 
   # GET /devices
   # GET /devices.json
@@ -39,11 +40,13 @@ class DevicesController < ApplicationController
       if @device.save
         # Now its time to save the device attributes
         format.html {redirect_to @device, notice: 'Device was successfully created.'}
-        format.json {render :show, status: :created, location: @device}
+        format.json {
+          full_device = render_to_string partial: 'devices/device', locals: { schedule: @device }
+          render json: { data: JSON::parse(full_device), result: :ok }
+        }
       else
-        set_value_types
-        format.html {render :new}
-        format.json {render json: @device.errors, status: :unprocessable_entity}
+        format.html {set_primitive_types(); set_directions(); render :new}
+        format.json {render json: { messages: @device.errors.full_messages, result: :error }}
       end
     end
 
@@ -70,10 +73,6 @@ class DevicesController < ApplicationController
     # and compute which of them we need to delete
     device_attribute_ids_to_delete = stored_device_attribute_ids - posted_device_attribute_ids
 
-    # puts "STORED: #{stored_device_attribute_ids}"
-    # puts "POSTED: #{posted_device_attribute_ids}"
-    # puts "TO DELETE: #{device_attribute_ids_to_delete}"
-
     # First delete the deleted ones
     if device_attribute_ids_to_delete
       DeviceAttribute.destroy(device_attribute_ids_to_delete)
@@ -96,11 +95,13 @@ class DevicesController < ApplicationController
     respond_to do |format|
       if @device.update(safe_device_params)
         format.html {redirect_to @device, notice: 'Device was successfully updated.'}
-        format.json {render :show, status: :ok, location: @device}
+        format.json {
+          full_device = render_to_string partial: 'devices/device', locals: { schedule: @device }
+          render json: { data: JSON::parse(full_device), result: :ok }
+        }
       else
-        set_value_types
-        format.html {render :edit}
-        format.json {render json: @device.errors, status: :unprocessable_entity}
+        format.html {set_primitive_types(); set_directions(); render :edit}
+        format.json {render json: { messages: @device.errors.full_messages, result: :error }}
       end
     end
   end
@@ -201,13 +202,17 @@ class DevicesController < ApplicationController
     @device = Device.where(user_id: current_user.id).find(params[:uid])
   end
 
-  private def set_value_types
-    @value_types = []
-    ValueType.all.each do |value|
-      @value_types << [value.name, value.id]
+  private def set_primitive_types
+    @primitive_types = []
+    DeviceAttribute::PRIMITIVE_TYPES.each do |key, p_type|
+      @primitive_types << [p_type[:LABEL], p_type[:ID]]
     end
-    if @value_types.empty?
-      redirect_to admin_path
+  end
+
+  private def set_directions
+    @directions = []
+    DeviceAttribute::DIRECTIONS.each do |key, direction|
+      @directions << [direction[:LABEL], direction[:ID]]
     end
   end
 
@@ -217,7 +222,7 @@ class DevicesController < ApplicationController
   end
 
   private def safe_device_attribute_params(unsafe_attribute)
-    unsafe_attribute.permit(:name, :value_type_id, :value_min, :value_max, :set_value)
+    unsafe_attribute.permit(:name, :primitive_type_c_id, :unsigned, :direction_c_id, :unit, :min_value, :max_value, :set_value)
   end
 
 end
