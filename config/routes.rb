@@ -12,10 +12,6 @@ Rails.application.routes.draw do
   get 'schedules/:id/get_overlapping_schedules', to: 'schedules#get_overlapping_schedules'
   post 'schedules/update_overlapping_schedules_priorities', to: 'schedules#update_overlapping_schedules_priorities'
 
-  get '/admin', to: 'admin#index'
-  get '/admin/manage_value_types', to: redirect('/admin')
-  post '/admin/manage_value_types', to: 'admin#manage_value_types'
-
   devise_for :users # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   # api routes

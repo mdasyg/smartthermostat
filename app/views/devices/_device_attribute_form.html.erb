@@ -2,7 +2,7 @@
 
   <div class="row">
 
-    <div class="col-xs-3">
+    <div class="col-xs-2">
       <div class="form-group">
         <%= label DeviceAttribute, :name, 'Prop Name' %>
       </div>
@@ -10,17 +10,29 @@
 
     <div class="col-xs-2">
       <div class="form-group">
-        <%= label DeviceAttribute, :value_type_id %>
+        <%= label DeviceAttribute, :direction_c_id %>
       </div>
     </div>
 
     <div class="col-xs-2">
       <div class="form-group">
+        <%= label DeviceAttribute, :primitive_type_c_id %>
+      </div>
+    </div>
+
+    <div class="col-xs-1">
+      <div class="form-group">
+        <%= label DeviceAttribute, :unsigned %>
+      </div>
+    </div>
+
+    <div class="col-xs-1">
+      <div class="form-group">
         <%= label DeviceAttribute, :min_value %>
       </div>
     </div>
 
-    <div class="col-xs-2">
+    <div class="col-xs-1">
       <div class="form-group">
         <%= label DeviceAttribute, :max_value %>
       </div>
@@ -34,7 +46,7 @@
 
     <div class="col-xs-1">
       <div class="form-group">
-        <%= label DeviceAttribute, :current_value %>
+        <%= label DeviceAttribute, :unit %>
       </div>
     </div>
 

@@ -21,7 +21,7 @@
 
     <div class="row">
 
-      <div class="col-xs-3">
+      <div class="col-xs-2">
         <div class="form-group">
           <%= device_attribute_form.text_field :name, class: 'form-control' %>
         </div>
@@ -29,21 +29,33 @@
 
       <div class="col-xs-2">
         <div class="form-group">
-          <%= device_attribute_form.select(:value_type_id, {}, {}, { class: 'form-control' }) do %>
-            <% options_for_select(@value_types, device_attribute.value_type_id) %>
+          <%= device_attribute_form.select(:direction_c_id, {}, {}, { class: 'form-control' }) do %>
+            <% options_for_select(@directions, device_attribute.direction_c_id) %>
           <% end %>
         </div>
       </div>
 
       <div class="col-xs-2">
         <div class="form-group">
-          <%= device_attribute_form.number_field(:min_value, class: 'form-control') %>
+          <%= device_attribute_form.select(:primitive_type_c_id, {}, {}, { class: 'form-control' }) do %>
+            <% options_for_select(@primitive_types, device_attribute.primitive_type_c_id) %>
+          <% end %>
         </div>
       </div>
 
-      <div class="col-xs-2">
+      <div class="col-xs-1">
+        <%= device_attribute_form.check_box :unsigned %>
+      </div>
+
+      <div class="col-xs-1">
         <div class="form-group">
-          <%= device_attribute_form.number_field :max_value, class: 'form-control' %>
+          <%= device_attribute_form.text_field(:min_value, class: 'form-control') %>
+        </div>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="form-group">
+          <%= device_attribute_form.text_field :max_value, class: 'form-control' %>
         </div>
       </div>
 
@@ -55,7 +67,7 @@
 
       <div class="col-xs-1">
         <div class="form-group">
-          <%= device_attribute.current_value.nil? ? '-' : device_attribute.current_value %>
+          <%= device_attribute_form.text_field :unit, class: 'form-control' %>
         </div>
       </div>
 
