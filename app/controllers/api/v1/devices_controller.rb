@@ -31,37 +31,39 @@ module Api
       end
 
       def attributes_status_update
-        if !params.has_key?(:dev_attr)
+        if !params.has_key?(:da)
           render plain: ActiveSupport::JSON.encode({ msg: ['Device attributes missing'], res: :err }) and return
         end
 
-        device_attributes_post = params[:dev_attr]
+        device_attributes_post = params[:da]
         device_attributes_post.each do |key, value|
           dev_attr               = @device.device_attributes.where(id: value[:id]).take
-          dev_attr.current_value = value[:curVal]
+          dev_attr.current_value = value[:cur]
           dev_attr.save()
         end
 
         render plain: ActiveSupport::JSON.encode({ res: :ok })
       end
 
-      # def attributes_list
-      #   # if !params.has_key?(:dev_uid)
-      #   #   render json: { status: :err, msg: ['Device UID is missing'] }, status: :bad_request and return
-      #   # end
-      #   #
-      #   # begin
-      #   #   @device = Device.find(params[:dev_uid])
-      #   # rescue ActiveRecord::RecordNotFound
-      #   #   respond_to do |format|
-      #   #     format.json {render json: { status: :err, msg: ['Device UID not exists'] }, status: :not_found and return}
-      #   #   end
-      #   # end
-      #
-      #   respond_to do |format|
-      #     format.json {render json: { status: :ok, msg: @device.device_attributes }, status: :ok}
-      #   end
-      # end
+      def attributes_list
+
+        mqtt_client = Mosquitto::Client.new()
+
+        # mqtt_client.on_connect {|rc|
+        #   p "Connected with return code #{rc}"
+        # }
+
+        @device.device_attributes.each do |device_attribute|
+          mqtt_client.connect('home-auto.eu', 1883, 10)
+          payload = ActiveSupport::JSON.encode({ da: { id: device_attribute.id, name: device_attribute.name, set: device_attribute.set_value } })
+          mqtt_client.publish(nil, @device.uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+        end
+
+        mqtt_client.disconnect()
+
+        render plain: ActiveSupport::JSON.encode({ res: :ok })
+
+      end
 
       ##########################################################################
       ##### PRIVATE METHODS ####################################################

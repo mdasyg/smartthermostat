@@ -119,10 +119,10 @@ class DevicesController < ApplicationController
     puts device_attribute.inspect
 
     if device_attribute.save
-      render(json: { status: :ok, msg: ['Attribute updated successfully'] }, status: :ok)
+      render(json: { status: :ok, msg: ['Attribute updated successfully'] })
 
       mqtt_client = Mosquitto::Client.new('tasos-test')
-      puts mqtt_client.inspect
+      # puts mqtt_client.inspect
 
       mqtt_client.on_connect {|rc|
         p "Connected with return code #{rc}"
@@ -130,10 +130,10 @@ class DevicesController < ApplicationController
         # mqtt_client.publish(nil, device_uid, 'test message', Mosquitto::AT_MOST_ONCE, true)
       }
 
-      asdf = mqtt_client.connect('10.168.10.50', 1883, 10)
-      puts asdf
+      mqtt_client.connect('home-auto.eu', 1883, 10)
 
-      mqtt_client.publish(nil, params[:device_uid], "{'dev_attr': [{ 'id': #{device_attribute.id}, 'curVal': #{device_attribute.read_attribute(params[:name])} }]}", Mosquitto::AT_MOST_ONCE, false)
+      payload = ActiveSupport::JSON.encode({ da: { id: device_attribute.id, set: device_attribute.read_attribute(params[:name]) } })
+      mqtt_client.publish(nil, params[:device_uid], payload, Mosquitto::AT_MOST_ONCE, false)
 
       mqtt_client.disconnect()
 
