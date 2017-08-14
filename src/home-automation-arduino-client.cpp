@@ -7,9 +7,9 @@
 #include <TimeLib.h>
 #include <MemoryFree.h>
 
-#include <EEPROM.h>
-
 #include <avr/wdt.h>
+
+#include <EEPROMAnything.h>
 
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
@@ -97,6 +97,8 @@ void setup() {
 
 uint32_t loopTimeCount;
 uint32_t loopTimeStat[3] = {0, 10000, 0}; // 0: current, 1: min, 2:max
+
+// int loopTimeStatEepromAddress = 0;
 
 void loop() {
 

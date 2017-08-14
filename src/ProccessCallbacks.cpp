@@ -12,8 +12,8 @@ int thermostatProccessCallback(deviceAttribute attributesStates[], dht &dht22, u
     readDht22Result = dht22.read22(tempSensorPin1);
     if (readDht22Result == DHTLIB_OK) {
       dtostrf(dht22.temperature, 3, 1,attributesStates[0].currentValue);
-      dtostrf(dht22.humidity, 3, 1,attributesStates[2].currentValue);
-      dtostrf(1, 3, 1,attributesStates[1].currentValue);
+      dtostrf(dht22.humidity, 3, 1,attributesStates[1].currentValue);
+      dtostrf(1, 3, 1,attributesStates[2].currentValue);
     } else {
       Serial.println(F("Error reading temp & RH"));
     }

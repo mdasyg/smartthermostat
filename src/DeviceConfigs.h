@@ -8,7 +8,7 @@
 #ifndef DEVICE_CONFIGS_H
 #define DEVICE_CONFIGS_H
 
-const char DEVICE_SERIAL_NUMBER[] =  "113702278392778921";
+const char DEVICE_SERIAL_NUMBER[] =  "753693990288223146";
 const char DEVICE_FIRMWARE_VERSION[] = "0.0.1";
 const char DEVICE_FRIENDLY_NAME[] =  "home-auto-dev534";
 
