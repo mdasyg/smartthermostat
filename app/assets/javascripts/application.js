@@ -22,6 +22,8 @@
 //= require fullcalendar/dist/fullcalendar
 //= require_tree .
 
+var deviceDetailShowViewUpdateIntervalInSeconds = null;
+
 function replaceUrlParams(url, data = {}) {
     if (!url) {
         return false;
@@ -38,6 +40,8 @@ function replaceUrlParams(url, data = {}) {
 }
 
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
+
+    deviceDetailShowViewUpdateIntervalInSeconds = $('meta[name="device-detail-show-view-update-interval-in-seconds"]').attr('content');
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();

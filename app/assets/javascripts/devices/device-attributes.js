@@ -2,20 +2,20 @@ var $deviceAttributeTemplate = null;
 var $deviceAttributesContainer = null;
 
 function addNewDeviceAttribute($thisClick) {
-    var lastDeviceAttributeDomId = parseInt($deviceAttributesContainer.find('.device-attribute').last().attr('data-index'));
+    let lastDeviceAttributeDomId = parseInt($deviceAttributesContainer.find('.device-attribute').last().attr('data-index'));
     if (!lastDeviceAttributeDomId) {
         lastDeviceAttributeDomId = 0;
     }
-    var nextDeviceAttributeDomId = lastDeviceAttributeDomId + 1;
+    let nextDeviceAttributeDomId = lastDeviceAttributeDomId + 1;
 
-    var $newDeviceAttribute = $deviceAttributeTemplate.clone();
+    let $newDeviceAttribute = $deviceAttributeTemplate.clone();
 
     $newDeviceAttribute.attr('data-index', nextDeviceAttributeDomId);
 
-    var propertyName = null;
-    var propertyId = null;
+    let propertyName = null;
+    let propertyId = null;
 
-    var $newDeviceAttributeInputs = $newDeviceAttribute.find('input');
+    let $newDeviceAttributeInputs = $newDeviceAttribute.find('input');
     $newDeviceAttributeInputs.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -27,7 +27,7 @@ function addNewDeviceAttribute($thisClick) {
         }
     });
 
-    var $newDeviceAttributeSelects = $newDeviceAttribute.find('select');
+    let $newDeviceAttributeSelects = $newDeviceAttribute.find('select');
     $newDeviceAttributeSelects.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -48,8 +48,8 @@ $(document).on('turbolinks:load', function () { // we need this because of turbo
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
-        var $thisClick = $(this);
-        // var thisRowId = ($thisClick.closest('.grid-row').data('id')) ? $thisClick.closest('.grid-row').data('id') : null;
+        let $thisClick = $(this);
+        // let thisRowId = ($thisClick.closest('.grid-row').data('id')) ? $thisClick.closest('.grid-row').data('id') : null;
         if ($thisClick.hasClass('active')) {
             if ($thisClick.hasClass('add-new-device-attribute')) {
                 addNewDeviceAttribute($thisClick);

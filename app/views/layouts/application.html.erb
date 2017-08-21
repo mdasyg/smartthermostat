@@ -5,6 +5,7 @@
   <%= stylesheet_link_tag 'application', 'data-turbolinks-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   <%= csrf_meta_tags %>
+  <meta name="device-detail-show-view-update-interval-in-seconds" content="<%= (Rails.application.secrets.configs[:device_detail_show_view_update_interval_in_seconds]) ? Rails.application.secrets.configs[:device_detail_show_view_update_interval_in_seconds] : 60 %>">
   <%= render 'layouts/shim' %>
 </head>
 <body>
