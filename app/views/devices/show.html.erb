@@ -1,21 +1,27 @@
 <% provide(:title, 'Device Overview') %>
 
+<div id="get-device-status-info" data-url="<%= device_url(@device.uid) %>"></div>
+
 <div class="well">
   <h1>Overview</h1>
   <h1>
     <small><%= @device.name %> @  <%= @device.location %></small>
   </h1>
+  <h4>Page content auto-updates
+    every <%= Rails.application.secrets.configs[:device_detail_show_view_update_interval_in_seconds] %>
+    seconds</h4>
 </div>
 
 <!-- STATUS -->
-<div class="panel panel-default">
+<div class=" panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Status</h3>
   </div>
   <div class="panel-body">
     <div>
-      <strong>Last contact at:</strong>
-      <%= @device.last_contact_at.nil? ? 'No contact yet' : @device.last_contact_at %>
+      <span id="device-status-indicator-text">
+        <%= compute_device_status_indication(@device.last_contact_at) %>
+      </span>
     </div>
   </div>
 </div>
@@ -28,98 +34,103 @@
     </div>
     <div class="panel-body">
 
-      <div class="row">
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= label DeviceAttribute, :name, 'Prop Name' %>
+      <div id="device-attributes-header">
+        <div class="row">
+          <div class="col-xs-2">
+            <div class="form-group">
+              <%= label DeviceAttribute, :name, 'Prop Name' %>
+            </div>
           </div>
-        </div>
 
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= label DeviceAttribute, :primitive_type_c_id %>
+          <div class="col-xs-2">
+            <div class="form-group">
+              <%= label DeviceAttribute, :primitive_type_c_id %>
+            </div>
           </div>
-        </div>
 
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= label DeviceAttribute, :min_value %>
+          <div class="col-xs-2">
+            <div class="form-group">
+              <%= label DeviceAttribute, :min_value %>
+            </div>
           </div>
-        </div>
 
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= label DeviceAttribute, :max_value %>
+          <div class="col-xs-2">
+            <div class="form-group">
+              <%= label DeviceAttribute, :max_value %>
+            </div>
           </div>
-        </div>
 
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= label DeviceAttribute, :set_value %>
+          <div class="col-xs-2">
+            <div class="form-group">
+              <%= label DeviceAttribute, :set_value %>
+            </div>
           </div>
-        </div>
 
-        <div class="col-xs-2">
-          <div class="form-group">
-            <%= label DeviceAttribute, :current_value %>
+          <div class="col-xs-2">
+            <div class="form-group">
+              <%= label DeviceAttribute, :current_value %>
+            </div>
           </div>
         </div>
       </div>
 
-      <% @device.device_attributes.each do |device_attribute| %>
+      <div id="device-attributes-container">
+        <% @device.device_attributes.each do |device_attribute| %>
+          <div class="device-attribute" data-id="<%= device_attribute.id %>">
+            <div class="row">
 
-        <div class="row">
+              <div class="col-xs-2">
+                <div class="form-group">
+                  <span class="device-attribute-name"><%= device_attribute.name %></span>
+                </div>
+              </div>
 
-          <div class="col-xs-2">
-            <div class="form-group">
-              <%= device_attribute.name %>
+              <div class="col-xs-2">
+                <div class="form-group">
+                  <% DeviceAttribute::PRIMITIVE_TYPES.each do |key, value| %>
+                    <% if value[:ID] == device_attribute.primitive_type_c_id %>
+                      <span class="device-attribute-primitve-type-text"><%= value[:LABEL] %></span>
+                      <% break %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="col-xs-2">
+                <div class="form-group">
+                  <span class="device-attribute-min-value"><%= device_attribute.min_value.nil? ? '-' : device_attribute.min_value %></span>
+                </div>
+              </div>
+
+              <div class="col-xs-2">
+                <div class="form-group">
+                  <span class="device-attribute-max-value"><%= device_attribute.max_value.nil? ? '-' : device_attribute.max_value %></span>
+                </div>
+              </div>
+
+              <div class="col-xs-2">
+                <div class="form-group">
+                  <% if (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID]) || (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]) %>
+                    <% params = ActiveSupport::JSON.encode({ device_uid: device_attribute.device_uid.to_s }) %>
+                    <a href="#" class="editable-device-attribute-set-value" data-params="<%= params %>" data-pk="<%= device_attribute.id %>" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
+                      <span class="device-attribute-set-value"><%= device_attribute.set_value.nil? ? '-' : device_attribute.set_value %></span>
+                    </a>
+                  <% else %>
+                    -
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="col-xs-2">
+                <div class="form-group">
+                  <span class="device-attribute-current-value"><%= compute_device_attribute_last_update_time_text(device_attribute.current_value, device_attribute.unit, device_attribute.updated_at) %></span>
+                </div>
+              </div>
+
             </div>
           </div>
-
-          <div class="col-xs-2">
-            <div class="form-group">
-              <% DeviceAttribute::PRIMITIVE_TYPES.each do |key, value| %>
-                <% if value[:ID] == device_attribute.primitive_type_c_id %>
-                  <%= value[:LABEL] %>
-                  <% break %>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-
-          <div class="col-xs-2">
-            <div class="form-group">
-              <%= device_attribute.min_value.nil? ? '-' : device_attribute.min_value %>
-            </div>
-          </div>
-
-          <div class="col-xs-2">
-            <div class="form-group">
-              <%= device_attribute.max_value.nil? ? '-' : device_attribute.max_value %>
-            </div>
-          </div>
-
-          <div class="col-xs-2">
-            <div class="form-group">
-              <% if (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID]) || (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]) %>
-                <% params = ActiveSupport::JSON.encode({ device_uid: device_attribute.device_uid.to_s }) %>
-                <a href="#" class="editable-device-attribute-set-value" data-params="<%= params %>" data-pk="<%= device_attribute.id %>" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
-                  <%= device_attribute.set_value.nil? ? '-' : device_attribute.set_value %>
-                </a>
-              <% else %>
-                -
-              <% end %>
-            </div>
-          </div>
-
-          <div class="col-xs-2">
-            <div class="form-group">
-              <%= device_attribute.current_value.nil? ? '-' : device_attribute.current_value + ' ' + device_attribute.unit %>
-            </div>
-          </div>
-
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
 <% end %>
