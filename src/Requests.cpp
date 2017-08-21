@@ -1,4 +1,5 @@
 #include <ArduinoJson.h>
+#include <MemoryFree.h>
 
 #include "DeviceConfigs.h"
 #include "Requests.h"
@@ -99,6 +100,9 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
   postRequestData += AMPERSAND;
   postRequestData += F("friendly_name=");
   postRequestData += DEVICE_FRIENDLY_NAME;
+  postRequestData += AMPERSAND;
+  postRequestData += F("ram=");
+  postRequestData += freeMemory();
   postRequestData += AMPERSAND;
   postRequestData += F("ip=");
   for (i=0; i<4; i++) {
