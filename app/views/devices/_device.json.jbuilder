@@ -12,6 +12,3 @@ json.device_attributes device.device_attributes.each do |device_attribute|
   json.set_value device_attribute.set_value
   json.current_value_text compute_device_attribute_last_update_time_text(device_attribute.current_value, device_attribute.unit, device_attribute.updated_at)
 end
-
-# json.extract! device, :id, :uid, :name, :location, :description, :access_token, :last_contact_at, :created_at, :updated_at
-# json.url device_url(device, format: :json)
