@@ -59,7 +59,18 @@ ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com
 
 + In production machines run `rake assets:precompile` in order to precompile assets and work properly
 
-+ When using modules(e.g x-editable, bootstrap) because of assets some url/links doesnot work so yoy have to override them (see application.scss for example)
++ When using modules(e.g x-editable, bootstrap) because of assets some url/links doesnot work so you have to override them (see application.scss for example)
+
++ when using nginx as reverse proxy use the following settings
+
+```
+location / {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Ssl on;
+}
+```
 
 + On "app/assets/javascripts/application.js" consider using "//= require bootstrap" instead of "//= require bootstrap-sprockets" when in production
 
