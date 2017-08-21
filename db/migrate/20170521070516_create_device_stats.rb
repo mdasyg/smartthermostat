@@ -8,6 +8,8 @@ class CreateDeviceStats < ActiveRecord::Migration[5.0]
       t.string :value, null: true, default: nil
       t.string :label, null: true, default: nil
       t.datetime :last_update_at
+
+      t.timestamps
     end
 
     # add_index( :device_stats, [:device_uid, :stat_id], unique: true )
