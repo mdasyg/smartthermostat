@@ -5,9 +5,9 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-2"><b>Name</b></div>
-  <div class="col-xs-2"><b>Location</b></div>
-  <div class="col-xs-2"><b>Actions</b></div>
+  <div class="col-sm-2"><b>Name</b></div>
+  <div class="col-sm-2"><b>Location</b></div>
+  <div class="col-sm-2"><b>Actions</b></div>
 </div>
 
 <hr/>
@@ -15,9 +15,9 @@
 <% @devices.each do |device| %>
 
   <div class="row">
-    <div class="col-xs-2"><%= device.name %></div>
-    <div class="col-xs-2"><%= device.location %></div>
-    <div class="col-xs-2">
+    <div class="col-sm-2"><%= device.name %></div>
+    <div class="col-sm-2"><%= device.location %></div>
+    <div class="col-sm-2">
       <%= link_to(device) do %>
         <span class="glyphicon glyphicon-zoom-in"></span>
       <% end %> |

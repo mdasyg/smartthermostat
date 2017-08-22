@@ -24,13 +24,13 @@
     <%= schedule_event_form.hidden_field(:device_uid, { class: 'schedule-event-device-uid' }) %>
 
     <div class="row">
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <div class="form-group">
           <span class="schedule-event-device-name-placeholder"><%= (schedule_event && schedule_event.device) ? schedule_event.device.name : '' %></span>
         </div>
       </div>
-      <div class="col-xs-4"></div>
-      <div class="col-xs-4">
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4">
         <div class="form-group">
           <button type="button" class="action-button active remove-form-row form-control">
             <span class="glyphicon glyphicon-remove"></span>
