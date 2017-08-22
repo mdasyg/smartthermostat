@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170527060931) do
+ActiveRecord::Schema.define(version: 20170822080727) do
 
   create_table "actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "device_attribute_id", null: false, unsigned: true
@@ -55,6 +55,23 @@ ActiveRecord::Schema.define(version: 20170527060931) do
     t.datetime "updated_at", null: false
     t.index ["access_token"], name: "index_devices_on_access_token", unique: true
     t.index ["user_id"], name: "fk_rails_410b63ef65"
+  end
+
+  create_table "quick_button_actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "quick_button_id", null: false, unsigned: true
+    t.integer "action_id", null: false, unsigned: true
+    t.index ["action_id"], name: "fk_rails_b635b11e28"
+    t.index ["quick_button_id"], name: "fk_rails_1270fa1389"
+  end
+
+  create_table "quick_buttons", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "user_id", null: false, unsigned: true
+    t.bigint "device_uid", null: false, unsigned: true
+    t.string "title", null: false
+    t.text "description"
+    t.integer "duration"
+    t.index ["device_uid"], name: "fk_rails_5f1190818b"
+    t.index ["user_id"], name: "fk_rails_abfb5bfc80"
   end
 
   create_table "schedule_events", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -114,6 +131,10 @@ ActiveRecord::Schema.define(version: 20170527060931) do
   add_foreign_key "device_attributes", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "device_stats", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "devices", "users"
+  add_foreign_key "quick_button_actions", "actions"
+  add_foreign_key "quick_button_actions", "quick_buttons"
+  add_foreign_key "quick_buttons", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "quick_buttons", "users"
   add_foreign_key "schedule_events", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "schedule_events", "schedules"
   add_foreign_key "schedule_events_actions", "actions"
