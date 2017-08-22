@@ -22,19 +22,19 @@
 
     <div class="row">
 
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <div class="form-group">
           <span class="schedule-event-action-device-attribute-name-placeholder"><%= (action && action.device_attribute) ? action.device_attribute.name : '' %></span>
         </div>
       </div>
 
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <div class="form-group">
           <%= action_form.text_field :device_attribute_start_value, class: 'form-control action-device-attribute-start-value' %>
         </div>
       </div>
 
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <div class="form-group">
           <%= action_form.text_field :device_attribute_end_value, class: 'form-control action-device-attribute-end-value' %>
         </div>
