@@ -1,4 +1,4 @@
-class CreateScheduleRelatedTables < ActiveRecord::Migration[5.0]
+class CreateSchedulesRelatedTables < ActiveRecord::Migration[5.0]
 
   def change
     create_table :schedules, id: false do |t|

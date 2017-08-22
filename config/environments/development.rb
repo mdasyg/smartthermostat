@@ -52,25 +52,29 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  ##### MY CUSTOM setup connection with gmail
+  ##############################################################################
+  ##### THE FOLLOWINGS ARE CUSTOMIZED CONFIGS BY THE AUTHOR ####################
+  ##############################################################################
+
+  ##### setup connection with email provider
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings   = {
-      address:              'smtp.gmail.com',
-      port:                 587,
-      domain:               Rails.application.secrets.mail['domain'],
-      user_name:            Rails.application.secrets.mail['username'],
-      password:             Rails.application.secrets.mail['pass'],
+      address:              Rails.application.secrets.mail[:host],
+      port:                 Rails.application.secrets.mail[:port],
+      domain:               Rails.application.secrets.mail[:domain],
+      user_name:            Rails.application.secrets.mail[:username],
+      password:             Rails.application.secrets.mail[:pass],
       authentication:       'plain',
       enable_starttls_auto: true
   }
 
-  ##### THIS IS FOR DEVISE
+  ##### DEVISE mail setup
   config.action_mailer.default_url_options = {
-      host: '10.168.10.50',
-      port: 3000
+      host: Rails.application.secrets.site[:host],
+      port: Rails.application.secrets.site[:port],
   }
 
   ##### whitelist my ip for web-console
-  config.web_console.whitelisted_ips = '10.168.10.0/25'
+  config.web_console.whitelisted_ips = Rails.application.secrets.configs[:web_console_whitelist_ips]
 
 end
