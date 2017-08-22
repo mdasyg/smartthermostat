@@ -32,7 +32,6 @@ class CreateSchedulesRelatedTables < ActiveRecord::Migration[5.0]
     add_index(:schedule_events_actions, [:schedule_event_id, :action_id], { unique: true })
 
     add_foreign_key(:schedules, :users)
-
     add_foreign_key(:schedule_events, :schedules)
     add_foreign_key(:schedule_events, :devices, column: 'device_uid', primary_key: 'uid')
     add_foreign_key(:schedule_events_actions, :schedule_events)
