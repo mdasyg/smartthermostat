@@ -2,64 +2,55 @@
 
 # Requirements
 
-1. ruby 2.3 or later
-2. ruby-gems manager
-3. bundler
-4. [libmosquitto](https://github.com/xively/mosquitto)
-5. mysql server
-6. web server with phusion passenger module (e.g install passenger gem)
+1. Ruby v2.3 or later
+2. RubyGems manager
+3. Bundler
+4. Mosquitto Broker v1.3.1 or later ([see mosquitto ruby gem on github for help](https://github.com/xively/mosquitto))
+5. MySQL database server
+6. Web server with phusion passenger module (e.g install passenger gem)
+7. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
 
 # Installation
 
 ## Initial setup
 
-1. after all requirements met, run 'bundle install'
-2. copy 'secrets.yml.sample' to 'secrets.yml' and change the appropriate values
+1. Install the project's required software
+2. Download the project and go to project's root directory
+3. Copy `secrets.yml.sample` to `secrets.yml` and change the appropriate values
+4. Run `bundle install`
+5. Run `yarn install`
 
 ## Database
 
-1. set the following configurations on the general application file(config/application.rb) or in the environment specifiec files(config/environments/...)
+1. Set the following configurations on the general application file `config/application.rb` or in the environment specific files `config/environments/...`
+```
+config.active_record.table_name_prefix
+config.active_record.table_name_suffix
+```
 
-	+ config.active_record.table_name_prefix
-	+ config.active_record.table_name_suffix
-
-2. setup a database on your DB
-3. setup a user and give him access
-4. run 'rails db:migrate'
+2. Create a database on MySQL
+3. Setup a user and give him access to the previously created db
+4. Run `rails db:migrate`
 
 ## Mailer
 
-1. set the following to config/environments/{enviroment_name}.rb
+1. Be sure to set a domain, otherwise email failing to send
 
-```
-config.action_mailer.delivery_method = :smtp
-config.action_mailer.smtp_settings = {
-  address:              'smtp.gmail.com',
-  port:                 587,
-  domain:               Rails.application.secrets.mail['domain'],
-  user_name:            Rails.application.secrets.mail['username'],
-  password:             Rails.application.secrets.mail['pass'],
-  authentication:       'plain',
-  enable_starttls_auto: true
-}
-```
-2. Be sure to set a domain, otherwise email failing to send
-
-3. change accordingly the from adress where needed
+2. Change accordingly the from address where needed
 	+ eg: app/mailers/application_mailer.rb
 
-Test emails with:
-ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com", subject: "Test", body: "Test").deliver
+3. Test emails with:
+`ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com", subject: "Test", body: "Test").deliver`
 
-## Web-console whitelist
+## web-console white-list ips
 
-1. config.web_console.whitelisted_ips = '10.168.10.40'
+1. Set your developments' machines ips on the web-console configuration in the secrets as an array of strings. `e.g ['192.168.1.2', '192.168.1.3']`
 
 # Notes
 
 + In production machines run `rake assets:precompile` in order to precompile assets and work properly
 
-+ When using modules(e.g x-editable, bootstrap) because of assets some url/links doesnot work so you have to override them (see application.scss for example)
++ When using modules (e.g x-editable, bootstrap) because of assets some url/links doesn't work, so you have to override them (see application.scss for example)
 
 + when using nginx as reverse proxy use the following settings
 
@@ -72,12 +63,12 @@ location / {
 }
 ```
 
-+ On "app/assets/javascripts/application.js" consider using "//= require bootstrap" instead of "//= require bootstrap-sprockets" when in production
++ On `app/assets/javascripts/application.js` consider using `//= require bootstrap` instead of `//= require bootstrap-sprockets` when in production
 
 + When using javascript remember that rails uses turbolinks,
 read [this](http://guides.rubyonrails.org/working_with_javascript_in_rails.html#page-change-events)
-for more info. To workaround this we need to replace the '$(document).ready()' 
-with '$(document).on("turbolinks:load", function() {})'
+for more info. To workaround this we need to replace the `$(document).ready(function() {})` 
+with `$(document).on("turbolinks:load", function() {})`
 + Use `puts request.env.select {|k, v| k =~ /^HTTP_/}` to print out on console HTTP headers
 
 # Resources
