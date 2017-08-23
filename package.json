@@ -6,14 +6,14 @@
   "author": "Anastasios Loumpas",
   "license": "MIT",
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
-    "fullcalendar": "^3.4.0",
-    "jquery": "^3.2.1",
-    "jquery-ujs": "^1.2.2",
-    "moment": "^2.18.1",
-    "moment-timezone-all": "^0.5.5",
-    "select2": "^4.0.3",
-    "x-editable": "^1.5.1"
+    "bootstrap": "3.3.7",
+    "eonasdan-bootstrap-datetimepicker": "4.17.47",
+    "fullcalendar": "3.4.0",
+    "jquery": "3.2.1",
+    "jquery-ujs": "1.2.2",
+    "moment": "2.18.1",
+    "moment-timezone-all": "0.5.5",
+    "select2": "4.0.3",
+    "x-editable": "1.5.1"
   }
 }
