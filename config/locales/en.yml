@@ -25,4 +25,7 @@ en:
       action:
         device_attribute_id: 'Attribute name'
       schedule:
-        title: 'Titloulisss'
+        title: 'Title'
+      device_attribute:
+        name: 'Attribute'
+        primitive_type_c_id: 'Primitive'
