@@ -37,9 +37,13 @@ module Api
 
         device_attributes_post = params[:da]
         device_attributes_post.each do |key, value|
-          dev_attr               = @device.device_attributes.where(id: value[:id]).take
-          dev_attr.current_value = value[:cur]
-          dev_attr.save()
+          dev_attr = @device.device_attributes.where(id: value[:id]).take
+          if (!dev_attr.nil?)
+            dev_attr.current_value = value[:cur]
+            dev_attr.save()
+          else
+            render plain: ActiveSupport::JSON.encode({ msg: ['Device attribute not exists'], res: :err }) and return
+          end
         end
 
         render plain: ActiveSupport::JSON.encode({ res: :ok })

@@ -15,6 +15,9 @@ function updateDevicePage(data) {
 
 function getDeviceInfo() {
     let url = $('#get-device-status-info').data('url');
+    if (!url) {
+        return false;
+    }
 
     // attributes request
     let request = $.ajax({
