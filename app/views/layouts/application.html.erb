@@ -22,13 +22,10 @@
   <%= render 'layouts/footer' %>
 
   <div>
-    <%= debug(I18n.t('hello')) if Rails.env.development? %>
     <%= debug(Time.new) if Rails.env.development? %>
     <%= debug(RUBY_VERSION) if Rails.env.development? %>
-    <%= debug(user_session.inspect) if Rails.env.development? %>
-    <%= debug(instance_variables) if Rails.env.development? %>
-    <%= debug(local_variables) if Rails.env.development? %>
     <%= debug(params) if Rails.env.development? %>
+    <%= debug(I18n.t('hello')) if Rails.env.development? %>
   </div>
 
 </div>
