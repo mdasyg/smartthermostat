@@ -98,13 +98,13 @@
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:min_value) %>" class="col-md-2">
                 <div class="form-group">
-                  <span class="device-attribute-min-value"><%= device_attribute.min_value.nil? ? '-' : device_attribute.min_value %></span>
+                  <span class="device-attribute-min-value"><%= (device_attribute.min_value.nil? || device_attribute.min_value.blank?) ? '-' : device_attribute.min_value %></span>
                 </div>
               </div>
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:max_value) %>" class="col-md-2">
                 <div class="form-group">
-                  <span class="device-attribute-max-value"><%= device_attribute.max_value.nil? ? '-' : device_attribute.max_value %></span>
+                  <span class="device-attribute-max-value"><%= (device_attribute.max_value.nil? || device_attribute.max_value.blank?) ? '-' : device_attribute.max_value %></span>
                 </div>
               </div>
 
