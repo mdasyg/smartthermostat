@@ -8,7 +8,6 @@
       margin-bottom: 10px;
       display: block;
       border: 1px solid #ddd;
-      //border-bottom: 2px solid #ddd;
       .col-md-2 {
         display: block;
         text-align: right;
@@ -18,18 +17,21 @@
           content: attr(data-label);
           float: left;
           font-weight: bold;
+          font-size: 200%;
         }
         &:last-child {
           border-bottom: 0;
         }
         .form-group {
+          font-size: 200%;
           margin: 15px 0;
         }
       }
     }
   }
-}
 
-.responsive-table-container.panel-default {
-  border: none;
+  .responsive-table-container.panel-default {
+    border: none;
+  }
+
 }
