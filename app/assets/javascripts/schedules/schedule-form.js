@@ -9,10 +9,16 @@ function initAddNewEventSelect2() {
         ajax: {
             dataType: 'json',
             url: $('#devices-search-url').data('url'),
-            processResults: function (data, params) {
-                return {
-                    results: data
-                };
+            processResults: function (response, params) {
+                if (response.result == 'ok') {
+                    return {
+                        results: response.data
+                    };
+                } else {
+                    return {
+                        results: []
+                    };
+                }
             },
             delay: 250
         },
@@ -56,6 +62,12 @@ function loadScheduleValues(data) {
     $scheduleForm.find('#schedule_start_datetime').data('DateTimePicker').date(data.start);
     $scheduleForm.find('#schedule_end_datetime').data('DateTimePicker').date(data.end);
     $scheduleForm.find('#schedule_priority').val(data.priority);
+    $scheduleForm.find('#schedule_is_recurrent').prop('checked', data.is_recurrent);
+    if (data.is_recurrent == 1) {
+        $scheduleForm.find('#recurrent-entries').removeClass('hidden');
+        $scheduleForm.find('#schedule_recurrence_frequency').val(data.recurrence_frequency);
+        $scheduleForm.find('#schedule_recurrence_unit').val(data.recurrence_unit);
+    }
 
     data.schedule_events.forEach(function (scheduleEvent) {
         // separate schedule event data from actions

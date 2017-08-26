@@ -61,14 +61,18 @@ function getDeviceAttributes(deviceUid, callback) {
         dataType: 'json',
     });
     request.done(function (responseData, textStatus, jqXHR) {
-        let dataForScheduleEventActions = [];
-        responseData.forEach(function (item) {
-            dataForScheduleEventActions.push({
-                device_attribute_id: item.id,
-                device_attribute_name: item.name
+        if (responseData.result == 'ok') {
+            let dataForScheduleEventActions = [];
+            responseData.data.forEach(function (item) {
+                dataForScheduleEventActions.push({
+                    device_attribute_id: item.id,
+                    device_attribute_name: item.name
+                });
             });
-        });
-        callback(dataForScheduleEventActions);
+            callback(dataForScheduleEventActions);
+        } else {
+            alert('Error getting device attributes');
+        }
     });
     request.fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);

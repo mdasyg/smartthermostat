@@ -4,6 +4,9 @@ json.description schedule.description
 json.start schedule.start_datetime
 json.end schedule.end_datetime
 json.priority schedule.priority
+json.is_recurrent schedule.is_recurrent
+json.recurrence_frequency schedule.recurrence_frequency
+json.recurrence_unit schedule.recurrence_unit
 
 json.schedule_events schedule.schedule_events.each do |schedule_event|
   json.id schedule_event.id.to_s
