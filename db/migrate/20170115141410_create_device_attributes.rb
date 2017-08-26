@@ -4,15 +4,14 @@ class CreateDeviceAttributes < ActiveRecord::Migration[5.0]
     create_table :device_attributes, id: false do |t|
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.bigint :device_uid, null: false, unsigned: true
-      t.string :name, null: false
+      t.string :name, null: false, limit: 20
       t.integer :primitive_type_c_id, null: false, unsigned: true, limit: 1
-      t.boolean :unsigned, null: false, unsigned: true
       t.integer :direction_c_id, null: false, unsigned: true, limit: 1
       t.string :unit, limit: 5
-      t.string :min_value
-      t.string :max_value
-      t.string :set_value
-      t.string :current_value
+      t.float :min_value
+      t.float :max_value
+      t.float :set_value
+      t.float :current_value
 
       t.timestamps
     end

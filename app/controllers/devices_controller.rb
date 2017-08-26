@@ -139,7 +139,7 @@ class DevicesController < ApplicationController
       mqtt_client.disconnect()
 
     else
-      render json: { status: :error, msg: ['Device Attribute could not updated'] }, status: :internal_server_error
+      render json: { status: :error, msg: device_attribute.errors }, status: :internal_server_error
     end
 
   end
@@ -222,7 +222,7 @@ class DevicesController < ApplicationController
   end
 
   private def safe_device_attribute_params(unsafe_attribute)
-    unsafe_attribute.permit(:name, :primitive_type_c_id, :unsigned, :direction_c_id, :unit, :min_value, :max_value, :set_value)
+    unsafe_attribute.permit(:name, :primitive_type_c_id, :direction_c_id, :unit, :min_value, :max_value, :set_value)
   end
 
 end
