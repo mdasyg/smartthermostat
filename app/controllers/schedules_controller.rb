@@ -334,7 +334,7 @@ class SchedulesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   private def safe_schedule_params
-    params.require(:schedule).permit(:title, :description, :start_datetime, :end_datetime, :is_recurrent, :repeat_every, :recurrence_period, :priority)
+    params.require(:schedule).permit(:title, :description, :start_datetime, :end_datetime, :is_recurrent, :recurrence_frequency, :recurrence_unit, :priority)
   end
 
   private def safe_schedule_event_params(unsafe_schedule_event)

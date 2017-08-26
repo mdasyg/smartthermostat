@@ -9,9 +9,9 @@ class CreateSchedulesRelatedTables < ActiveRecord::Migration[5.0]
       t.datetime :start_datetime, null: false
       t.datetime :end_datetime, null: false
       t.integer :priority, unsigned: true, limit: 1
-      t.integer :is_recurrent, null: false, unsigned: true, limit: 1
-      t.integer :repeat_every, unsigned: true, limit: 1
-      t.integer :recurrence_period, unsigned: true, comment: 'Measured in what the "repeat_every" says'
+      t.boolean :is_recurrent, null: false, unsigned: true
+      t.integer :recurrence_frequency, unsigned: true, limit: 1
+      t.integer :recurrence_unit, unsigned: true, comment: 'Measured in what the "recurrence_frequency" says'
 
       t.timestamps
     end

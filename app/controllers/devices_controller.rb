@@ -108,30 +108,23 @@ class DevicesController < ApplicationController
 
   def update_device_attribute_value
     device_attribute = DeviceAttribute.joins(:device).where("devices.user_id = #{current_user.id}", device_uid: params[:device_uid]).find_by(id: params[:pk])
-
-    puts device_attribute.inspect
-
     if (device_attribute.nil?)
-      render json: { status: :error, msg: ['Device Attribute not exist'] }, status: :not_found
+      # render json: { status: :error, msg: ['Device Attribute not exist'] }, status: :not_found
+      render json: { messages: ['Device Attribute not exist'], result: :error }
     end
 
     device_attribute.write_attribute(params[:name], params[:value])
-
-    puts device_attribute.inspect
-
     if device_attribute.save
-      render(json: { status: :ok, msg: ['Attribute updated successfully'] })
+      render(json: { result: :ok })
 
-      mqtt_client = Mosquitto::Client.new('tasos-test')
-      # puts mqtt_client.inspect
-
+      mqtt_client = Mosquitto::Client.new()
       mqtt_client.on_connect {|rc|
         p "Connected with return code #{rc}"
         # publish a test message once connected
         # mqtt_client.publish(nil, device_uid, 'test message', Mosquitto::AT_MOST_ONCE, true)
       }
 
-      mqtt_client.connect('home-auto.eu', 1883, 10)
+      mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
 
       payload = ActiveSupport::JSON.encode({ da: { id: device_attribute.id, set: device_attribute.read_attribute(params[:name]) } })
       mqtt_client.publish(nil, params[:device_uid], payload, Mosquitto::AT_MOST_ONCE, false)
@@ -139,7 +132,7 @@ class DevicesController < ApplicationController
       mqtt_client.disconnect()
 
     else
-      render json: { status: :error, msg: device_attribute.errors }, status: :internal_server_error
+      render json: { messages: device_attribute.errors, result: :error }
     end
 
   end
@@ -155,24 +148,27 @@ class DevicesController < ApplicationController
     end
 
     # then delete the schedules
-    if !@device.schedules.empty?
-      @device.schedules.each do |device_schedule|
+    if !@device.schedule_events.empty?
+      @device.schedule_eventss.each do |device_schedule|
         device_schedule.destroy
       end
     end
 
-    # finally destroy the device
-    @device.destroy
-
     respond_to do |format|
-      format.html {redirect_to devices_url, notice: 'Device was successfully destroyed.'}
-      format.json {head :no_content}
+      # finally destroy the device
+      if @device.destroy
+        format.html {redirect_to devices_url, notice: 'Device was successfully destroyed.'}
+        format.json {render json: { result: :ok }}
+      else
+        format.html {redirect_to devices_url, notice: 'Device cannot be destroyed.'}
+        format.json {render json: { messages: ['Device cannot be deleted'], result: :error }}
+      end
     end
   end
 
   def search
     if !params.has_key?(:term)
-      render json: [] and return
+      render json: { messages: ['Term is missing'], result: :error } and return
     else
       search_term = params[:term]
     end
@@ -184,13 +180,19 @@ class DevicesController < ApplicationController
       formatted_results << { id: device.uid.to_s, text: device.name }
     end
 
-    render json: formatted_results
-
+    render json: { data: formatted_results, result: :ok }
   end
 
   # GET /devices/1/get_device_attributes_list
   def get_device_attributes_list
-    render json: @device.device_attributes
+    device_attributes = []
+    @device.device_attributes.each do |device_attribute|
+      if device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID] || device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]
+        device_attributes << device_attribute
+      end
+    end
+
+    render json: { data: device_attributes, result: :ok }
   end
 
   ##############################################################################

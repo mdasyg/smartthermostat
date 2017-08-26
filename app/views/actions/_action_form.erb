@@ -28,7 +28,11 @@
 
   <div class="actions-container">
     <% if actions.any? %>
-      <%= render partial: '/actions/action_form_element', collection: actions, as: :action, locals: { prefix_for_subform: prefix_for_subform } %>
+      <% actions.each do |action| %>
+        <% if action.device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID] || action.device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID] %>
+          <%= render partial: '/actions/action_form_element', locals: { action: action, prefix_for_subform: prefix_for_subform } %>
+        <% end %>
+      <% end %>
     <% end %>
   </div>
 
