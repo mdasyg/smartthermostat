@@ -13,16 +13,16 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   if (ethClient.connected()) {
     isEthClientConnectedToServer = true;
   } else {
-    Serial.print(F("Connection to the app srv failed: "));
+    // Serial.print(F("Connection to the app srv failed: "));
     return false;
   }
   return true;
 }
 
-bool sendHttpGetRequest(EthernetClient &ethClient, const String &uri) {
+void sendHttpGetRequest(EthernetClient &ethClient, const String &uri) {
   if(!connectToApplicationServer(ethClient)) {
-    Serial.println(F("Abort get request send"));
-    return false;
+    // Serial.println(F("Abort get request send"));
+    return;
   }
   String httpRequestStr;
 
@@ -45,13 +45,13 @@ bool sendHttpGetRequest(EthernetClient &ethClient, const String &uri) {
   // finalize request
   ethClient.print("\r\n\r\n");
 
-  return true;
+  return;
 }
 
-bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData) {
+void sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData) {
   if(!connectToApplicationServer(ethClient)) {
-    Serial.println(F("Abort post request send"));
-    return false;
+    // Serial.println(F("Abort post request send"));
+    return;
   }
   String httpRequestStr;
 
@@ -83,7 +83,7 @@ bool sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const Str
   // print post data
   ethClient.print(postRequestData);
 
-  return true;
+  return;
 }
 
 void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const String &uri) {
@@ -101,9 +101,6 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
   postRequestData += F("friendly_name=");
   postRequestData += DEVICE_FRIENDLY_NAME;
   postRequestData += AMPERSAND;
-  postRequestData += F("ram=");
-  postRequestData += freeMemory();
-  postRequestData += AMPERSAND;
   postRequestData += F("ip=");
   for (i=0; i<4; i++) {
     postRequestData += ipAddress[i];
@@ -119,6 +116,7 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
 void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const String &uri, deviceAttribute stateOfAttributes[]) {
   String postRequestData;
   byte i;
+  int retValue;
 
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
     postRequestData = "";
@@ -133,6 +131,13 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
     postRequestData += stateOfAttributes[i].currentValue;
 
     sendHttpPostRequest(ethClient, uri, postRequestData);
+
+    do {
+      retValue = httpResponseReader(ethClient);
+      if (retValue == -1) {
+        break;
+      }
+    } while(retValue != 0);
   }
 
   return;
@@ -141,38 +146,40 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
 
 int httpResponseReader(EthernetClient &ethClient) {
   if (ethClient.available()) {
+    // some response found. Examine it.
     ethClient.setTimeout(10000);
 
     // HTTP headers end with an empty line
     char endOfHeaders[] = "\r\n\r\n";
     bool ok = ethClient.find(endOfHeaders);
     if (!ok) {
-      Serial.println(F("No response or invalid http response"));
+      // Serial.println(F("No response or invalid http response"));
       return -1;
     }
 
     StaticJsonBuffer<100> jsonBuffer;
 
-    // Test
     JsonObject& root = jsonBuffer.parseObject(ethClient);
 
     if (!root.success()) {
-      Serial.println(F("parseObject() failed"));
+      // Serial.println(F("parseObject() failed"));
       return -1;
     }
 
     if(root.containsKey("res")) {
       const char* result = root["res"];
       if (strcmp(result, "ok") != 0) {
-        Serial.print(F("Result: ERROR"));
+        // Serial.println(F("Result: ERROR"));
       }
 
     }
 
     if(root.containsKey("msg")) {
-      Serial.println(F("Response contains msg"));
+      // Serial.println(F("Response contains msg"));
     }
 
+  } else {
+    return 1;
   }
 
   return 0;

@@ -105,7 +105,7 @@ time_t getNtpTime() {
 
 void readFromFlash(const char src[], String &flashReadBufferStr) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
-    Serial.println(F("Src bigger than buf. Aborting execution"));
+    // Serial.println(F("Src bigger than buf. Aborting execution"));
     while(true);
   }
   char tempCharBuffer;
@@ -123,7 +123,7 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   JsonObject& root = jsonBuffer.parseObject(payload);
 
   if (!root.success()) {
-    Serial.println(F("parseObject() failed"));
+    // Serial.println(F("parseObject() failed"));
   }
 
   if(root.containsKey("da")) {
@@ -134,7 +134,8 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
           strcpy(stateOfAttributes[i].name, root["da"]["name"]);
         }
         if (strlen(root["da"]["set"]) > 0) {
-          strcpy(stateOfAttributes[i].setValue, root["da"]["set"]);
+          stateOfAttributes[i].setValue = root["da"]["set"];
+          // strcpy(stateOfAttributes[i].setValue, root["da"]["set"]);
         }
       }
     }
@@ -142,27 +143,27 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
 
 }
 
-void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[], const uint32_t loopTimeStat[]) {
+void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
   // Device status in serial
   if (timeStatus() != timeNotSet) {
     if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 10) { // in seconds
-      byte i;
+      // byte i;
       lastDeviceStatusDisplayUpdateTimestamp = now();
-      Serial.println();
-      // Serial.print(F("Time: ")); digitalClockDisplay(false);
-      Serial.print(F("Last loop cycle time(us): ")); Serial.println(loopTimeStat[0]);
-      Serial.print(F("Last loop cycle time min(us): ")); Serial.println(loopTimeStat[1]);
-      Serial.print(F("Last loop cycle time max(us): ")); Serial.println(loopTimeStat[2]);
-      Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
-      for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-        Serial.print(stateOfAttributes[i].name);
-        Serial.print(F(": Current value = "));
-        Serial.print(stateOfAttributes[i].currentValue);
-        Serial.print(F(", Set value = "));
-        Serial.print(stateOfAttributes[i].setValue);
-        Serial.println();
-      }
-      Serial.println();
+      // Serial.println();
+      // // Serial.print(F("Time: ")); digitalClockDisplay(false);
+      // // Serial.print(F("Last loop cycle time(us): ")); Serial.println(loopTimeStat[0]);
+      // // Serial.print(F("Last loop cycle time min(us): ")); Serial.println(loopTimeStat[1]);
+      // // Serial.print(F("Last loop cycle time max(us): ")); Serial.println(loopTimeStat[2]);
+      // Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+      // for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+      //   Serial.print(stateOfAttributes[i].name);
+      //   Serial.print(F(": Current value = "));
+      //   Serial.print(stateOfAttributes[i].currentValue);
+      //   Serial.print(F(", Set value = "));
+      //   Serial.print(stateOfAttributes[i].setValue);
+      //   Serial.println();
+      // }
+      // Serial.println();
     }
   }
 }

@@ -11,14 +11,21 @@ int thermostatProccessCallback(deviceAttribute attributesStates[], dht &dht22, u
     // Get temperature event and print its value.
     readDht22Result = dht22.read22(tempSensorPin1);
     if (readDht22Result == DHTLIB_OK) {
-      dtostrf(dht22.temperature, 3, 1,attributesStates[0].currentValue);
-      dtostrf(dht22.humidity, 3, 1,attributesStates[1].currentValue);
-      dtostrf(1, 3, 1,attributesStates[2].currentValue);
-    } else {
-      Serial.println(F("Error reading temp & RH"));
+       attributesStates[0].currentValue = dht22.temperature;
+       attributesStates[1].currentValue = dht22.humidity;
+       attributesStates[2].currentValue = 1;
+      // dtostrf(dht22.temperature, 3, 1, attributesStates[0].currentValue);
+      // dtostrf(dht22.humidity, 3, 1, attributesStates[1].currentValue);
+      // dtostrf(1, 3, 1, attributesStates[2].currentValue);
     }
-
     lastDHT22QueryTimestamp = millis();
+  }
+
+  // heating only for now
+  if (attributesStates[0].currentValue < attributesStates[0].setValue) {
+    digitalWrite(boilerRelayPin, HIGH);
+  } else {
+    digitalWrite(boilerRelayPin, LOW);
   }
 
   return 0;

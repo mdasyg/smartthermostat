@@ -36,9 +36,6 @@ time_t lastDeviceStatusDisplayUpdateTimestamp; // when the digital clock was dis
 dht dht22;
 
 void setup() {
-
-  uint16_t startInit = millis();
-
   Serial.begin(115200);
 
   // flashReadBufferStr.reserve(FLASH_READ_BUFFER_MAX_SIZE);
@@ -47,18 +44,15 @@ void setup() {
   lastDHT22QueryTimestamp = millis();
   lastDeviceStatusDisplayUpdateTimestamp = millis();
 
-  // Serial.println();
-  // Serial.println(F("Device Info"));
-  // Serial.print(F("Name: "));
-  // Serial.println(DEVICE_FRIENDLY_NAME);
-  // Serial.print(F("S/N:  "));
-  // Serial.println(DEVICE_SERIAL_NUMBER);
-  // Serial.print(F("F/W:  "));
-  // Serial.println(DEVICE_FIRMWARE_VERSION);
-  // Serial.println();
+  Serial.print(F("Name: "));
+  Serial.println(DEVICE_FRIENDLY_NAME);
+  Serial.print(F("S/N:  "));
+  Serial.println(DEVICE_SERIAL_NUMBER);
+  Serial.print(F("F/W:  "));
+  Serial.println(DEVICE_FIRMWARE_VERSION);
 
   // initial device status update to serial
-  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes, 0);
+  // statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
   // Init EthernetClient
   initEthernetShieldNetwork();
@@ -77,32 +71,16 @@ void setup() {
   // initial device attributes
   initDeviceAttributes(ethClient, stateOfAttributes);
 
-  // testing eeprom
-  unsigned int address=0;
-  byte value;
-  while(address != EEPROM.length()) {
-    value = EEPROM.read(address);
-    Serial.print(address);
-    Serial.print("\t");
-    Serial.print(value, DEC);
-    Serial.println();
-    address++;
-  }
-
   wdt_enable(WDTO_8S);
-
-  Serial.print(F("Time to init(ms): ")); Serial.println(millis() - startInit);
 
 }
 
-uint32_t loopTimeCount;
-uint32_t loopTimeStat[3] = {0, 10000, 0}; // 0: current, 1: min, 2:max
-
-// int loopTimeStatEepromAddress = 0;
+// uint32_t loopTimeCount;
+// uint32_t loopTimeStat[3] = {0, 10000, 0}; // 0: current, 1: min, 2:max
 
 void loop() {
 
-  loopTimeCount = micros();
+  // loopTimeCount = micros();
 
   if (!mqttClient.connected()) {
     mqttConnectToBrokerCallback(mqttClient);
@@ -133,17 +111,17 @@ void loop() {
   mqttClient.loop();
 
   // device status update to Serial
-  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes, loopTimeStat);
+  // statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
   wdt_reset();
 
-  loopTimeStat[0] = micros() - loopTimeCount;
-  loopTimeCount = micros();
-  if (loopTimeStat[0] < loopTimeStat[1]) {
-    loopTimeStat[1] = loopTimeStat[0];
-  }
-  if (loopTimeStat[0] > loopTimeStat[2]) {
-    loopTimeStat[2] = loopTimeStat[0];
-  }
+  // loopTimeStat[0] = micros() - loopTimeCount;
+  // loopTimeCount = micros();
+  // if (loopTimeStat[0] < loopTimeStat[1]) {
+  //   loopTimeStat[1] = loopTimeStat[0];
+  // }
+  // if (loopTimeStat[0] > loopTimeStat[2]) {
+  //   loopTimeStat[2] = loopTimeStat[0];
+  // }
 
 }
