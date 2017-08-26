@@ -5,7 +5,6 @@
 #include <PubSubClient.h>
 #include <EthernetUdp.h>
 #include <TimeLib.h>
-#include <MemoryFree.h>
 
 #include <avr/wdt.h>
 
