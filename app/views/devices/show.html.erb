@@ -123,7 +123,7 @@
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:current_value) %>" class="col-md-2">
                 <div class="form-group">
-                  <span class="device-attribute-current-value"><%= compute_device_attribute_last_update_time_text(device_attribute.current_value, device_attribute.unit, device_attribute.updated_at) %></span>
+                  <span class="device-attribute-current-value"><%= compute_device_attribute_text(device_attribute.current_value, device_attribute.unit, device_attribute.updated_at) %></span>
                 </div>
               </div>
 

@@ -13,11 +13,11 @@ module DevicesHelper
     end
   end
 
-  def compute_device_attribute_last_update_time_text(device_attribute_current_value, device_attribute_unit, device_attribute_last_update_time)
+  def compute_device_attribute_text(device_attribute_current_value, device_attribute_unit, device_attribute_last_update_time)
     if device_attribute_current_value.nil?
       return '-'
     else
-      return_text = device_attribute_current_value + ' ' + device_attribute_unit
+      return_text = device_attribute_current_value.to_s + ' ' + device_attribute_unit
       # if device_attribute_last_update_time.nil?
       #   return return_text + ' (-)'
       # else
