@@ -16,6 +16,3 @@ json.schedule_events schedule.schedule_events.each do |schedule_event|
     json.partial! partial: 'actions/action', collection: schedule_event.actions, as: :action
   end
 end
-
-# json.actions schedule.actions
-# json.url schedule_url(schedule, format: :json)

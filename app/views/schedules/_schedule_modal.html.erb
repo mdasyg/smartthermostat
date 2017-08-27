@@ -9,7 +9,7 @@
       </div>
 
       <div class="modal-body">
-        <%= render 'schedule_form', schedule: schedule, repeat_every_list: repeat_every_list %>
+        <%= render 'schedule_form', schedule: Schedule.new, schedule_recurrent_unit_list: schedule_recurrent_unit_list %>
       </div>
 
       <div class="modal-footer">

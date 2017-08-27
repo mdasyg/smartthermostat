@@ -1,27 +1,116 @@
 class SchedulesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_schedule, only: [:show, :edit, :update, :destroy, :get_overlapping_schedules]
-  before_action :set_repeat_every_list, only: [:new, :edit, :index]
+  before_action :set_schedule_recurrent_unit_list, only: [:new, :edit, :index]
 
   # GET /schedules
   # GET /schedules.json
   def index
+    query_string = 'is_recurrent = :is_recurrent'
+    query_params = {
+        is_recurrent: '0'
+    }
 
-    # TODO: FIX IT
+    if params.include?(:start)
+      if !query_string.empty?
+        query_string += ' AND '
+      end
+      query_string                  += 'start_datetime >= :start_datetime'
+      query_params[:start_datetime] = params[:start]
+    end
 
-    # if params.include?(:start)
-    #   if params.include?(:end)
-    #     @schedules = current_user.schedules.select('*').where(['start_datetime >= :start_datetime AND end_datetime <= :end_datetime', { start_datetime: params[:start], end_datetime: params[:end] }]).find_each
-    #   else
-    #     @schedules = current_user.schedules.select('*').where(['start_datetime >= :start_datetime', { start_datetime: params[:start] }]).find_each
-    #   end
-    # else
-    #   @schedules = current_user.schedules.find_each
-    # end
+    if params.include?(:end)
+      if !query_string.empty?
+        query_string += ' AND '
+      end
+      query_string                += 'end_datetime <= :end_datetime'
+      query_params[:end_datetime] = params[:end]
+    end
 
-    @schedules = current_user.schedules.find_each
+    @schedules = current_user.schedules.select('*').where([query_string, query_params]).find_each # UNTIL HERE GOOD CODE
 
-    @schedule = Schedule.new # it's for the modal
+
+    ### UNDER HERE TESTING!!!!
+
+    if params.include?(:start)
+      start_time = Time.zone.iso8601(params[:start])
+    else
+      return
+    end
+
+    if params.include?(:end)
+      end_time = Time.zone.iso8601(params[:end])
+    else
+      return
+    end
+
+    # puts start_time = start_time.advance(days: 1)
+    # puts start_time.advance(months: 1)
+    # puts start_time.advance(months: 2)
+    # puts start_time.advance(months: 3)
+    # puts start_time.advance(months: 4)
+    # puts start_time.advance(months: 5)
+    # puts start_time.advance(months: 6)
+    # puts start_time.advance(months: 7)
+    # puts start_time.advance(months: 8)
+    # puts start_time.advance(months: 9)
+    # puts start_time.advance(months: 10)
+    # puts start_time.advance(months: 11)
+    # puts start_time.advance(months: 12)
+    # puts start_time.advance(months: 13)
+
+    recurrent_schedules = current_user.schedules.select('*').where(['is_recurrent = :is_recurrent', { is_recurrent: '1' }]).find_each
+
+
+    @recurrent_schedules_array = []
+    recurrent_schedules.each do |schedule|
+      if schedule.start_datetime >= start_time
+        start_time_loop = schedule.start_datetime
+      else
+        start_time_loop = start_time
+        puts schedule.start_datetime.hour
+        puts start_time_loop
+        start_time_loop = start_time_loop.change(hour: schedule.start_datetime.hour, minutes: schedule.start_datetime.min, seconds: schedule.start_datetime.sec)
+        puts start_time_loop
+      end
+
+      frequency = nil
+      if schedule.recurrence_unit == Schedule::REPEAT_EVERY[:DAY][:ID]
+        frequency = schedule.recurrence_frequency.day.to_i
+      elsif schedule.recurrence_unit == Schedule::REPEAT_EVERY[:WEEK][:ID]
+        frequency = schedule.recurrence_frequency.week.to_i
+      else
+        return 'Recurrence unit not exists.'
+      end
+
+      puts "Freq: #{frequency}"
+
+      while start_time_loop <= end_time do
+        puts "Time to check: #{start_time_loop} against: #{schedule.start_datetime}"
+        diff = start_time_loop - schedule.start_datetime
+        puts "Diff: #{diff}"
+        if (diff == 0)
+          puts "BINGO"
+          @recurrent_schedules_array << schedule
+        elsif (diff != 0)
+          if (diff % frequency) == 0
+            puts "BINGO"
+            puts "Time executing: #{(diff / frequency).to_i}"
+            new_schedule                = schedule.dup
+            new_schedule.id             = schedule.id
+            new_schedule.start_datetime = start_time_loop
+            new_schedule.end_datetime   = new_schedule.start_datetime + (schedule.end_datetime - schedule.start_datetime)
+            @recurrent_schedules_array << new_schedule
+          end
+        end
+        puts ''
+
+        start_time_loop = start_time_loop.advance(days: 1)
+      end
+    end
+
+    # puts @recurrent_schedules_array.inspect
+
   end
 
   # GET /schedules/1
@@ -52,7 +141,7 @@ class SchedulesController < ApplicationController
     if (@schedule.end_datetime <= @schedule.start_datetime)
       @schedule.errors[:end_datetime] << 'Must be bigger than start datetime'
       respond_to do |format|
-        format.html {set_repeat_every_list(); render :new}
+        format.html {set_schedule_recurrent_unit_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -60,7 +149,7 @@ class SchedulesController < ApplicationController
     if !params.include?(:schedule_events)
       @schedule.errors[:base] << 'At least one event must exists'
       respond_to do |format|
-        format.html {set_repeat_every_list(); render :new}
+        format.html {set_schedule_recurrent_unit_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -81,7 +170,7 @@ class SchedulesController < ApplicationController
 
     if errors_exists
       respond_to do |format|
-        format.html {set_repeat_every_list(); render :new}
+        format.html {set_schedule_recurrent_unit_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -94,7 +183,7 @@ class SchedulesController < ApplicationController
           render json: { data: JSON::parse(full_schedule), result: :ok }
         }
       else
-        format.html {set_repeat_every_list(); render :new}
+        format.html {set_schedule_recurrent_unit_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
@@ -113,7 +202,7 @@ class SchedulesController < ApplicationController
     if !params.include?(:schedule_events)
       @schedule.errors[:base] << 'At least one event must exists'
       respond_to do |format|
-        format.html {set_repeat_every_list(); render :edit}
+        format.html {set_schedule_recurrent_unit_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -142,7 +231,7 @@ class SchedulesController < ApplicationController
 
     if errors_exists
       respond_to do |format|
-        format.html {set_repeat_every_list(); render :edit}
+        format.html {set_schedule_recurrent_unit_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -176,7 +265,7 @@ class SchedulesController < ApplicationController
 
     if errors_exists
       respond_to do |format|
-        format.html {set_repeat_every_list(); render :edit}
+        format.html {set_schedule_recurrent_unit_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -203,7 +292,7 @@ class SchedulesController < ApplicationController
       end
     rescue
       respond_to do |format|
-        format.html {set_repeat_every_list(); render :edit}
+        format.html {set_schedule_recurrent_unit_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
@@ -228,7 +317,7 @@ class SchedulesController < ApplicationController
       end
     rescue
       respond_to do |format|
-        set_repeat_every_list()
+        set_schedule_recurrent_unit_list()
         format.html {render :index}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
@@ -272,7 +361,6 @@ class SchedulesController < ApplicationController
     respond_to do |format|
       format.json {render json: { result: :ok }}
     end
-
   end
 
   ##############################################################################
@@ -325,10 +413,10 @@ class SchedulesController < ApplicationController
     return overlapping_schedules
   end
 
-  private def set_repeat_every_list
-    @repeat_every_list = []
+  private def set_schedule_recurrent_unit_list
+    @schedule_recurrent_unit_list = []
     Schedule::REPEAT_EVERY.each do |key, value|
-      @repeat_every_list << [value[:LABEL], value[:ID]]
+      @schedule_recurrent_unit_list << [value[:LABEL], value[:ID]]
     end
   end
 

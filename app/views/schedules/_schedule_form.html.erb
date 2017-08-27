@@ -87,15 +87,15 @@
       <div class="row">
         <div class="col-sm-4">
           <div class="form-group">
-            <%= schedule_form.label :recurrence_unit %>
-            <%= schedule_form.text_field :recurrence_unit, class: 'form-control' %>
+            <%= schedule_form.label :recurrence_frequency %>
+            <%= schedule_form.text_field :recurrence_frequency, class: 'form-control' %>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="form-group">
-            <%= schedule_form.label :recurrence_frequency %>
-            <%= schedule_form.select(:recurrence_frequency, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>
-              <% options_for_select(repeat_every_list, schedule.recurrence_frequency) %>
+            <%= schedule_form.label :recurrence_unit %>
+            <%= schedule_form.select(:recurrence_unit, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>
+              <% options_for_select(schedule_recurrent_unit_list, schedule.recurrence_frequency) %>
             <% end %>
           </div>
         </div>
