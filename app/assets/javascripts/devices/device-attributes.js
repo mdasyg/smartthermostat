@@ -57,4 +57,26 @@ $(document).on('turbolinks:load', function () { // we need this because of turbo
         }
     });
 
+    $('#device-form').on('change', '.device-attribute-direction-selector, .device-attribute-primitive-type-selector', function () {
+        $thisDeviceAttribute = $(this).closest('.device-attribute');
+        if ($thisDeviceAttribute.find('.device-attribute-direction-selector').val() == deviceAttributeDirectionConstants["FEEDBACK_ONLY"]["ID"]) {
+            $thisDeviceAttribute.find('.device-attribute-set-value').val('').prop('disabled', true);
+            if ($thisDeviceAttribute.find('.device-attribute-primitive-type-selector').val() == deviceAttributePrimitiveTypesConstants["BOOL"]["ID"]) {
+                $thisDeviceAttribute.find('.device-attribute-min-value').val('ON').prop('disabled', true);
+                $thisDeviceAttribute.find('.device-attribute-max-value').val('OFF').prop('disabled', true);
+            } else {
+                $thisDeviceAttribute.find('.device-attribute-min-value, .device-attribute-max-value').val('').prop('disabled', true);
+            }
+        } else {
+            $thisDeviceAttribute.find('.device-attribute-set-value').prop('disabled', false);
+            if ($thisDeviceAttribute.find('.device-attribute-primitive-type-selector').val() == deviceAttributePrimitiveTypesConstants["BOOL"]["ID"]) {
+                $thisDeviceAttribute.find('.device-attribute-min-value').val('ON').prop('disabled', true);
+                $thisDeviceAttribute.find('.device-attribute-max-value').val('OFF').prop('disabled', true);
+            } else {
+                $thisDeviceAttribute.find('.device-attribute-min-value, .device-attribute-max-value').val('').prop('disabled', false);
+            }
+        }
+
+    });
+
 });

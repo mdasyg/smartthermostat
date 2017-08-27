@@ -23,6 +23,8 @@
 //= require_tree .
 
 var deviceDetailShowViewUpdateIntervalInSeconds = null;
+var deviceAttributeDirectionConstants = null;
+var deviceAttributePrimitiveTypesConstants = null;
 
 function replaceUrlParams(url, data = {}) {
     if (!url) {
@@ -42,6 +44,8 @@ function replaceUrlParams(url, data = {}) {
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
 
     deviceDetailShowViewUpdateIntervalInSeconds = $('meta[name="device-detail-show-view-update-interval-in-seconds"]').attr('content');
+    deviceAttributeDirectionConstants = $('#device-attribute-direction-constants').data('constants');
+    deviceAttributePrimitiveTypesConstants = $('#device-attribute-primitive-types-constants').data('constants');
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();

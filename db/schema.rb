@@ -21,15 +21,15 @@ ActiveRecord::Schema.define(version: 20170822080727) do
 
   create_table "device_attributes", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
-    t.string "name", null: false
+    t.integer "index_on_device", limit: 1, null: false, unsigned: true
+    t.string "name", limit: 20, null: false
     t.integer "primitive_type_c_id", limit: 1, null: false, unsigned: true
-    t.boolean "unsigned", null: false
     t.integer "direction_c_id", limit: 1, null: false, unsigned: true
-    t.string "unit", limit: 5, null: false
-    t.string "min_value"
-    t.string "max_value"
-    t.string "set_value"
-    t.string "current_value"
+    t.string "unit", limit: 5
+    t.float "min_value", limit: 24
+    t.float "max_value", limit: 24
+    t.float "set_value", limit: 24
+    t.float "current_value", limit: 24
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["device_uid"], name: "fk_rails_69a3134aba"
@@ -41,6 +41,8 @@ ActiveRecord::Schema.define(version: 20170822080727) do
     t.string "value"
     t.string "label"
     t.datetime "last_update_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["device_uid"], name: "fk_rails_e93e183788"
   end
 
@@ -95,9 +97,11 @@ ActiveRecord::Schema.define(version: 20170822080727) do
     t.datetime "start_datetime", null: false
     t.datetime "end_datetime", null: false
     t.integer "priority", limit: 1, unsigned: true
-    t.integer "is_recurrent", limit: 1, null: false, unsigned: true
-    t.integer "repeat_every", limit: 1, unsigned: true
-    t.integer "recurrence_period", comment: "Measured in what the \"repeat_every\" says", unsigned: true
+    t.boolean "is_recurrent", null: false, unsigned: true
+    t.integer "recurrence_frequency", limit: 1, unsigned: true
+    t.integer "recurrence_unit", comment: "Measured in what the \"recurrence_frequency\" says", unsigned: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "fk_rails_3c900465fa"
   end
 
