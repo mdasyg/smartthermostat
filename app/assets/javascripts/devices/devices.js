@@ -1,3 +1,5 @@
+var $deviceForm = null;
+
 function updateDevicePage(data) {
     $('#device-status-indicator-text').text(data.last_contact_text);
     let $deviceAttributeElement = null;

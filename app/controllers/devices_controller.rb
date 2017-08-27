@@ -224,7 +224,7 @@ class DevicesController < ApplicationController
   end
 
   private def safe_device_attribute_params(unsafe_attribute)
-    unsafe_attribute.permit(:name, :primitive_type_c_id, :direction_c_id, :unit, :min_value, :max_value, :set_value)
+    unsafe_attribute.permit(:name, :index_on_device, :primitive_type_c_id, :direction_c_id, :unit, :min_value, :max_value, :set_value)
   end
 
 end

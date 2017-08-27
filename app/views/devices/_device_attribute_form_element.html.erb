@@ -21,7 +21,7 @@
 
     <div class="row">
 
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         <div class="form-group">
           <%= device_attribute_form.text_field :name, class: 'form-control' %>
         </div>
@@ -29,7 +29,7 @@
 
       <div class="col-sm-2">
         <div class="form-group">
-          <%= device_attribute_form.select(:direction_c_id, {}, {}, { class: 'form-control' }) do %>
+          <%= device_attribute_form.select(:direction_c_id, {}, {}, { class: 'form-control device-attribute-direction-selector' }) do %>
             <% options_for_select(@directions, device_attribute.direction_c_id) %>
           <% end %>
         </div>
@@ -37,7 +37,7 @@
 
       <div class="col-sm-2">
         <div class="form-group">
-          <%= device_attribute_form.select(:primitive_type_c_id, {}, {}, { class: 'form-control' }) do %>
+          <%= device_attribute_form.select(:primitive_type_c_id, {}, {}, { class: 'form-control device-attribute-primitive-type-selector' }) do %>
             <% options_for_select(@primitive_types, device_attribute.primitive_type_c_id) %>
           <% end %>
         </div>
@@ -45,19 +45,36 @@
 
       <div class="col-sm-1">
         <div class="form-group">
-          <%= device_attribute_form.text_field(:min_value, class: 'form-control') %>
+          <%= device_attribute_form.text_field(:index_on_device, class: 'form-control') %>
         </div>
       </div>
 
       <div class="col-sm-1">
         <div class="form-group">
-          <%= device_attribute_form.text_field :max_value, class: 'form-control' %>
+          <% field_params = { class: 'form-control device-attribute-min-value' } %>
+          <% (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:FEEDBACK_ONLY][:ID] || device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) ? field_params[:disabled] = true : field_params[:disabled] = false %>
+          <% (device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) ? field_params[:value] = 'ON' : nil %>
+          <%= device_attribute_form.text_field :min_value, field_params %>
         </div>
       </div>
 
       <div class="col-sm-1">
         <div class="form-group">
-          <%= device_attribute_form.text_field :set_value, class: 'form-control' %>
+          <% field_params = { class: 'form-control device-attribute-max-value' } %>
+          <% (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:FEEDBACK_ONLY][:ID] || device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) ? field_params[:disabled] = true : field_params[:disabled] = false %>
+          <% (device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) ? field_params[:value] = 'OFF' : nil %>
+          <%= device_attribute_form.text_field :max_value, field_params %>
+        </div>
+      </div>
+
+      <div class="col-sm-1">
+        <div class="form-group">
+          <% if device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:FEEDBACK_ONLY][:ID] %>
+            <% disable_field = true %>
+          <% else %>
+            <% disable_field = false %>
+          <% end %>
+          <%= device_attribute_form.text_field :set_value, { class: 'form-control device-attribute-set-value', disabled: disable_field } %>
         </div>
       </div>
 

@@ -1,11 +1,17 @@
 class ValidateValues < ActiveModel::Validator
   def validate(record)
     if record.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID] || record.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]
+      if record.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]
+        if record.set_value != 0 || record.set_value != 1
+          record.errors[:set_value] << 'Illegal value for bool type'
+        end
+        return
+      end
       if record.min_value.blank?
         record.errors[:min_value] << 'Missing'
       end
       if record.max_value.blank?
-        record.errors[:max_value] << 'MMissing'
+        record.errors[:max_value] << 'Missing'
       end
       if record.errors.any?
         return
@@ -22,9 +28,9 @@ end
 class DeviceAttribute < ApplicationRecord
 
   PRIMITIVE_TYPES = {
-      BOOL:    { ID: 1, LABEL: 'Bool' },
-      INTEGER: { ID: 2, LABEL: 'Integer' },
-      FLOAT:   { ID: 3, LABEL: 'Float' },
+      INTEGER: { ID: 1, LABEL: 'Integer' },
+      FLOAT:   { ID: 2, LABEL: 'Float' },
+      BOOL:    { ID: 3, LABEL: 'Bool' },
   }
 
   DIRECTIONS = {

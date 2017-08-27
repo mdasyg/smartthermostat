@@ -4,6 +4,7 @@ class CreateDeviceAttributes < ActiveRecord::Migration[5.0]
     create_table :device_attributes, id: false do |t|
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.bigint :device_uid, null: false, unsigned: true
+      t.integer :index_on_device, null: false, unsigned: true, limit: 1
       t.string :name, null: false, limit: 20
       t.integer :primitive_type_c_id, null: false, unsigned: true, limit: 1
       t.integer :direction_c_id, null: false, unsigned: true, limit: 1
