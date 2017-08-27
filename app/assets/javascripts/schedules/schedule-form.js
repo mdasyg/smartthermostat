@@ -276,7 +276,11 @@ function updateOverlapSchedulesPriorities() {
         data: overlapSchedulesWithPriorities
     });
     request.done(function (responseData, textStatus, jqXHR) {
-        // console.log(responseData);
+        if (responseData.result == 'ok') {
+            $fullCalendar.fullCalendar('refetchEvents');
+        } else {
+            console.log('Could not update overlapping event priorities');
+        }
     });
     request.fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);

@@ -101,7 +101,12 @@ function deleteSchedule($thisClick) {
         dataType: 'json'
     });
     request.done(function (responseData, textStatus, jqXHR) {
-        $fullCalendar.fullCalendar('removeEvents', scheduleId);
+        // $fullCalendar.fullCalendar('removeEvents', scheduleId);
+        if (responseData.result == 'ok') {
+            $fullCalendar.fullCalendar('refetchEvents');
+        } else {
+            console.log('Could not delet event');
+        }
         $scheduleModal.modal('hide');
     });
     request.fail(function (jqXHR, textStatus, errorThrown) {
