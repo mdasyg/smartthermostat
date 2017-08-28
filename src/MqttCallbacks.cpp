@@ -10,9 +10,8 @@ void mqttConnectToBrokerCallback(PubSubClient &mqttClient) {
 }
 
 void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
+  Serial.print(F("MQTT msg: "));
+  Serial.write(payload, length);
+  Serial.println();
   updateAppropriateEntityFromJsonResponse(payload);
-
-  // Serial.print(F("MQTT msg: "));
-  // Serial.write(payload, length);
-  // Serial.println();
 }

@@ -123,24 +123,19 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   JsonObject& root = jsonBuffer.parseObject(payload);
 
   if (!root.success()) {
-    // Serial.println(F("parseObject() failed"));
+    Serial.println(F("parseObject() failed"));
   }
 
   if(root.containsKey("da")) {
-    byte i;
-    for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-      if(stateOfAttributes[i].id == (int) root["da"]["id"]) {
-        if (strlen(root["da"]["name"]) > 0) {
-          strcpy(stateOfAttributes[i].name, root["da"]["name"]);
-        }
-        if (strlen(root["da"]["set"]) > 0) {
-          stateOfAttributes[i].setValue = root["da"]["set"];
-          // strcpy(stateOfAttributes[i].setValue, root["da"]["set"]);
-        }
-      }
+    byte index = root["da"]["idx"];
+    stateOfAttributes[index].id = root["da"]["id"];
+    if (strlen(root["da"]["name"]) > 0) {
+      strcpy(stateOfAttributes[index].name, root["da"]["name"]);
+    }
+    if (strlen(root["da"]["set"]) > 0) {
+      stateOfAttributes[index].setValue = root["da"]["set"];
     }
   }
-
 }
 
 void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
@@ -154,7 +149,8 @@ void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, device
       // // Serial.print(F("Last loop cycle time(us): ")); Serial.println(loopTimeStat[0]);
       // // Serial.print(F("Last loop cycle time min(us): ")); Serial.println(loopTimeStat[1]);
       // // Serial.print(F("Last loop cycle time max(us): ")); Serial.println(loopTimeStat[2]);
-      // Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+      Serial.println(now());
+      Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
       // for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
       //   Serial.print(stateOfAttributes[i].name);
       //   Serial.print(F(": Current value = "));

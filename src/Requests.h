@@ -10,7 +10,7 @@ extern bool isEthClientConnectedToServer;
 bool connectToApplicationServer(EthernetClient &ethClient);
 
 void sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData);
-void sendHttpGetRequest(EthernetClient &ethClient, const String &uri);
+void sendHttpGetRequest(EthernetClient &ethClient, const String &uri, const char* queryStringData);
 int httpResponseReader(EthernetClient &ethClient);
 
 void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const String &uri);

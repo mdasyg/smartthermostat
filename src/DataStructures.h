@@ -10,4 +10,24 @@ struct deviceAttribute {
   float currentValue;
 };
 
+// struct scheduleAttributeSettings {
+//   uint16_t deviceAttributeId;
+//   float startSetValue;
+//   float endtSetValue;
+// };
+//
+// struct schedule {
+//   uint32_t startTimestamp;
+//   uint32_t endTimestamp;
+//   uint32_t recurrenceFrequency;
+//   byte status;
+//   scheduleAttributeSettings *atrrSettings;
+// };
+//
+// struct quickButton {
+//   uint32_t duration;
+//   uint32_t initiateTimeTimestamp;
+//   bool active;
+// };
+
 #endif

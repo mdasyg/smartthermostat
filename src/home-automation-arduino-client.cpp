@@ -17,8 +17,9 @@
 #include "Requests.h"
 #include "System.h"
 
-// device attributesStates
+// custom data structures
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
+// schedule scheduleTable[2];
 // buffers
 String flashReadBufferStr;
 // clients
@@ -71,6 +72,14 @@ void setup() {
   initDeviceAttributes(ethClient, stateOfAttributes);
 
   wdt_enable(WDTO_8S);
+  //
+  // Serial.println(sizeof(schedule));
+  // Serial.println(sizeof(scheduleTable));
+  //
+  // scheduleTable[0].startTimestamp = 15454654;
+  // scheduleTable[0].endTimestamp = 15464654;
+  //
+  // Serial.println(scheduleTable[0].endTimestamp);
 
 }
 
@@ -110,7 +119,7 @@ void loop() {
   mqttClient.loop();
 
   // device status update to Serial
-  // statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
+  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
   wdt_reset();
 

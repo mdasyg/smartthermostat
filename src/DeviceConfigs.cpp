@@ -10,15 +10,11 @@ void initDeviceAttributes(EthernetClient &ethClient, deviceAttribute stateOfAttr
   pinMode(boilerRelayPin, OUTPUT);
   digitalWrite(boilerRelayPin, LOW);
 
-  // attribute 1 init
-  stateOfAttributes[0].id = 1;
-  // attribute 2 init
-  stateOfAttributes[1].id = 2;
-  // attribute 3 init
-  stateOfAttributes[2].id = 3;
+  stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
+   stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
 
   // Request devices attributes list update and wait the reponse on MQTT
-  readFromFlash(deviceAttributesListUri, flashReadBufferStr);
+  readFromFlash(deviceDataRequestUri, flashReadBufferStr);
   flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
-  sendHttpGetRequest(ethClient, flashReadBufferStr);
+  sendHttpGetRequest(ethClient, flashReadBufferStr, "all");
 }

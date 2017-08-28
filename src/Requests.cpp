@@ -1,5 +1,4 @@
 #include <ArduinoJson.h>
-#include <MemoryFree.h>
 
 #include "DeviceConfigs.h"
 #include "Requests.h"
@@ -19,7 +18,7 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   return true;
 }
 
-void sendHttpGetRequest(EthernetClient &ethClient, const String &uri) {
+void sendHttpGetRequest(EthernetClient &ethClient, const String &uri, const char* queryStringData) {
   if(!connectToApplicationServer(ethClient)) {
     // Serial.println(F("Abort get request send"));
     return;
@@ -28,7 +27,7 @@ void sendHttpGetRequest(EthernetClient &ethClient, const String &uri) {
 
   // SET GET REQUEST
   httpRequestStr = F("GET ");
-  httpRequestStr += uri;
+  httpRequestStr += uri+queryStringData;
   httpRequestStr += F(" HTTP/1.1\r\n");
   ethClient.print(httpRequestStr);
   // set HOST contents
@@ -129,7 +128,12 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
     postRequestData += i;
     postRequestData += F("][cur]=");
     postRequestData += stateOfAttributes[i].currentValue;
-
+    postRequestData += AMPERSAND;
+    postRequestData += F("da[");
+    postRequestData += i;
+    postRequestData += F("][set]=");
+    postRequestData += stateOfAttributes[i].setValue;
+    Serial.println(postRequestData);
     sendHttpPostRequest(ethClient, uri, postRequestData);
 
     do {
