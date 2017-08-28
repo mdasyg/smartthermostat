@@ -112,7 +112,8 @@
                 <div class="form-group">
                   <% if (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID]) || (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]) %>
                     <% params = ActiveSupport::JSON.encode({ device_uid: device_attribute.device_uid.to_s }) %>
-                    <a href="#" class="device-attribute-set-value editable-device-attribute-set-value" data-params="<%= params %>" data-pk="<%= device_attribute.id %>" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
+                    <% field_type = (device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) ? 'text' : 'text' %>
+                    <a href="#" class="device-attribute-set-value editable-device-attribute-set-value" data-type="<%= field_type %>" data-params="<%= params %>" data-pk="<%= device_attribute.id %>" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
                       <%= device_attribute.set_value %>
                     </a>
                   <% else %>
