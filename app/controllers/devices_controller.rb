@@ -109,14 +109,15 @@ class DevicesController < ApplicationController
   def update_device_attribute_value
     device_attribute = DeviceAttribute.joins(:device).where("devices.user_id = #{current_user.id}", device_uid: params[:device_uid]).find_by(id: params[:pk])
     if (device_attribute.nil?)
-      # render json: { status: :error, msg: ['Device Attribute not exist'] }, status: :not_found
       render json: { messages: ['Device Attribute not exist'], result: :error }
     end
 
     device_attribute.write_attribute(params[:name], params[:value])
     if device_attribute.save
+      # inform client that all is ok
       render(json: { result: :ok })
 
+      # and now tell the device about changes
       mqtt_client = Mosquitto::Client.new()
       mqtt_client.on_connect {|rc|
         p "Connected with return code #{rc}"
@@ -125,16 +126,12 @@ class DevicesController < ApplicationController
       }
 
       mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
-
-      payload = ActiveSupport::JSON.encode({ da: { id: device_attribute.id, set: device_attribute.read_attribute(params[:name]) } })
+      payload = ActiveSupport::JSON.encode({ da: { idx: device_attribute.index_on_device, id: device_attribute.id, set: device_attribute.read_attribute(params[:name]) } })
       mqtt_client.publish(nil, params[:device_uid], payload, Mosquitto::AT_MOST_ONCE, false)
-
       mqtt_client.disconnect()
-
     else
       render json: { messages: device_attribute.errors, result: :error }
     end
-
   end
 
   # DELETE /devices/1
@@ -191,7 +188,6 @@ class DevicesController < ApplicationController
         device_attributes << device_attribute
       end
     end
-
     render json: { data: device_attributes, result: :ok }
   end
 

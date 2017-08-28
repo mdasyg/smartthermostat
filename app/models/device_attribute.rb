@@ -2,7 +2,7 @@ class ValidateValues < ActiveModel::Validator
   def validate(record)
     if record.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID] || record.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]
       if record.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]
-        if record.set_value != 0 || record.set_value != 1
+        if record.set_value != 0 && record.set_value != 1
           record.errors[:set_value] << 'Illegal value for bool type'
         end
         return
