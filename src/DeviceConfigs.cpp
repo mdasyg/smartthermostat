@@ -11,7 +11,7 @@ void initDeviceAttributes(EthernetClient &ethClient, deviceAttribute stateOfAttr
   digitalWrite(boilerRelayPin, LOW);
 
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
-   stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
+  stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
 
   // Request devices attributes list update and wait the reponse on MQTT
   readFromFlash(deviceDataRequestUri, flashReadBufferStr);
