@@ -1,0 +1,2 @@
+module QuickButtonsHelper
+end

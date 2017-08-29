@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   resources :schedules
   resources :devices, param: :uid
+  resources :quick_buttons
 
   get '/devices/:uid/get_device_attributes_list', to: 'devices#get_device_attributes_list'
   post '/devices/:uid/update_device_attribute_value', to: 'devices#update_device_attribute_value'
