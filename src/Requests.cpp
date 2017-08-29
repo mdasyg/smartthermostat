@@ -133,7 +133,6 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
     postRequestData += i;
     postRequestData += F("][set]=");
     postRequestData += stateOfAttributes[i].setValue;
-    Serial.println(postRequestData);
     sendHttpPostRequest(ethClient, uri, postRequestData);
 
     do {

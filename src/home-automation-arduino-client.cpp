@@ -38,6 +38,19 @@ dht dht22;
 void setup() {
   Serial.begin(115200);
 
+  // boiler pin init
+  pinMode(boilerRelayPin, OUTPUT);
+  digitalWrite(boilerRelayPin, LOW);
+  // shift register for
+  pinMode(latchPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);
+  pinMode(clockPin, OUTPUT);
+  // button ping init
+  pinMode(deviceStateButtonPin, INPUT);
+
+  // initialize led status to all off
+  shiftOut(dataPin, clockPin, LSBFIRST, 0b00000000);
+
   // flashReadBufferStr.reserve(FLASH_READ_BUFFER_MAX_SIZE);
 
   lastAttrUpdateTimestamp = millis();
@@ -71,24 +84,33 @@ void setup() {
   // initial device attributes
   initDeviceAttributes(ethClient, stateOfAttributes);
 
+  // watchdog enable
   wdt_enable(WDTO_8S);
-  //
-  // Serial.println(sizeof(schedule));
-  // Serial.println(sizeof(scheduleTable));
-  //
-  // scheduleTable[0].startTimestamp = 15454654;
-  // scheduleTable[0].endTimestamp = 15464654;
-  //
-  // Serial.println(scheduleTable[0].endTimestamp);
 
+  Serial.println(F("System is ready"));
 }
 
 // uint32_t loopTimeCount;
 // uint32_t loopTimeStat[3] = {0, 10000, 0}; // 0: current, 1: min, 2:max
+bool buttonPressed = false;
 
 void loop() {
-
   // loopTimeCount = micros();
+
+  if ((digitalRead(deviceStateButtonPin) == HIGH)) {
+    if (buttonPressed == false) {
+      buttonPressed = true;
+      if(stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue == 1) {
+        stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
+      } else {
+        stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 1;
+      }
+    }
+  } else {
+    if (buttonPressed == true) {
+      buttonPressed = false;
+    }
+  }
 
   if (!mqttClient.connected()) {
     mqttConnectToBrokerCallback(mqttClient);
@@ -121,8 +143,6 @@ void loop() {
   // device status update to Serial
   statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
-  wdt_reset();
-
   // loopTimeStat[0] = micros() - loopTimeCount;
   // loopTimeCount = micros();
   // if (loopTimeStat[0] < loopTimeStat[1]) {
@@ -131,5 +151,7 @@ void loop() {
   // if (loopTimeStat[0] > loopTimeStat[2]) {
   //   loopTimeStat[2] = loopTimeStat[0];
   // }
+
+  wdt_reset();
 
 }

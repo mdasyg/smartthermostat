@@ -7,9 +7,6 @@
 void initDeviceAttributes(EthernetClient &ethClient, deviceAttribute stateOfAttributes[]) {
   String flashReadBufferStr;
 
-  pinMode(boilerRelayPin, OUTPUT);
-  digitalWrite(boilerRelayPin, LOW);
-
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
 

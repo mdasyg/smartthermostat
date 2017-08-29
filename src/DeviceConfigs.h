@@ -21,7 +21,7 @@ const byte HUMIDITY_ATTRIBUTE_INDEX = 2;
 const char MQTT_USERNAME[] =  "";
 const char MQTT_PASSWORD[] = "";
 
-const unsigned long attrUpdateInterval = 30000L; // in milliseconds
+const unsigned long attrUpdateInterval = 10000L; // in milliseconds
 
 const char applicationServerUrl[] = "home-auto.eu";
 const unsigned int applicationServerPort = 8080; // to unsigned anevazei poly thn xrhsh tis flash, gt?
@@ -36,7 +36,16 @@ const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/DEV_UID/attrib
 
 // system variables
 const byte boilerRelayPin = 7;
+const byte deviceStatusLedIndex = 7;
 const byte tempSensorPin1 = 2;
+
+// device buttons
+const byte deviceStateButtonPin = 5;
+
+// Pin configuration for 74HC595 for led controlling
+const byte latchPin = 8; //Pin connected to latch pin (ST_CP) of 74HC595
+const byte dataPin = 9; //Pin connected to Data in (DS) of 74HC595
+const byte clockPin = 3; //Pin connected to clock pin (SH_CP) of 74HC595
 
 void initDeviceAttributes(EthernetClient &ethClient, deviceAttribute stateOfAttributes[]);
 

@@ -7,6 +7,8 @@
 IPAddress ntpTimeServer(10, 168, 10, 60); // TODO REMOVE from here
 byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED }; // TODO REMOVE from here
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
+// led status
+byte ledStatus = 0b00000000;
 
 extern EthernetUDP udpClient;
 
@@ -73,6 +75,18 @@ time_t getNtpTime() {
     }
   }
   return 0; // return 0 if unable to get the time
+}
+
+void registerWrite(byte whichPin, byte whihchState) {
+  // turn off the output so the pins don't light up
+  // while you're shifting bits:
+  digitalWrite(latchPin, LOW);
+  // turn on the next highest bit in bitsToSend:
+  bitWrite(ledStatus, whichPin, whihchState);
+  // shift the bits out:
+  shiftOut(dataPin, clockPin, LSBFIRST, ledStatus);
+  // turn on the output so the LEDs can light up:
+  digitalWrite(latchPin, HIGH);
 }
 
 // void printDigits(int digits) {

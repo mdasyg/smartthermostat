@@ -19,6 +19,7 @@ extern deviceAttribute stateOfAttributes[];
 void initEthernetShieldNetwork();
 void sendNTPpacket(IPAddress &address);
 time_t getNtpTime();
+void registerWrite(byte whichPin, byte whihchState);
 void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
 void readFromFlash(const char src[], String &flashReadBufferStr);
