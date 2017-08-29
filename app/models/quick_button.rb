@@ -1,0 +1,2 @@
+class QuickButton < ApplicationRecord
+end

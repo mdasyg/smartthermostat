@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @quick_button.user_id %>
+</p>
+
+<p>
+  <strong>Device uid:</strong>
+  <%= @quick_button.device_uid %>
+</p>
+
+<p>
+  <strong>Index on device:</strong>
+  <%= @quick_button.index_on_device %>
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @quick_button.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @quick_button.description %>
+</p>
+
+<p>
+  <strong>Duration:</strong>
+  <%= @quick_button.duration %>
+</p>
+
+<%= link_to 'Edit', edit_quick_button_path(@quick_button) %> |
+<%= link_to 'Back', quick_buttons_path %>

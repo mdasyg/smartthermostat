@@ -85,13 +85,13 @@
 
     <div id="recurrent-entries" class="<%= (schedule.is_recurrent == 1) ? '' : 'hidden' %>">
       <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-6">
           <div class="form-group">
             <%= schedule_form.label :recurrence_frequency %>
             <%= schedule_form.text_field :recurrence_frequency, class: 'form-control' %>
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
           <div class="form-group">
             <%= schedule_form.label :recurrence_unit %>
             <%= schedule_form.select(:recurrence_unit, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>

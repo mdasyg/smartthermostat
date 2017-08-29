@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170822080727) do
+ActiveRecord::Schema.define(version: 20170829080727) do
 
   create_table "actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "device_attribute_id", null: false, unsigned: true
@@ -59,16 +59,17 @@ ActiveRecord::Schema.define(version: 20170822080727) do
     t.index ["user_id"], name: "fk_rails_410b63ef65"
   end
 
-  create_table "quick_button_actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "quick_button_actions", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "quick_button_id", null: false, unsigned: true
     t.integer "action_id", null: false, unsigned: true
     t.index ["action_id"], name: "fk_rails_b635b11e28"
-    t.index ["quick_button_id"], name: "fk_rails_1270fa1389"
+    t.index ["quick_button_id", "action_id"], name: "index_quick_button_actions_on_quick_button_id_and_action_id", unique: true
   end
 
   create_table "quick_buttons", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "user_id", null: false, unsigned: true
     t.bigint "device_uid", null: false, unsigned: true
+    t.integer "index_on_device", limit: 1, null: false, unsigned: true
     t.string "title", null: false
     t.text "description"
     t.integer "duration"
