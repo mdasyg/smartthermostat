@@ -1,0 +1,88 @@
+<div id="get-device-attributes-list-url" class="hidden" data-url="<%= device_url('DEVICE_ID') + '/get_device_attributes_list' %>"></div>
+
+<% current_form_prefix = 'quick_button_event' %>
+<% prefix_for_subform = current_form_prefix %>
+
+<div id="devices-search-url" class="hidden" data-url="<%= devices_search_url %>"></div>
+
+<%= form_with(model: quick_button, local: true, id: 'quick-button-form') do |quick_button_form| %>
+
+  <div class="quick-button-event-form-prefix-for-subform hidden" data-prefix="<%= prefix_for_subform %>"></div>
+
+  <% if quick_button.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(quick_button.errors.count, 'error') %> prohibited this
+        quick_button from being saved:</h2>
+      <ul>
+        <% quick_button.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+
+    <div class="col-sm-3">
+      <div class="form-group">
+        <%= quick_button_form.label :title %>
+        <%= quick_button_form.text_field :title, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-sm-3">
+      <div class="form-group">
+        <%= quick_button_form.label :description %>
+        <%= quick_button_form.text_field :description, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-sm-3">
+      <div class="form-group">
+        <%= quick_button_form.label :index_on_device %>
+        <%= quick_button_form.text_field(:index_on_device, class: 'form-control') %>
+      </div>
+    </div>
+
+    <div class="col-sm-3">
+      <div class="form-group">
+        <%= quick_button_form.label :duration %>
+        <%= quick_button_form.text_field(:duration, class: 'form-control') %>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="select-device-for-quick-button-container">
+    <div class="row">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <% if quick_button && quick_button.device && quick_button.device.name && quick_button.device_uid %>
+            <% selectOptionName = quick_button.device.name %>
+            <% selectOptionValue = quick_button.device_uid %>
+          <% else %>
+            <% selectOptionName = nil %>
+            <% selectOptionValue = nil %>
+          <% end %>
+          <%= quick_button_form.select(:device_uid, [[selectOptionName, selectOptionValue]], {}, { class: 'form-control quick-button-device-selector' }) %>
+        </div>
+      </div>
+      <div class="col-sm-3"></div>
+    </div>
+  </div>
+
+  <div class="quick-button-event-actions-container">
+    <%= render partial: '/actions/action_form', locals: { actions: quick_button.actions, prefix_for_subform: prefix_for_subform } %>
+  </div>
+
+  <div class="actions">
+    <%= quick_button_form.submit %>
+  </div>
+<% end %>
+
+<div id="quick-button-subforms-templates" class="hidden">
+  <div class="quick-button-action-template">
+    <%= render partial: '/actions/action_form_element', locals: { action: Action.new, prefix_for_subform: 'REPLACE_WITH_EVENT_FORM_PREFIX' } %>
+  </div>
+</div>

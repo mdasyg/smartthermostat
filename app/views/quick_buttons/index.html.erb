@@ -1,37 +1,38 @@
-<p id="notice"><%= notice %></p>
+<% provide(:title, 'Quick Buttons List') %>
 
-<h1>Quick Buttons</h1>
+<div class="well">
+  <h1>Quick Buttons List</h1>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Device uid</th>
-      <th>Index on device</th>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Duration</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+<div class="row">
+  <div class="col-sm-3"><b>Title</b></div>
+  <div class="col-sm-3"><b>Description</b></div>
+  <div class="col-sm-2"><b>Duration</b></div>
+  <div class="col-sm-2"><b>Device Name</b></div>
+  <div class="col-sm-2"><b>Actions</b></div>
+</div>
 
-  <tbody>
-    <% @quick_buttons.each do |quick_button| %>
-      <tr>
-        <td><%= quick_button.user_id %></td>
-        <td><%= quick_button.device_uid %></td>
-        <td><%= quick_button.index_on_device %></td>
-        <td><%= quick_button.title %></td>
-        <td><%= quick_button.description %></td>
-        <td><%= quick_button.duration %></td>
-        <td><%= link_to 'Show', quick_button %></td>
-        <td><%= link_to 'Edit', edit_quick_button_path(quick_button) %></td>
-        <td><%= link_to 'Destroy', quick_button, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<hr/>
 
-<br>
+<% @quick_buttons.each do |quick_button| %>
+  <div class="row">
+    <div class="col-sm-3"><%= quick_button.title %></div>
+    <div class="col-sm-3"><%= quick_button.description %></div>
+    <div class="col-sm-2"><%= quick_button.duration %></div>
+    <div class="col-sm-2"><%= quick_button.device.name %></div>
+    <div class="col-sm-2">
+      <%= link_to(quick_button) do %>
+        <span class="glyphicon glyphicon-zoom-in"></span>
+      <% end %> |
+      <%= link_to edit_quick_button_path(quick_button) do %>
+        <span class="glyphicon glyphicon-pencil"></span>
+      <% end %>  |
+      <%= link_to quick_button, method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <span class="glyphicon glyphicon-remove"></span>
+      <% end %>
+    </div>
+  </div>
+  <hr>
+<% end %>
 
 <%= link_to 'New Quick Button', new_quick_button_path %>
