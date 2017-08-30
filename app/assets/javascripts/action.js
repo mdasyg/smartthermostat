@@ -16,13 +16,13 @@ function addNewAction($containerToAppendActions, $actionTemplate, prefixForActio
     $newActionInputs.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
-            propertyName = propertyName.replace('REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX', prefixForActionSubForm);
+            propertyName = propertyName.replace('REPLACE_WITH_EVENT_FORM_PREFIX', prefixForActionSubForm);
             propertyName = propertyName.replace('ACTION_INDEX', nextActionDomId);
             $(this).attr('name', propertyName);
         }
         propertyId = $(this).attr('id');
         if (propertyId) {
-            propertyId = propertyId.replace('REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX', prefixForActionSubForm);
+            propertyId = propertyId.replace('REPLACE_WITH_EVENT_FORM_PREFIX', prefixForActionSubForm);
             propertyId = propertyId.replace('ACTION_INDEX', nextActionDomId);
             propertyId = propertyId.replace('[', '_');
             propertyId = propertyId.replace(']', '_');
@@ -33,7 +33,7 @@ function addNewAction($containerToAppendActions, $actionTemplate, prefixForActio
     if (actionData) {
         $newAction.find('.action-id').val(actionData.id);
         $newAction.find('.action-device-attribute-id').val(actionData.device_attribute_id);
-        $newAction.find('.schedule-event-action-device-attribute-name-placeholder').text(actionData.device_attribute_name);
+        $newAction.find('.event-action-device-attribute-name-placeholder').text(actionData.device_attribute_name);
         $newAction.find('.action-device-attribute-start-value').val(actionData.device_attribute_start_value);
         $newAction.find('.action-device-attribute-end-value').val(actionData.device_attribute_end_value);
     }

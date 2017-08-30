@@ -41,6 +41,20 @@ function replaceUrlParams(url, data = {}) {
     return url;
 }
 
+function displayErrors($formToAttachErrors, errorMessages) {
+    $formToAttachErrors.find('#errors-explanation').remove();
+
+    let $errorsDomBlock = $('<div/>').attr('id', 'errors-explanation');
+    $errorsDomBlock.append($('<h2/>').text('Erorrs'));
+    $errorsDomBlock.append('<ul/>');
+
+    $(errorMessages).each(function (index, errorMsg) {
+        $errorsDomBlock.find('ul').append($('<li/>').text(errorMsg));
+    });
+
+    $formToAttachErrors.prepend($errorsDomBlock);
+}
+
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
 
     deviceDetailShowViewUpdateIntervalInSeconds = $('meta[name="device-detail-show-view-update-interval-in-seconds"]').attr('content');
