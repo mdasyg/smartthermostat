@@ -147,14 +147,25 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
 
 }
 
+// char size[10];
 int httpResponseReader(EthernetClient &ethClient) {
   if (ethClient.available()) {
     // some response found. Examine it.
     ethClient.setTimeout(10000);
 
+    bool ok;
+
+    // // first read Content-length
+    // char contentLengthHeaders[] = "Content-Length: ";
+    // ok = ethClient.find(contentLengthHeaders);
+    //
+    // ethClient.readBytesUntil('\r', size, 10);
+    //
+    // Serial.println(sizeof(size));
+
     // HTTP headers end with an empty line
     char endOfHeaders[] = "\r\n\r\n";
-    bool ok = ethClient.find(endOfHeaders);
+    ok = ethClient.find(endOfHeaders);
     if (!ok) {
       // Serial.println(F("No response or invalid http response"));
       return -1;

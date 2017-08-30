@@ -46,7 +46,7 @@ void setup() {
   pinMode(dataPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   // button ping init
-  pinMode(deviceStateButtonPin, INPUT);
+  pinMode(deviceStateToggleButtonPin, INPUT);
 
   // initialize led status to all off
   shiftOut(dataPin, clockPin, LSBFIRST, 0b00000000);
@@ -94,10 +94,14 @@ void setup() {
 // uint32_t loopTimeStat[3] = {0, 10000, 0}; // 0: current, 1: min, 2:max
 bool buttonPressed = false;
 
+void updateQuickButtonsState(byte quickButtonLedIndex) {
+  registerWrite(quickButtonLedStatusIndex[quickButtonLedIndex], HIGH);
+}
+
 void loop() {
   // loopTimeCount = micros();
 
-  if ((digitalRead(deviceStateButtonPin) == HIGH)) {
+  if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
     if (buttonPressed == false) {
       buttonPressed = true;
       if(stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue == 1) {
@@ -105,6 +109,39 @@ void loop() {
       } else {
         stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 1;
       }
+    }
+  } else {
+    if (buttonPressed == true) {
+      buttonPressed = false;
+    }
+  }
+
+  if ((digitalRead(quickButton1Pin) == HIGH)) {
+    if (buttonPressed == false) {
+      buttonPressed = true;
+      updateQuickButtonsState(QUICK_BUTTON_1_INDEX);
+    }
+  } else {
+    if (buttonPressed == true) {
+      buttonPressed = false;
+    }
+  }
+
+  if ((digitalRead(quickButton2Pin) == HIGH)) {
+    if (buttonPressed == false) {
+      buttonPressed = true;
+      updateQuickButtonsState(QUICK_BUTTON_2_INDEX);
+    }
+  } else {
+    if (buttonPressed == true) {
+      buttonPressed = false;
+    }
+  }
+
+  if ((digitalRead(quickButton3Pin) == HIGH)) {
+    if (buttonPressed == false) {
+      buttonPressed = true;
+      updateQuickButtonsState(QUICK_BUTTON_3_INDEX);
     }
   } else {
     if (buttonPressed == true) {

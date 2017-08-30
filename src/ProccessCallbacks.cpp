@@ -23,9 +23,9 @@ int thermostatProccessCallback(deviceAttribute stateOfAttributes[], dht &dht22, 
   if (stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue == 1) {
     registerWrite(deviceStatusLedIndex, HIGH);
     stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 1;
-    if (stateOfAttributes[TEMP_ATTRIBUTE_INDEX].currentValue < stateOfAttributes[TEMP_ATTRIBUTE_INDEX].setValue) {
+    if ((stateOfAttributes[TEMP_ATTRIBUTE_INDEX].currentValue) < (stateOfAttributes[TEMP_ATTRIBUTE_INDEX].setValue - 0.5)) {
       digitalWrite(boilerRelayPin, HIGH);
-    } else {
+    } else if (stateOfAttributes[TEMP_ATTRIBUTE_INDEX].currentValue > stateOfAttributes[TEMP_ATTRIBUTE_INDEX].setValue ) {
       digitalWrite(boilerRelayPin, LOW);
     }
   } else {
