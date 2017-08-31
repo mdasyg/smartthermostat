@@ -8,8 +8,6 @@
 
 #include <avr/wdt.h>
 
-#include <EEPROMAnything.h>
-
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
 #include "ProccessCallbacks.h"

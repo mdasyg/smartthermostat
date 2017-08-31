@@ -150,6 +150,25 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
       stateOfAttributes[index].setValue = root["da"]["set"];
     }
   }
+
+  if(root.containsKey("qb")) {
+    byte index = root["qb"]["idx"];
+    if (quickButtons[index].isActionsTableInitiated == false) {
+      quickButtons[index].actions = (attributeSettings *)malloc(NUMBER_OF_ATTRIBUTES * sizeof(attributeSettings));
+      quickButtons[index].isActionsTableInitiated = true;
+    }
+    if (strlen(root["qb"]["dur"]) > 0) {
+      quickButtons[index].duration = root["qb"]["dur"];
+    }
+  }
+
+  if(root.containsKey("qb_a")) {
+    byte actionIndex = root["qb_a"]["idx"];
+    byte deviceAttributeIndex = root["qb_a"]["da_idx"];
+    quickButtons[actionIndex].actions[deviceAttributeIndex].deviceAttributeIndex = deviceAttributeIndex;
+    quickButtons[actionIndex].actions[deviceAttributeIndex].startSetValue = root["qb_a"]["start"];
+    quickButtons[actionIndex].actions[deviceAttributeIndex].endSetValue = root["qb_a"]["end"];
+  }
 }
 
 // void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
