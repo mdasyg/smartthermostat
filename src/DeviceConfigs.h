@@ -8,8 +8,6 @@
 #ifndef DEVICE_CONFIGS_H
 #define DEVICE_CONFIGS_H
 
-const char DEVICE_FRIENDLY_NAME[] =  "home-auto-dev534"; // paizete, ipo elegxo
-
 // device information
 const char DEVICE_SERIAL_NUMBER[] =  "973214849367374423"; // BE CAREFUL TO UPDATE DEVICE SERIAL NUMBER
 const char DEVICE_FIRMWARE_VERSION[] = "0.0.1";

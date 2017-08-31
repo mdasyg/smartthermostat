@@ -143,9 +143,9 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   if(root.containsKey("da")) {
     byte index = root["da"]["idx"];
     stateOfAttributes[index].id = root["da"]["id"];
-    if (strlen(root["da"]["name"]) > 0) {
-      strcpy(stateOfAttributes[index].name, root["da"]["name"]);
-    }
+    // if (strlen(root["da"]["name"]) > 0) {
+    //   strcpy(stateOfAttributes[index].name, root["da"]["name"]);
+    // }
     if (strlen(root["da"]["set"]) > 0) {
       stateOfAttributes[index].setValue = root["da"]["set"];
     }

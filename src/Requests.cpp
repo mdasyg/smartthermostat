@@ -97,9 +97,6 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
   postRequestData += F("fw=");
   postRequestData += DEVICE_FIRMWARE_VERSION;
   postRequestData += AMPERSAND;
-  postRequestData += F("friendly_name=");
-  postRequestData += DEVICE_FRIENDLY_NAME;
-  postRequestData += AMPERSAND;
   postRequestData += F("ip=");
   for (i=0; i<4; i++) {
     postRequestData += ipAddress[i];

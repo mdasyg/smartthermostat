@@ -5,7 +5,7 @@
 
 struct deviceAttribute {
   int id;
-  char name[20];
+  // char name[20];
   float setValue;
   float currentValue;
 };

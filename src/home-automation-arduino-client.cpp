@@ -62,8 +62,6 @@ void setup() {
   lastDHT22QueryTimestamp = millis();
   // lastDeviceStatusDisplayUpdateTimestamp = millis();
 
-  Serial.print(F("Name: "));
-  Serial.println(DEVICE_FRIENDLY_NAME);
   Serial.print(F("S/N:  "));
   Serial.println(DEVICE_SERIAL_NUMBER);
   Serial.print(F("F/W:  "));
