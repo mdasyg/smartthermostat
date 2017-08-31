@@ -1,4 +1,4 @@
-<% action_index = (defined? action_counter) ? action_counter : 'ACTION_INDEX' %>
+<% action_index = (action.id) ? action.id : 'ACTION_INDEX' %>
 <% current_form_prefix = prefix_for_subform + '[actions]' %>
 
 <div class="action form-row" data-index="<%= action_index %>">
