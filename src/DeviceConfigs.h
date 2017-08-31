@@ -37,9 +37,10 @@ const unsigned int applicationServerPort = 8080; // to unsigned anevazei poly th
 const char mqttServerUrl[] = "home-auto.eu";
 const unsigned int mqttServerPort = 1883;
 const unsigned int localUdpPort = 8888;  // local port to listen for UDP packets
-const PROGMEM char deviceDataRequestUri[] = "/api/v1/devices/DEV_UID/get_info?t=";
-const PROGMEM char deviceStatsUpdateUri[] = "/api/v1/devices/DEV_UID/stats_update";
-const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/DEV_UID/attributes_status_update";
+const PROGMEM char apiBaseUrl[] = "/api/v1/devices";
+const PROGMEM char deviceDataRequestUri[] = "/get_info?t=";
+const PROGMEM char deviceStatsUpdateUri[] = "/stats_update";
+const PROGMEM char deviceAttributesUpdateUri[] = "/attributes_status_update";
 
 // Pin configuration for 74HC595 for led controlling
 const byte latchPin = 8; //Pin connected to latch pin (ST_CP) of 74HC595

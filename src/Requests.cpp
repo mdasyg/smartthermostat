@@ -18,7 +18,7 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   return true;
 }
 
-void sendHttpGetRequest(EthernetClient &ethClient, const String &uri, const char* queryStringData) {
+void sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char* queryStringData) {
   if(!connectToApplicationServer(ethClient)) {
     // Serial.println(F("Abort get request send"));
     return;
@@ -27,7 +27,8 @@ void sendHttpGetRequest(EthernetClient &ethClient, const String &uri, const char
 
   // SET GET REQUEST
   httpRequestStr = F("GET ");
-  httpRequestStr += uri+queryStringData;
+  httpRequestStr += uri;
+  httpRequestStr += queryStringData;
   httpRequestStr += F(" HTTP/1.1\r\n");
   ethClient.print(httpRequestStr);
   // set HOST contents
@@ -47,7 +48,7 @@ void sendHttpGetRequest(EthernetClient &ethClient, const String &uri, const char
   return;
 }
 
-void sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const String &postRequestData) {
+void sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const String &postRequestData) {
   if(!connectToApplicationServer(ethClient)) {
     // Serial.println(F("Abort post request send"));
     return;
@@ -85,7 +86,7 @@ void sendHttpPostRequest(EthernetClient &ethClient, const String &uri, const Str
   return;
 }
 
-void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const String &uri) {
+void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const char uri[]) {
   String postRequestData;
   IPAddress ipAddress;
   byte i;
@@ -109,7 +110,7 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const S
 
 }
 
-void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const String &uri, deviceAttribute stateOfAttributes[]) {
+void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const char uri[], deviceAttribute stateOfAttributes[]) {
   String postRequestData;
   byte i;
   int retValue;

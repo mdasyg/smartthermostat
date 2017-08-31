@@ -27,9 +27,9 @@ void initEthernetShieldNetwork() {
     }
   } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
   // if(isEthernetShieldConnected) {
-  //   // Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
+  //   Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
   // } else {
-  //   // Serial.print(F("Keep going w/o netwrok"));
+  //   Serial.print(F("Keep going w/o netwrok"));
   // }
 
 }
@@ -117,18 +117,32 @@ void registerWrite(byte whichPin, byte whihchState) {
 //   }
 // }
 
-void readFromFlash(const char src[], String &flashReadBufferStr) {
+void readFromFlash(const char src[], char buf[]) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
-    // Serial.println(F("Src bigger than buf. Aborting execution"));
+    Serial.println(F("Src bigger than buf. Aborting execution"));
     while(true);
   }
-  char tempCharBuffer;
-  unsigned int i;
-  flashReadBufferStr = "";
-  for (i=0; i<strlen_P(src); i++) {
-    tempCharBuffer = pgm_read_byte_near(src + i);
-    flashReadBufferStr += tempCharBuffer;
+
+  unsigned int i = 0;
+  unsigned int buf_index = 0;
+
+  for (i=0; i<strlen_P(apiBaseUrl); i++) {
+    buf[buf_index++] = pgm_read_byte_near(apiBaseUrl + i);
   }
+  buf[buf_index++] = '/';
+  for (i=0; i<strlen(DEVICE_SERIAL_NUMBER); i++) {
+   buf[buf_index++] = DEVICE_SERIAL_NUMBER[i];
+  }
+  for (i=0; i<strlen_P(src); i++) {
+    buf[buf_index++] = pgm_read_byte_near(src + i);
+  }
+  buf[buf_index] = '\0';
+
+  if (buf_index > FLASH_READ_BUFFER_MAX_SIZE) {
+    Serial.println(F("Src bigger than buf. Aborting execution"));
+    while(true);
+  }
+
 }
 
 void updateAppropriateEntityFromJsonResponse(byte *payload) {

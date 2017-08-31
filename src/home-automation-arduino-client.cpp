@@ -20,7 +20,7 @@
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
 quickButton quickButtons[NUMBER_OF_QUICK_BUTTONS];
 // buffers
-String flashReadBufferStr;
+char flashReadBuffer[FLASH_READ_BUFFER_MAX_SIZE];
 // clients
 EthernetClient ethClient;
 EthernetClient ethClientForMqtt;
@@ -37,8 +37,14 @@ dht dht22;
 bool stateButtonPressed = false;
 bool quickButtonPressed[3] = {false, false, false};
 
+byte i;
+// byte tas_i;
+
+char tas[100];
+
 void setup() {
   Serial.begin(115200);
+  Serial.println("Loading...");
 
   // boiler pin init
   pinMode(boilerRelayPin, OUTPUT);
@@ -60,11 +66,6 @@ void setup() {
   lastDHT22QueryTimestamp = millis();
   // lastDeviceStatusDisplayUpdateTimestamp = millis();
 
-  Serial.print(F("S/N:  "));
-  Serial.println(DEVICE_SERIAL_NUMBER);
-  Serial.print(F("F/W:  "));
-  Serial.println(DEVICE_FIRMWARE_VERSION);
-
   // Init EthernetClient
   initEthernetShieldNetwork();
   // Init UDP
@@ -74,24 +75,25 @@ void setup() {
   // Init PubSubClient
   mqttConnectToBrokerCallback(mqttClient);
   // Send device info to application server
-  readFromFlash(deviceStatsUpdateUri, flashReadBufferStr);
-  flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
-  sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBufferStr);
+  readFromFlash(deviceStatsUpdateUri, flashReadBuffer);
+  sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBuffer);
   // initialize device attributes
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
   // Request devices attributes list update and wait the reponse on MQTT
-  readFromFlash(deviceDataRequestUri, flashReadBufferStr);
-  flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
-  sendHttpGetRequest(ethClient, flashReadBufferStr, "all");
+  readFromFlash(deviceDataRequestUri, flashReadBuffer);
+  sendHttpGetRequest(ethClient, flashReadBuffer, "all");
 
   // watchdog enable
   wdt_enable(WDTO_8S);
 
-  Serial.println(F("Ready"));
+  Serial.print(F("S/N:  "));
+  Serial.println(DEVICE_SERIAL_NUMBER);
+  Serial.print(F("F/W:  "));
+  Serial.println(DEVICE_FIRMWARE_VERSION);
+
 }
 
-byte i;
 void loop() {
   if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
     if (stateButtonPressed == false) {
@@ -112,7 +114,7 @@ void loop() {
     if ((digitalRead(quickButtonsPin[i]) == HIGH)) {
       if (quickButtonPressed[i] == false) {
         quickButtonPressed[i] = true;
-        updateQuickButtonsState(quickButtons, i);
+        updateQuickButtonsState(quickButtons, stateOfAttributes, i);
       }
     } else {
       if (quickButtonPressed[i] == true) {
@@ -139,9 +141,8 @@ void loop() {
 
   // Send statistics to app
   if (millis() - lastAttrUpdateTimestamp > attrUpdateInterval ) {
-    readFromFlash(deviceAttributesUpdateUri, flashReadBufferStr);
-    flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
-    sendDeviceAtributesStatusUpdateToApplicationServer(ethClient, flashReadBufferStr, stateOfAttributes);
+    readFromFlash(deviceAttributesUpdateUri, flashReadBuffer);
+    sendDeviceAtributesStatusUpdateToApplicationServer(ethClient, flashReadBuffer, stateOfAttributes);
     lastAttrUpdateTimestamp = millis();
   }
 
