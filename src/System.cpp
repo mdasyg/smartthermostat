@@ -15,22 +15,22 @@ extern EthernetUDP udpClient;
 // ethernet shield initialization
 void initEthernetShieldNetwork() {
   byte etherShieldConnectionRetryCount = 0;
-  Serial.println(F("Trying DHCP"));
+  // Serial.println(F("Trying DHCP"));
   bool isEthernetShieldConnected = false;
   do {
     if (Ethernet.begin(mac) == 0) {
       etherShieldConnectionRetryCount++;
-      Serial.println(F("DHCP failed, Retry later"));
+      // Serial.println(F("DHCP failed, Retry later"));
       delay(5000);
     } else {
       isEthernetShieldConnected = true;
     }
   } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
-  if(isEthernetShieldConnected) {
-    Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
-  } else {
-    Serial.print(F("Keep going w/o netwrok"));
-  }
+  // if(isEthernetShieldConnected) {
+  //   // Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
+  // } else {
+  //   // Serial.print(F("Keep going w/o netwrok"));
+  // }
 
 }
 
@@ -152,28 +152,28 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   }
 }
 
-void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
-  // Device status in serial
-  if (timeStatus() != timeNotSet) {
-    if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 10) { // in seconds
-      // byte i;
-      lastDeviceStatusDisplayUpdateTimestamp = now();
-      // Serial.println();
-      // // Serial.print(F("Time: ")); digitalClockDisplay(false);
-      // // Serial.print(F("Last loop cycle time(us): ")); Serial.println(loopTimeStat[0]);
-      // // Serial.print(F("Last loop cycle time min(us): ")); Serial.println(loopTimeStat[1]);
-      // // Serial.print(F("Last loop cycle time max(us): ")); Serial.println(loopTimeStat[2]);
-      Serial.println(now());
-      Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
-      // for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-      //   Serial.print(stateOfAttributes[i].name);
-      //   Serial.print(F(": Current value = "));
-      //   Serial.print(stateOfAttributes[i].currentValue);
-      //   Serial.print(F(", Set value = "));
-      //   Serial.print(stateOfAttributes[i].setValue);
-      //   Serial.println();
-      // }
-      // Serial.println();
-    }
-  }
-}
+// void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
+//   // Device status in serial
+//   if (timeStatus() != timeNotSet) {
+//     if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 10) { // in seconds
+//       // byte i;
+//       lastDeviceStatusDisplayUpdateTimestamp = now();
+//       // Serial.println();
+//       // // Serial.print(F("Time: ")); digitalClockDisplay(false);
+//       // // Serial.print(F("Last loop cycle time(us): ")); Serial.println(loopTimeStat[0]);
+//       // // Serial.print(F("Last loop cycle time min(us): ")); Serial.println(loopTimeStat[1]);
+//       // // Serial.print(F("Last loop cycle time max(us): ")); Serial.println(loopTimeStat[2]);
+//       Serial.println(now());
+//       Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+//       // for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+//       //   Serial.print(stateOfAttributes[i].name);
+//       //   Serial.print(F(": Current value = "));
+//       //   Serial.print(stateOfAttributes[i].currentValue);
+//       //   Serial.print(F(", Set value = "));
+//       //   Serial.print(stateOfAttributes[i].setValue);
+//       //   Serial.println();
+//       // }
+//       // Serial.println();
+//     }
+//   }
+// }

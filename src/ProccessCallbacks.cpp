@@ -21,7 +21,7 @@ int thermostatProccessCallback(deviceAttribute stateOfAttributes[], dht &dht22, 
 
   // heating only for now
   if (stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue == 1) {
-    registerWrite(deviceStatusLedIndex, HIGH);
+    registerWrite(deviceStateLedIndex, HIGH);
     stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 1;
     if ((stateOfAttributes[TEMP_ATTRIBUTE_INDEX].currentValue) < (stateOfAttributes[TEMP_ATTRIBUTE_INDEX].setValue - 0.5)) {
       digitalWrite(boilerRelayPin, HIGH);
@@ -29,7 +29,7 @@ int thermostatProccessCallback(deviceAttribute stateOfAttributes[], dht &dht22, 
       digitalWrite(boilerRelayPin, LOW);
     }
   } else {
-    registerWrite(deviceStatusLedIndex, LOW);
+    registerWrite(deviceStateLedIndex, LOW);
     stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
     digitalWrite(boilerRelayPin, LOW);
   }

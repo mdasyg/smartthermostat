@@ -16,10 +16,11 @@
 #include "MqttCallbacks.h"
 #include "Requests.h"
 #include "System.h"
+#include "QuickButtons.h"
 
 // custom data structures
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
-// schedule scheduleTable[2];
+quickButton quickButtons[NUMBER_OF_QUICK_BUTTONS];
 // buffers
 String flashReadBufferStr;
 // clients
@@ -31,9 +32,12 @@ bool isEthClientConnectedToServer = false;
 // timers
 uint32_t lastDHT22QueryTimestamp;
 uint32_t lastAttrUpdateTimestamp;
-time_t lastDeviceStatusDisplayUpdateTimestamp; // when the digital clock was displayed
+// time_t lastDeviceStatusDisplayUpdateTimestamp; // when the digital clock was displayed
 // DHT
 dht dht22;
+// help vars for button presses
+bool stateButtonPressed = false;
+bool quickButtonPressed[3] = {false, false, false};
 
 void setup() {
   Serial.begin(115200);
@@ -45,17 +49,18 @@ void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
-  // button ping init
+  // button pin init
   pinMode(deviceStateToggleButtonPin, INPUT);
+  pinMode(quickButtonsPin[QUICK_BUTTON_1_INDEX], INPUT);
+  pinMode(quickButtonsPin[QUICK_BUTTON_2_INDEX], INPUT);
+  pinMode(quickButtonsPin[QUICK_BUTTON_3_INDEX], INPUT);
 
   // initialize led status to all off
-  shiftOut(dataPin, clockPin, LSBFIRST, 0b00000000);
-
-  // flashReadBufferStr.reserve(FLASH_READ_BUFFER_MAX_SIZE);
+  shiftOut(dataPin, clockPin, MSBFIRST, 0b00000000);
 
   lastAttrUpdateTimestamp = millis();
   lastDHT22QueryTimestamp = millis();
-  lastDeviceStatusDisplayUpdateTimestamp = millis();
+  // lastDeviceStatusDisplayUpdateTimestamp = millis();
 
   Serial.print(F("Name: "));
   Serial.println(DEVICE_FRIENDLY_NAME);
@@ -63,9 +68,6 @@ void setup() {
   Serial.println(DEVICE_SERIAL_NUMBER);
   Serial.print(F("F/W:  "));
   Serial.println(DEVICE_FIRMWARE_VERSION);
-
-  // initial device status update to serial
-  // statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
   // Init EthernetClient
   initEthernetShieldNetwork();
@@ -75,35 +77,29 @@ void setup() {
   setSyncProvider(getNtpTime);
   // Init PubSubClient
   mqttConnectToBrokerCallback(mqttClient);
-
   // Send device info to application server
   readFromFlash(deviceStatsUpdateUri, flashReadBufferStr);
   flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
   sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBufferStr);
-
-  // initial device attributes
-  initDeviceAttributes(ethClient, stateOfAttributes);
+  // initialize device attributes
+  stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
+  stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
+  // Request devices attributes list update and wait the reponse on MQTT
+  readFromFlash(deviceDataRequestUri, flashReadBufferStr);
+  flashReadBufferStr.replace("DEV_UID", DEVICE_SERIAL_NUMBER);
+  sendHttpGetRequest(ethClient, flashReadBufferStr, "all");
 
   // watchdog enable
   wdt_enable(WDTO_8S);
 
-  Serial.println(F("System is ready"));
+  Serial.println(F("Ready"));
 }
 
-// uint32_t loopTimeCount;
-// uint32_t loopTimeStat[3] = {0, 10000, 0}; // 0: current, 1: min, 2:max
-bool buttonPressed = false;
-
-void updateQuickButtonsState(byte quickButtonLedIndex) {
-  registerWrite(quickButtonLedStatusIndex[quickButtonLedIndex], HIGH);
-}
-
+byte i;
 void loop() {
-  // loopTimeCount = micros();
-
   if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
-    if (buttonPressed == false) {
-      buttonPressed = true;
+    if (stateButtonPressed == false) {
+      stateButtonPressed = true;
       if(stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue == 1) {
         stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
       } else {
@@ -111,41 +107,21 @@ void loop() {
       }
     }
   } else {
-    if (buttonPressed == true) {
-      buttonPressed = false;
+    if (stateButtonPressed == true) {
+      stateButtonPressed = false;
     }
   }
 
-  if ((digitalRead(quickButton1Pin) == HIGH)) {
-    if (buttonPressed == false) {
-      buttonPressed = true;
-      updateQuickButtonsState(QUICK_BUTTON_1_INDEX);
-    }
-  } else {
-    if (buttonPressed == true) {
-      buttonPressed = false;
-    }
-  }
-
-  if ((digitalRead(quickButton2Pin) == HIGH)) {
-    if (buttonPressed == false) {
-      buttonPressed = true;
-      updateQuickButtonsState(QUICK_BUTTON_2_INDEX);
-    }
-  } else {
-    if (buttonPressed == true) {
-      buttonPressed = false;
-    }
-  }
-
-  if ((digitalRead(quickButton3Pin) == HIGH)) {
-    if (buttonPressed == false) {
-      buttonPressed = true;
-      updateQuickButtonsState(QUICK_BUTTON_3_INDEX);
-    }
-  } else {
-    if (buttonPressed == true) {
-      buttonPressed = false;
+  for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
+    if ((digitalRead(quickButtonsPin[i]) == HIGH)) {
+      if (quickButtonPressed[i] == false) {
+        quickButtonPressed[i] = true;
+        updateQuickButtonsState(quickButtons, i);
+      }
+    } else {
+      if (quickButtonPressed[i] == true) {
+        quickButtonPressed[i] = false;
+      }
     }
   }
 
@@ -178,16 +154,7 @@ void loop() {
   mqttClient.loop();
 
   // device status update to Serial
-  statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
-
-  // loopTimeStat[0] = micros() - loopTimeCount;
-  // loopTimeCount = micros();
-  // if (loopTimeStat[0] < loopTimeStat[1]) {
-  //   loopTimeStat[1] = loopTimeStat[0];
-  // }
-  // if (loopTimeStat[0] > loopTimeStat[2]) {
-  //   loopTimeStat[2] = loopTimeStat[0];
-  // }
+  // statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
   wdt_reset();
 

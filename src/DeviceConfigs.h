@@ -27,7 +27,7 @@ const byte QUICK_BUTTON_2_INDEX = 1;
 const byte QUICK_BUTTON_3_INDEX = 2;
 
 // mqtt ifno
-const char MQTT_USERNAME[] =  "";
+const char MQTT_USERNAME[] = "";
 const char MQTT_PASSWORD[] = "";
 
 // update internal for device's attributes
@@ -43,27 +43,27 @@ const PROGMEM char deviceDataRequestUri[] = "/api/v1/devices/DEV_UID/get_info?t=
 const PROGMEM char deviceStatsUpdateUri[] = "/api/v1/devices/DEV_UID/stats_update";
 const PROGMEM char deviceAttributesUpdateUri[] = "/api/v1/devices/DEV_UID/attributes_status_update";
 
-// overall device status
-const byte deviceStatusLedIndex = 7;
-const byte deviceStateToggleButtonPin = A0;
 // Pin configuration for 74HC595 for led controlling
 const byte latchPin = 8; //Pin connected to latch pin (ST_CP) of 74HC595
 const byte dataPin = 9; //Pin connected to Data in (DS) of 74HC595
 const byte clockPin = 3; //Pin connected to clock pin (SH_CP) of 74HC595
+// overall device status
+const byte deviceStateLedIndex = 7;
+const byte deviceStateToggleButtonPin = A0;
 // boiler PINs
 const byte boilerRelayPin = 7;
 // temperature sendor PINs
 const byte tempSensorPin1 = 2;
 // quick button PINs
-const byte quickButton1Pin = A1;
-const byte quickButton2Pin = A2;
-const byte quickButton3Pin = A3;
-const byte quickButtonLedStatusIndex[NUMBER_OF_QUICK_BUTTONS] = {
+const byte quickButtonsPin[NUMBER_OF_QUICK_BUTTONS] = {
+  [QUICK_BUTTON_1_INDEX] = A1,
+  [QUICK_BUTTON_2_INDEX] = A2,
+  [QUICK_BUTTON_3_INDEX] = A3
+};
+const byte quickButtonLedIndex[NUMBER_OF_QUICK_BUTTONS] = {
   [QUICK_BUTTON_1_INDEX] = 6,
   [QUICK_BUTTON_2_INDEX] = 5,
   [QUICK_BUTTON_3_INDEX] = 4
 };
-
-void initDeviceAttributes(EthernetClient &ethClient, deviceAttribute stateOfAttributes[]);
 
 #endif

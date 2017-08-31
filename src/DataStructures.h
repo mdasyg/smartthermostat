@@ -13,7 +13,7 @@ struct deviceAttribute {
 struct quickButton {
   uint32_t duration;
   uint32_t activiationTimeTimestamp;
-  bool isActive;
+  bool isActive = false;
 };
 
 // struct scheduleAttributeSettings {
