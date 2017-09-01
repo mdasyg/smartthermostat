@@ -14,7 +14,7 @@ class CreateQuickButtonsRelatedTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :quick_button_actions, id: false do |t|
-      # t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
+      t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.integer :quick_button_id, null: false, unsigned: true
       t.integer :action_id, null: false, unsigned: true
     end

@@ -70,20 +70,18 @@ class QuickButtonsController < ApplicationController
 
     @quick_button.attributes = quick_button_params
 
-    quick_button_event_action_ids_to_be_deleted = []
-    quick_button_event_actions_post             = params[:quick_button_event][:actions]
+    quick_button_event_actions_to_be_deleted = []
+    quick_button_event_actions_post          = params[:quick_button_event][:actions]
     @quick_button.actions.each do |stored_quick_button_action|
-      puts stored_quick_button_action.inspect
-      puts stored_quick_button_action.id
       stored_action_found = false
       quick_button_event_actions_post.each do |key, posted_quick_button_action|
-        if !posted_quick_button_action[:id].empty?&& (posted_quick_button_action[:id].to_i == stored_quick_button_action.id)
+        if !posted_quick_button_action[:id].empty? && (posted_quick_button_action[:id].to_i == stored_quick_button_action.id)
           stored_action_found                   = true
           stored_quick_button_action.attributes = safe_quick_button_action_params(posted_quick_button_action)
         end
       end
       if stored_action_found == false
-        quick_button_event_action_ids_to_be_deleted << stored_quick_button_action.id
+        quick_button_event_actions_to_be_deleted << stored_quick_button_action.quick_button_action
       end
     end
 
@@ -93,51 +91,27 @@ class QuickButtonsController < ApplicationController
       end
     end
 
-    puts 'To be deleted'
-    puts quick_button_event_action_ids_to_be_deleted
-
     begin
       @quick_button.transaction do
-        @quick_button.actions.destroy(quick_button_event_action_ids_to_be_deleted)
+        action_ids = []
+        quick_button_event_actions_to_be_deleted.each do |quick_button_event_action|
+          action_ids << quick_button_event_action.action_id
+          quick_button_event_action.destroy
+        end
+        Action.destroy(action_ids)
         @quick_button.save
         respond_to do |format|
           format.html {redirect_to @quick_button, notice: 'Quick button was successfully updated.'}
           format.json {render json: { result: :ok }}
         end
       end
-    rescue
+    rescue Exception => e
+      puts e.message
       respond_to do |format|
         format.html {render :edit}
         format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
       end
     end
-
-    # respond_to do |format|
-    #   if @quick_button.update(quick_button_params)
-    #     format.html {redirect_to @quick_button, notice: 'Quick button was successfully updated.'}
-    #     format.json {render :show, status: :ok, location: @quick_button}
-    #   else
-    #     format.html {render :edit}
-    #     format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
-    #   end
-    # end
-
-    # if action[:id]
-    #   if stored_action_ids.include?(action[:id].to_i)
-    #     stored_quick_button_action = @quick_button.actions.find_by_id(action[:id])
-    #     if stored_quick_button_action
-    #       stored_quick_button_action.attributes = safe_quick_button_action_params(action)
-    #     else
-    #       @quick_button.errors.add(:base, 'Action does not exists')
-    #       respond_to do |format|
-    #         format.html {render :edit}
-    #         format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
-    #       end
-    #     end
-    #   end
-    # else
-    #   @quick_button.actions.build(safe_quick_button_action_params(action))
-    # end
   end
 
   # DELETE /quick_buttons/1
@@ -146,14 +120,16 @@ class QuickButtonsController < ApplicationController
     begin
       @quick_button.transaction do
         action_ids = @quick_button.actions.ids
-        Action.destroy(action_ids)
+        @quick_button.quick_button_actions.destroy
         @quick_button.destroy
+        Action.destroy(action_ids)
         respond_to do |format|
           format.html {redirect_to quick_buttons_url, notice: 'Quick Button was successfully destroyed.'}
           format.json {render json: { result: :ok }}
         end
       end
-    rescue
+    rescue Exception => e
+      puts e.message
       respond_to do |format|
         format.html {redirect_to quick_buttons_url, notice: 'Error when destroying Quick Button.'}
         format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
