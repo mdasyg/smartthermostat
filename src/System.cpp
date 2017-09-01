@@ -117,9 +117,9 @@ void registerWrite(byte whichPin, byte whihchState) {
 //   }
 // }
 
-void readFromFlash(const char src[], char buf[]) {
+void readUriFromFlash(const char src[], char buf[]) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
-    Serial.println(F("Src bigger than buf. Aborting execution"));
+    Serial.println(F("Cannot read from flash, size limit reached"));
     while(true);
   }
 
@@ -139,7 +139,7 @@ void readFromFlash(const char src[], char buf[]) {
   buf[buf_index] = '\0';
 
   if (buf_index > FLASH_READ_BUFFER_MAX_SIZE) {
-    Serial.println(F("Src bigger than buf. Aborting execution"));
+    Serial.println(F("Cannot read from flash, size limit reached"));
     while(true);
   }
 
@@ -152,6 +152,7 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
 
   if (!root.success()) {
     Serial.println(F("parseObject() failed"));
+    return;
   }
 
   if(root.containsKey("da")) {
@@ -167,9 +168,9 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
 
   if(root.containsKey("qb")) {
     byte index = root["qb"]["idx"];
-    if (quickButtons[index].isActionsTableInitiated == false) {
+    if (quickButtons[index].isInitialized == false) {
       quickButtons[index].actions = (attributeSettings *)malloc(NUMBER_OF_ATTRIBUTES * sizeof(attributeSettings));
-      quickButtons[index].isActionsTableInitiated = true;
+      quickButtons[index].isInitialized = true;
     }
     if (strlen(root["qb"]["dur"]) > 0) {
       quickButtons[index].duration = root["qb"]["dur"];
@@ -185,28 +186,24 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   }
 }
 
-// void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
-//   // Device status in serial
-//   if (timeStatus() != timeNotSet) {
-//     if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 10) { // in seconds
-//       // byte i;
-//       lastDeviceStatusDisplayUpdateTimestamp = now();
-//       // Serial.println();
-//       // // Serial.print(F("Time: ")); digitalClockDisplay(false);
-//       // // Serial.print(F("Last loop cycle time(us): ")); Serial.println(loopTimeStat[0]);
-//       // // Serial.print(F("Last loop cycle time min(us): ")); Serial.println(loopTimeStat[1]);
-//       // // Serial.print(F("Last loop cycle time max(us): ")); Serial.println(loopTimeStat[2]);
-//       Serial.println(now());
-//       Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
-//       // for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-//       //   Serial.print(stateOfAttributes[i].name);
-//       //   Serial.print(F(": Current value = "));
-//       //   Serial.print(stateOfAttributes[i].currentValue);
-//       //   Serial.print(F(", Set value = "));
-//       //   Serial.print(stateOfAttributes[i].setValue);
-//       //   Serial.println();
-//       // }
-//       // Serial.println();
-//     }
-//   }
-// }
+void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
+  // Device status in serial
+  if (timeStatus() != timeNotSet) {
+    if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 5) { // in seconds
+      byte i;
+      lastDeviceStatusDisplayUpdateTimestamp = now();
+      Serial.println();
+      Serial.println(now());
+      Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+      for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+        Serial.print(stateOfAttributes[i].id);
+        Serial.print(F("-> Cur: "));
+        Serial.print(stateOfAttributes[i].currentValue);
+        Serial.print(F(", Set: "));
+        Serial.print(stateOfAttributes[i].setValue);
+        Serial.println();
+      }
+      Serial.println();
+    }
+  }
+}

@@ -6,5 +6,6 @@
 #define QUICK_BUTTONS_H
 
 void updateQuickButtonsState(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonLedIndex);
+void checkQuickButtonsStatus(quickButton quickButtons[], deviceAttribute stateOfAttributes[]);
 
 #endif
