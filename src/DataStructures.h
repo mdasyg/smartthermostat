@@ -20,7 +20,7 @@ struct quickButton {
   uint32_t duration;
   uint32_t activiationTimeTimestampInSeconds;
   attributeSettings *actions;
-  bool isActionsTableInitiated = false;
+  bool isInitialized = false;
   bool isActive = false;
 };
 

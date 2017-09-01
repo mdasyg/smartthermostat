@@ -30,7 +30,7 @@ bool isEthClientConnectedToServer = false;
 // timers
 uint32_t lastDHT22QueryTimestamp;
 uint32_t lastAttrUpdateTimestamp;
-// time_t lastDeviceStatusDisplayUpdateTimestamp; // when the digital clock was displayed
+time_t lastDeviceStatusDisplayUpdateTimestamp; // when the digital clock was displayed
 // DHT
 dht dht22;
 // help vars for button presses
@@ -38,9 +38,6 @@ bool stateButtonPressed = false;
 bool quickButtonPressed[3] = {false, false, false};
 
 byte i;
-// byte tas_i;
-
-char tas[100];
 
 void setup() {
   Serial.begin(115200);
@@ -64,7 +61,7 @@ void setup() {
 
   lastAttrUpdateTimestamp = millis();
   lastDHT22QueryTimestamp = millis();
-  // lastDeviceStatusDisplayUpdateTimestamp = millis();
+  lastDeviceStatusDisplayUpdateTimestamp = millis();
 
   // Init EthernetClient
   initEthernetShieldNetwork();
@@ -75,21 +72,21 @@ void setup() {
   // Init PubSubClient
   mqttConnectToBrokerCallback(mqttClient);
   // Send device info to application server
-  readFromFlash(deviceStatsUpdateUri, flashReadBuffer);
+  readUriFromFlash(deviceStatsUpdateUri, flashReadBuffer);
   sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBuffer);
   // initialize device attributes
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
-  // Request devices attributes list update and wait the reponse on MQTT
-  readFromFlash(deviceDataRequestUri, flashReadBuffer);
+  // Request devices info initialization and wait the reponse on MQTT
+  readUriFromFlash(deviceDataRequestUri, flashReadBuffer);
   sendHttpGetRequest(ethClient, flashReadBuffer, "all");
 
   // watchdog enable
   wdt_enable(WDTO_8S);
 
-  Serial.print(F("S/N:  "));
+  Serial.print(F("S/N: "));
   Serial.println(DEVICE_SERIAL_NUMBER);
-  Serial.print(F("F/W:  "));
+  Serial.print(F("F/W: "));
   Serial.println(DEVICE_FIRMWARE_VERSION);
 
 }
@@ -123,6 +120,8 @@ void loop() {
     }
   }
 
+  checkQuickButtonsStatus(quickButtons, stateOfAttributes);
+
   if (!mqttClient.connected()) {
     mqttConnectToBrokerCallback(mqttClient);
   }
@@ -141,7 +140,7 @@ void loop() {
 
   // Send statistics to app
   if (millis() - lastAttrUpdateTimestamp > attrUpdateInterval ) {
-    readFromFlash(deviceAttributesUpdateUri, flashReadBuffer);
+    readUriFromFlash(deviceAttributesUpdateUri, flashReadBuffer);
     sendDeviceAtributesStatusUpdateToApplicationServer(ethClient, flashReadBuffer, stateOfAttributes);
     lastAttrUpdateTimestamp = millis();
   }
