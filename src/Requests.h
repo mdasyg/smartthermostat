@@ -3,13 +3,17 @@
 
 #include "DataStructures.h"
 
-const char AMPERSAND = '&';
+const char HTTP_VERSION[] = " HTTP/1.1\r\n";
+const char AMPERSAND[] = "&";
+const byte HTTP_REQUEST_BUFFER_SIZE = 100;
 
 extern bool isEthClientConnectedToServer;
 
 bool connectToApplicationServer(EthernetClient &ethClient);
 
-void sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const String &postRequestData);
+void prepareHttpHeader(char buf[], const char data[]);
+void setHttpHost(EthernetClient &ethClient);
+void sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const char postRequestData[]);
 void sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char* queryStringData);
 int httpResponseReader(EthernetClient &ethClient);
 

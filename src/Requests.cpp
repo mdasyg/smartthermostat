@@ -1,14 +1,14 @@
 #include <ArduinoJson.h>
 
+#include <MemoryFree.h>
+
 #include "DeviceConfigs.h"
 #include "Requests.h"
 #include "System.h"
 
 bool connectToApplicationServer(EthernetClient &ethClient) {
   ethClient.stop();
-
   ethClient.connect(applicationServerUrl, applicationServerPort);
-
   if (ethClient.connected()) {
     isEthClientConnectedToServer = true;
   } else {
@@ -18,64 +18,80 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   return true;
 }
 
-void sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char* queryStringData) {
+void prepareHttpRequestBuffer(char buf[], const char data[]) {
+  if (strlen(buf)+strlen(data) < HTTP_REQUEST_BUFFER_SIZE){
+    strncpy(&buf[strlen(buf)], data, strlen(data)+1);
+    return;
+  }
+  Serial.println(F("HTTP buffer size limit reached, abort"));
+  while(1);
+}
+
+void setHttpHost(EthernetClient &ethClient) {
+  char httpRequestBuffer[HTTP_REQUEST_BUFFER_SIZE];
+  char tempBuf[6];
+  httpRequestBuffer[0] = 0;
+  prepareHttpRequestBuffer(httpRequestBuffer, "HOST: ");
+  prepareHttpRequestBuffer(httpRequestBuffer, applicationServerUrl);
+  if (applicationServerPort != 80) {
+    prepareHttpRequestBuffer(httpRequestBuffer, ":");
+    prepareHttpRequestBuffer(httpRequestBuffer, itoa(applicationServerPort, tempBuf, 10));
+  }
+  prepareHttpRequestBuffer(httpRequestBuffer, "\r\n");
+  ethClient.print(httpRequestBuffer);
+  return;
+}
+
+void sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char queryStringData[]) {
   if(!connectToApplicationServer(ethClient)) {
     // Serial.println(F("Abort get request send"));
     return;
   }
-  String httpRequestStr;
+
+  char httpRequestBuffer[HTTP_REQUEST_BUFFER_SIZE];
 
   // SET GET REQUEST
-  httpRequestStr = F("GET ");
-  httpRequestStr += uri;
-  httpRequestStr += queryStringData;
-  httpRequestStr += F(" HTTP/1.1\r\n");
-  ethClient.print(httpRequestStr);
+  httpRequestBuffer[0] = 0;
+  prepareHttpRequestBuffer(httpRequestBuffer, "GET ");
+  prepareHttpRequestBuffer(httpRequestBuffer, uri);
+  prepareHttpRequestBuffer(httpRequestBuffer, queryStringData);
+  prepareHttpRequestBuffer(httpRequestBuffer, HTTP_VERSION);
+  ethClient.print(httpRequestBuffer);
   // set HOST contents
-  httpRequestStr = F("HOST: ");
-  httpRequestStr += applicationServerUrl;
-  if (applicationServerPort != 80) {
-    httpRequestStr += ":";
-    httpRequestStr += applicationServerPort;
-  }
-  httpRequestStr += F("\r\n");
-  ethClient.print(httpRequestStr);
+  setHttpHost(ethClient);
   // Connection close
   ethClient.print(F("Connection: close\r\n"));
   // finalize request
-  ethClient.print("\r\n\r\n");
+  ethClient.print(F("\r\n\r\n"));
 
   return;
 }
 
-void sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const String &postRequestData) {
+void sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const char postRequestData[]) {
   if(!connectToApplicationServer(ethClient)) {
     // Serial.println(F("Abort post request send"));
     return;
   }
-  String httpRequestStr;
+
+  char httpRequestBuffer[HTTP_REQUEST_BUFFER_SIZE];
+  char tempBuf[6];
 
   // SET POST REQUEST
-  httpRequestStr = F("POST ");
-  httpRequestStr += uri;
-  httpRequestStr += F(" HTTP/1.1\r\n");
-  ethClient.print(httpRequestStr);
+  httpRequestBuffer[0] = 0;
+  prepareHttpRequestBuffer(httpRequestBuffer, "POST ");
+  prepareHttpRequestBuffer(httpRequestBuffer, uri);
+  prepareHttpRequestBuffer(httpRequestBuffer, HTTP_VERSION);
+  ethClient.print(httpRequestBuffer);
   // set HOST contents
-  httpRequestStr = F("HOST: ");
-  httpRequestStr += applicationServerUrl;
-  if (applicationServerPort != 80) {
-    httpRequestStr += ":";
-    httpRequestStr += applicationServerPort;
-  }
-  httpRequestStr += F("\r\n");
-  ethClient.print(httpRequestStr);
+  setHttpHost(ethClient);
   // set Accept request header
   ethClient.print(F("Accept: application/json\r\n"));
   // set content length
-  httpRequestStr = F("Content-length: ");
-  httpRequestStr += postRequestData.length();
-  httpRequestStr += F("\r\n");
-  ethClient.print(httpRequestStr);
+  httpRequestBuffer[0] = 0;
+  prepareHttpRequestBuffer(httpRequestBuffer,"Content-length: ");
+  prepareHttpRequestBuffer(httpRequestBuffer, itoa(strlen(postRequestData), tempBuf, 10));
+  prepareHttpRequestBuffer(httpRequestBuffer, "\r\n");
+  ethClient.print(httpRequestBuffer);
   // Connection close
   ethClient.print(F("Connection: close\r\n"));
   // print request data header
@@ -87,22 +103,25 @@ void sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const Stri
 }
 
 void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const char uri[]) {
-  String postRequestData;
   IPAddress ipAddress;
   byte i;
+  char postRequestData[HTTP_REQUEST_BUFFER_SIZE];
+  char tempBuf[6];
 
   ipAddress = Ethernet.localIP();
-  postRequestData = F("sn=");
-  postRequestData += DEVICE_SERIAL_NUMBER;
-  postRequestData += AMPERSAND;
-  postRequestData += F("fw=");
-  postRequestData += DEVICE_FIRMWARE_VERSION;
-  postRequestData += AMPERSAND;
-  postRequestData += F("ip=");
+
+  postRequestData[0] = 0;
+  prepareHttpRequestBuffer(postRequestData, "sn=");
+  prepareHttpRequestBuffer(postRequestData, DEVICE_SERIAL_NUMBER);
+  prepareHttpRequestBuffer(postRequestData, AMPERSAND);
+  prepareHttpRequestBuffer(postRequestData, "fw=");
+  prepareHttpRequestBuffer(postRequestData, DEVICE_FIRMWARE_VERSION);
+  prepareHttpRequestBuffer(postRequestData, AMPERSAND);
+  prepareHttpRequestBuffer(postRequestData, "ip=");
   for (i=0; i<4; i++) {
-    postRequestData += ipAddress[i];
+    prepareHttpRequestBuffer(postRequestData,itoa(ipAddress[i], tempBuf, 10));
     if (i !=3) {
-      postRequestData += '.';
+      prepareHttpRequestBuffer(postRequestData,".");
     }
   }
 
@@ -111,26 +130,28 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const c
 }
 
 void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClient, const char uri[], deviceAttribute stateOfAttributes[]) {
-  String postRequestData;
   byte i;
   int retValue;
+  char postRequestData[HTTP_REQUEST_BUFFER_SIZE];
+  char tempBuf[6];
 
   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-    postRequestData = "";
-    postRequestData += F("da[");
-    postRequestData += i;
-    postRequestData += F("][id]=");
-    postRequestData += stateOfAttributes[i].id;
-    postRequestData += AMPERSAND;
-    postRequestData += F("da[");
-    postRequestData += i;
-    postRequestData += F("][cur]=");
-    postRequestData += stateOfAttributes[i].currentValue;
-    postRequestData += AMPERSAND;
-    postRequestData += F("da[");
-    postRequestData += i;
-    postRequestData += F("][set]=");
-    postRequestData += stateOfAttributes[i].setValue;
+    postRequestData[0] = 0;
+    prepareHttpRequestBuffer(postRequestData, "da[");
+    prepareHttpRequestBuffer(postRequestData, itoa(i, tempBuf, 10));
+    prepareHttpRequestBuffer(postRequestData, "][id]=");
+    prepareHttpRequestBuffer(postRequestData, itoa(stateOfAttributes[i].id, tempBuf, 10));
+    prepareHttpRequestBuffer(postRequestData, AMPERSAND);
+    prepareHttpRequestBuffer(postRequestData, "da[");
+    prepareHttpRequestBuffer(postRequestData, itoa(i, tempBuf, 10));
+    prepareHttpRequestBuffer(postRequestData, "][cur]=");
+    prepareHttpRequestBuffer(postRequestData, dtostrf(stateOfAttributes[i].currentValue, 6, 2, tempBuf));
+    prepareHttpRequestBuffer(postRequestData, AMPERSAND);
+    prepareHttpRequestBuffer(postRequestData, "da[");
+    prepareHttpRequestBuffer(postRequestData, itoa(i, tempBuf, 10));
+    prepareHttpRequestBuffer(postRequestData, "][set]=");
+    prepareHttpRequestBuffer(postRequestData, dtostrf(stateOfAttributes[i].setValue, 6, 2, tempBuf));
+
     sendHttpPostRequest(ethClient, uri, postRequestData);
 
     do {
@@ -148,6 +169,14 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
 // char size[10];
 int httpResponseReader(EthernetClient &ethClient) {
   if (ethClient.available()) {
+
+    // while(ethClient.available()) {
+    //   char c = ethClient.read();
+    //   Serial.print(c);
+    // }
+    // Serial.println();
+
+
     // some response found. Examine it.
     ethClient.setTimeout(10000);
 
@@ -156,16 +185,19 @@ int httpResponseReader(EthernetClient &ethClient) {
     // // first read Content-length
     // char contentLengthHeaders[] = "Content-Length: ";
     // ok = ethClient.find(contentLengthHeaders);
-    //
-    // ethClient.readBytesUntil('\r', size, 10);
-    //
-    // Serial.println(sizeof(size));
+    // char size[6];
+    // ethClient.readBytesUntil('\r', size, 6);
+    // unsigned int sizeInt = (int) strtol(size, (char **)NULL, 10);
+    // Serial.println(sizeInt);
+    // if (sizeInt > FLASH_READ_BUFFER_MAX_SIZE) {
+    //   return -1;
+    // }
 
     // HTTP headers end with an empty line
     char endOfHeaders[] = "\r\n\r\n";
     ok = ethClient.find(endOfHeaders);
     if (!ok) {
-      // Serial.println(F("No response or invalid http response"));
+      Serial.println(F("No response or invalid http response"));
       return -1;
     }
 
@@ -174,20 +206,20 @@ int httpResponseReader(EthernetClient &ethClient) {
     JsonObject& root = jsonBuffer.parseObject(ethClient);
 
     if (!root.success()) {
-      // Serial.println(F("parseObject() failed"));
+      Serial.println(F("parseObject() failed"));
       return -1;
     }
 
     if(root.containsKey("res")) {
       const char* result = root["res"];
       if (strcmp(result, "ok") != 0) {
-        // Serial.println(F("Result: ERROR"));
+        Serial.println(F("Result: ERROR"));
       }
-
     }
 
     if(root.containsKey("msg")) {
-      // Serial.println(F("Response contains msg"));
+      const char* msg = root["msg"];
+      Serial.println(msg);
     }
 
   } else {

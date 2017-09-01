@@ -5,7 +5,8 @@ void mqttConnectToBrokerCallback(PubSubClient &mqttClient) {
   if (mqttClient.connect(DEVICE_SERIAL_NUMBER, MQTT_USERNAME, MQTT_PASSWORD)) {
     mqttClient.subscribe(DEVICE_SERIAL_NUMBER);
   } else {
-    // Serial.println(F("Connection to MQTT broker failed"));
+    Serial.println(F("Connection to MQTT broker failed"));
+    while(true) {}
   }
 }
 

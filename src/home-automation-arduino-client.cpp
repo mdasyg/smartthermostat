@@ -5,8 +5,8 @@
 #include <PubSubClient.h>
 #include <EthernetUdp.h>
 #include <TimeLib.h>
-
 #include <avr/wdt.h>
+#include <MemoryFree.h>
 
 #include "DataStructures.h"
 #include "DeviceConfigs.h"
@@ -40,7 +40,8 @@ bool quickButtonPressed[3] = {false, false, false};
 byte i;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(19200);
+
   Serial.println("Loading...");
 
   // boiler pin init
@@ -82,7 +83,8 @@ void setup() {
   sendHttpGetRequest(ethClient, flashReadBuffer, "all");
 
   // watchdog enable
-  wdt_enable(WDTO_8S);
+  wdt_enable(WDTO_2S);
+  wdt_reset();
 
   Serial.print(F("S/N: "));
   Serial.println(DEVICE_SERIAL_NUMBER);
@@ -90,6 +92,9 @@ void setup() {
   Serial.println(DEVICE_FIRMWARE_VERSION);
 
 }
+
+time_t heartbeat = now();
+long unsigned int loop_counter = 0;
 
 void loop() {
   if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
@@ -151,6 +156,15 @@ void loop() {
 
   // device status update to Serial
   // statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
+
+  loop_counter++;
+  if (now() - heartbeat >= 1) {
+    Serial.println(now());
+    Serial.print(F("Loop count: ")); Serial.println(loop_counter);
+    Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+    loop_counter = 0;
+    heartbeat = now();
+  }
 
   wdt_reset();
 

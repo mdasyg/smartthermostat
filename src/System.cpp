@@ -189,7 +189,7 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
 void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
   // Device status in serial
   if (timeStatus() != timeNotSet) {
-    if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 5) { // in seconds
+    if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 2) { // in seconds
       byte i;
       lastDeviceStatusDisplayUpdateTimestamp = now();
       Serial.println();

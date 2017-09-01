@@ -28,7 +28,7 @@ const byte QUICK_BUTTON_3_INDEX = 2;
 const char MQTT_USERNAME[] = "";
 const char MQTT_PASSWORD[] = "";
 
-// update internal for device's attributes
+// update interval for device's attributes
 const unsigned long attrUpdateInterval = 10000L; // in milliseconds
 
 // application server information
