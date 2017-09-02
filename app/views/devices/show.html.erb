@@ -215,5 +215,20 @@
   </div>
 <% end %>
 
+<!--DEVICE'S QUICK BUTTONS-->
+<% if @device.quick_buttons.any? %>
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">Device's quick buttons</h3>
+    </div>
+
+    <div class="panel-body">
+      <%= @device.quick_buttons.inspect %>
+    </div>
+
+  </div>
+<% end %>
+
 <%= link_to 'Edit', edit_device_path(@device) %> |
 <%= link_to 'Back', devices_path %>

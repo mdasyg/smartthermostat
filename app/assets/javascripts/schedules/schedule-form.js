@@ -91,14 +91,14 @@ function resetScheduleForm() {
     $scheduleForm.find('#errors-explanation').remove();
 }
 
-function addNewScheduleEventAction($scheduleEventArea, scheduleEventAction) {
+function addNewScheduleEventAction($scheduleEventArea, scheduleEventActionData) {
     let $scheduleEventActionsContainer = $scheduleEventArea.find('.actions-container');
     let prefixForScheduleEventActionSubform = $scheduleEventArea.find('.schedule-event-form-prefix-for-subform').data('prefix');
 
     let scheduleEventIndex = $scheduleEventArea.data('index');
     prefixForScheduleEventActionSubform = prefixForScheduleEventActionSubform.replace('SCHEDULE_EVENT_INDEX', scheduleEventIndex);
 
-    addNewAction($scheduleEventActionsContainer, $scheduleEventActionSubFormTemplate, prefixForScheduleEventActionSubform, scheduleEventAction);
+    addNewAction($scheduleEventActionsContainer, $scheduleEventActionSubFormTemplate, prefixForScheduleEventActionSubform, scheduleEventActionData);
 }
 
 function appendScheduleEventWithActions(dataForScheduleEventActions, dataForScheduleEvent = {}) {
@@ -150,8 +150,8 @@ function appendScheduleEventWithActions(dataForScheduleEventActions, dataForSche
         }
     });
 
-    dataForScheduleEventActions.forEach(function (scheduleEventAction) {
-        addNewScheduleEventAction($newScheduleEvent, scheduleEventAction);
+    dataForScheduleEventActions.forEach(function (scheduleEventActionData) {
+        addNewScheduleEventAction($newScheduleEvent, scheduleEventActionData);
     });
 
     $scheduleEventsContainer.append($newScheduleEvent);
@@ -185,20 +185,6 @@ function scheduleRecurrenceFieldsVisibilityToggle(event) {
     } else {
         $('#recurrent-entries').addClass('hidden');
     }
-}
-
-function displayErrors(errorMessages) {
-    $scheduleForm.find('#errors-explanation').remove();
-
-    let $errorsDomBlock = $('<div/>').attr('id', 'errors-explanation');
-    $errorsDomBlock.append($('<h2/>').text('Erorrs'));
-    $errorsDomBlock.append('<ul/>');
-
-    $(errorMessages).each(function (index, errorMsg) {
-        $errorsDomBlock.find('ul').append($('<li/>').text(errorMsg));
-    });
-
-    $scheduleForm.prepend($errorsDomBlock);
 }
 
 function displayOverlappingSchedules(scheduleData) {
@@ -237,7 +223,7 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
                 displayOverlappingSchedules(responseData.overlaps);
             }
             if (responseData.messages) {
-                displayErrors(responseData.messages);
+                displayErrors($scheduleForm, responseData.messages);
             }
         } else if (responseData.result === 'ok') {
             if (responseData.overlaps) {
@@ -317,7 +303,7 @@ function submitScheduleForm($thicClick) {
                 displayOverlappingSchedules(responseData.overlaps);
             }
             if (responseData.messages) {
-                displayErrors(responseData.messages);
+                displayErrors($scheduleForm, responseData.messages);
             }
         } else if (responseData.result === 'ok') {
             if (scheduleId) {

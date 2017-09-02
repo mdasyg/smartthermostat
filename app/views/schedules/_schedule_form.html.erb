@@ -85,13 +85,13 @@
 
     <div id="recurrent-entries" class="<%= (schedule.is_recurrent == 1) ? '' : 'hidden' %>">
       <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-6">
           <div class="form-group">
             <%= schedule_form.label :recurrence_frequency %>
             <%= schedule_form.text_field :recurrence_frequency, class: 'form-control' %>
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
           <div class="form-group">
             <%= schedule_form.label :recurrence_unit %>
             <%= schedule_form.select(:recurrence_unit, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>
@@ -174,7 +174,7 @@
     <%= render partial: '/schedules/schedule_event_form', locals: { schedule_event: ScheduleEvent.new } %>
   </div>
   <div class="schedule-event-action-template">
-    <%= render partial: '/actions/action_form_element', locals: { action: Action.new, prefix_for_subform: 'REPLACE_WITH_SCHEDULE_EVENT_FORM_PREFIX' } %>
+    <%= render partial: '/actions/action_form_element', locals: { action: Action.new, prefix_for_subform: 'REPLACE_WITH_EVENT_FORM_PREFIX' } %>
   </div>
   <div class="overlap-schedule-template">
     <div class="overlap-schedule">

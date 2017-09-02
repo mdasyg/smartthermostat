@@ -7,6 +7,7 @@ class User < ApplicationRecord
 
   has_many :devices, inverse_of: :user
   has_many :schedules, inverse_of: :user
+  has_many :quick_buttons, inverse_of: :user
 
   #	def id
   #		return 4

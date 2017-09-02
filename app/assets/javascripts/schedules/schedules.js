@@ -44,44 +44,6 @@ function initializeFullCalendar() {
     });
 }
 
-function getDeviceAttributes(deviceUid, callback) {
-    let data = {
-        deviceUid: deviceUid
-    };
-    let url = $('#get-device-attributes-list-url').data('url');
-    url = replaceUrlParams(url, data);
-
-    // attributes request
-    let request = $.ajax({
-        url: url,
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
-        },
-        type: 'get',
-        dataType: 'json',
-    });
-    request.done(function (responseData, textStatus, jqXHR) {
-        if (responseData.result == 'ok') {
-            let dataForScheduleEventActions = [];
-            responseData.data.forEach(function (item) {
-                dataForScheduleEventActions.push({
-                    device_attribute_id: item.id,
-                    device_attribute_name: item.name
-                });
-            });
-            callback(dataForScheduleEventActions);
-        } else {
-            alert('Error getting device attributes');
-        }
-    });
-    request.fail(function (jqXHR, textStatus, errorThrown) {
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
-        // alert(errorThrown + ': ' + textStatus);
-    });
-}
-
 function deleteSchedule($thisClick) {
     let url = null;
     let scheduleId = $scheduleForm.find('#schedule_id').val();

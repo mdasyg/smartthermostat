@@ -1,0 +1,40 @@
+<% provide(:title, 'Quick Buttons List') %>
+
+<div class="well">
+  <h1>Quick Buttons List</h1>
+</div>
+
+<div class="row">
+  <div class="col-sm-2"><b>Title</b></div>
+  <div class="col-sm-2"><b>Description</b></div>
+  <div class="col-sm-2"><b>Duration</b></div>
+  <div class="col-sm-2"><b>Index</b></div>
+  <div class="col-sm-2"><b>Device Name</b></div>
+  <div class="col-sm-2"><b>Actions</b></div>
+</div>
+
+<hr/>
+
+<% @quick_buttons.each do |quick_button| %>
+  <div class="row">
+    <div class="col-sm-2"><%= quick_button.title %></div>
+    <div class="col-sm-2"><%= quick_button.description %></div>
+    <div class="col-sm-2"><%= quick_button.duration %></div>
+    <div class="col-sm-2"><%= quick_button.index_on_device %></div>
+    <div class="col-sm-2"><%= quick_button.device.name %></div>
+    <div class="col-sm-2">
+      <%= link_to(quick_button) do %>
+        <span class="glyphicon glyphicon-zoom-in"></span>
+      <% end %> |
+      <%= link_to edit_quick_button_path(quick_button) do %>
+        <span class="glyphicon glyphicon-pencil"></span>
+      <% end %>  |
+      <%= link_to quick_button, method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <span class="glyphicon glyphicon-remove"></span>
+      <% end %>
+    </div>
+  </div>
+  <hr>
+<% end %>
+
+<%= link_to 'New Quick Button', new_quick_button_path %>

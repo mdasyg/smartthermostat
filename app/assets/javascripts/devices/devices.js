@@ -42,6 +42,44 @@ function getDeviceInfo() {
     });
 }
 
+function getDeviceAttributes(deviceUid, callback) {
+    let data = {
+        deviceUid: deviceUid
+    };
+    let url = $('#get-device-attributes-list-url').data('url');
+    url = replaceUrlParams(url, data);
+
+    // attributes request
+    let request = $.ajax({
+        url: url,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        },
+        type: 'get',
+        dataType: 'json',
+    });
+    request.done(function (responseData, textStatus, jqXHR) {
+        if (responseData.result == 'ok') {
+            let deviceAttributesData = [];
+            responseData.data.forEach(function (deviceAttribute) {
+                deviceAttributesData.push({
+                    device_attribute_id: deviceAttribute.id,
+                    device_attribute_name: deviceAttribute.name
+                });
+            });
+            callback(deviceAttributesData);
+        } else {
+            alert('Error getting device attributes');
+        }
+    });
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+        // alert(errorThrown + ': ' + textStatus);
+    });
+}
+
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
 
     $('.editable-device-attribute-set-value').editable();

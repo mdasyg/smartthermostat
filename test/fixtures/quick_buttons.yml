@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  device_uid: 1
+  index_on_device: 1
+  title: MyString
+  description: MyText
+  duration: 1
+
+two:
+  user_id: 1
+  device_uid: 1
+  index_on_device: 1
+  title: MyString
+  description: MyText
+  duration: 1

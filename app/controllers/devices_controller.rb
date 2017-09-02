@@ -119,14 +119,11 @@ class DevicesController < ApplicationController
 
       # and now tell the device about changes
       mqtt_client = Mosquitto::Client.new()
-      mqtt_client.on_connect {|rc|
-        p "Connected with return code #{rc}"
-        # publish a test message once connected
-        # mqtt_client.publish(nil, device_uid, 'test message', Mosquitto::AT_MOST_ONCE, true)
-      }
-
-      mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
+      mqtt_client.on_connect do |rc|
+        puts "Connected with return code #{rc}"
+      end
       payload = ActiveSupport::JSON.encode({ da: { idx: device_attribute.index_on_device, id: device_attribute.id, set: device_attribute.read_attribute(params[:name]) } })
+      mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
       mqtt_client.publish(nil, params[:device_uid], payload, Mosquitto::AT_MOST_ONCE, false)
       mqtt_client.disconnect()
     else
