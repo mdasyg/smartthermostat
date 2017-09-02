@@ -5,9 +5,10 @@
 </div>
 
 <div class="row">
-  <div class="col-sm-3"><b>Title</b></div>
-  <div class="col-sm-3"><b>Description</b></div>
+  <div class="col-sm-2"><b>Title</b></div>
+  <div class="col-sm-2"><b>Description</b></div>
   <div class="col-sm-2"><b>Duration</b></div>
+  <div class="col-sm-2"><b>Index</b></div>
   <div class="col-sm-2"><b>Device Name</b></div>
   <div class="col-sm-2"><b>Actions</b></div>
 </div>
@@ -16,9 +17,10 @@
 
 <% @quick_buttons.each do |quick_button| %>
   <div class="row">
-    <div class="col-sm-3"><%= quick_button.title %></div>
-    <div class="col-sm-3"><%= quick_button.description %></div>
+    <div class="col-sm-2"><%= quick_button.title %></div>
+    <div class="col-sm-2"><%= quick_button.description %></div>
     <div class="col-sm-2"><%= quick_button.duration %></div>
+    <div class="col-sm-2"><%= quick_button.index_on_device %></div>
     <div class="col-sm-2"><%= quick_button.device.name %></div>
     <div class="col-sm-2">
       <%= link_to(quick_button) do %>
