@@ -1,4 +1,4 @@
-<% action_index = (defined? action_counter) ? action_counter : 'ACTION_INDEX' %>
+<% action_index = (action.id) ? action.id : 'ACTION_INDEX' %>
 <% current_form_prefix = prefix_for_subform + '[actions]' %>
 
 <div class="action form-row" data-index="<%= action_index %>">
@@ -24,7 +24,7 @@
 
       <div class="col-sm-4">
         <div class="form-group">
-          <span class="schedule-event-action-device-attribute-name-placeholder"><%= (action && action.device_attribute) ? action.device_attribute.name : '' %></span>
+          <span class="event-action-device-attribute-name-placeholder"><%= (action && action.device_attribute) ? action.device_attribute.name : '' %></span>
         </div>
       </div>
 

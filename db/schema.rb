@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170822080727) do
+ActiveRecord::Schema.define(version: 20170829080727) do
 
   create_table "actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "device_attribute_id", null: false, unsigned: true
@@ -63,17 +63,27 @@ ActiveRecord::Schema.define(version: 20170822080727) do
     t.integer "quick_button_id", null: false, unsigned: true
     t.integer "action_id", null: false, unsigned: true
     t.index ["action_id"], name: "fk_rails_b635b11e28"
-    t.index ["quick_button_id"], name: "fk_rails_1270fa1389"
+    t.index ["quick_button_id", "action_id"], name: "index_quick_button_actions_on_quick_button_id_and_action_id", unique: true
   end
 
   create_table "quick_buttons", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "user_id", null: false, unsigned: true
     t.bigint "device_uid", null: false, unsigned: true
+    t.integer "index_on_device", limit: 1, null: false, unsigned: true
     t.string "title", null: false
     t.text "description"
     t.integer "duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["device_uid"], name: "fk_rails_5f1190818b"
     t.index ["user_id"], name: "fk_rails_abfb5bfc80"
+  end
+
+  create_table "schedule_event_actions", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "schedule_event_id", null: false, unsigned: true
+    t.integer "action_id", null: false, unsigned: true
+    t.index ["action_id"], name: "fk_rails_260702085a"
+    t.index ["schedule_event_id", "action_id"], name: "index_schedule_event_actions_on_schedule_event_id_and_action_id", unique: true
   end
 
   create_table "schedule_events", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -81,13 +91,6 @@ ActiveRecord::Schema.define(version: 20170822080727) do
     t.bigint "device_uid", null: false, unsigned: true
     t.index ["device_uid"], name: "fk_rails_07433a881c"
     t.index ["schedule_id", "device_uid"], name: "index_schedule_events_on_schedule_id_and_device_uid", unique: true
-  end
-
-  create_table "schedule_events_actions", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "schedule_event_id", null: false, unsigned: true
-    t.integer "action_id", null: false, unsigned: true
-    t.index ["action_id"], name: "fk_rails_0dc9a5e5a1"
-    t.index ["schedule_event_id", "action_id"], name: "index_schedule_events_actions_on_schedule_event_id_and_action_id", unique: true
   end
 
   create_table "schedules", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -139,9 +142,9 @@ ActiveRecord::Schema.define(version: 20170822080727) do
   add_foreign_key "quick_button_actions", "quick_buttons"
   add_foreign_key "quick_buttons", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "quick_buttons", "users"
+  add_foreign_key "schedule_event_actions", "actions"
+  add_foreign_key "schedule_event_actions", "schedule_events"
   add_foreign_key "schedule_events", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "schedule_events", "schedules"
-  add_foreign_key "schedule_events_actions", "actions"
-  add_foreign_key "schedule_events_actions", "schedule_events"
   add_foreign_key "schedules", "users"
 end

@@ -12,5 +12,6 @@ class Device < ApplicationRecord
   has_many :device_attributes, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device, autosave: true
   has_many :device_stats, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
   has_many :schedule_events, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
+  has_many :quick_buttons, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
 
 end

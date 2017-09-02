@@ -22,20 +22,20 @@ class CreateSchedulesRelatedTables < ActiveRecord::Migration[5.0]
       t.bigint :device_uid, null: false, unsigned: true
     end
 
-    create_table :schedule_events_actions, id: false do |t|
+    create_table :schedule_event_actions, id: false do |t|
       # t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.integer :schedule_event_id, null: false, unsigned: true
       t.integer :action_id, null: false, unsigned: true
     end
 
     add_index(:schedule_events, [:schedule_id, :device_uid], { unique: true })
-    add_index(:schedule_events_actions, [:schedule_event_id, :action_id], { unique: true })
+    add_index(:schedule_event_actions, [:schedule_event_id, :action_id], { unique: true })
 
     add_foreign_key(:schedules, :users)
     add_foreign_key(:schedule_events, :schedules)
     add_foreign_key(:schedule_events, :devices, column: 'device_uid', primary_key: 'uid')
-    add_foreign_key(:schedule_events_actions, :schedule_events)
-    add_foreign_key(:schedule_events_actions, :actions)
+    add_foreign_key(:schedule_event_actions, :schedule_events)
+    add_foreign_key(:schedule_event_actions, :actions)
 
   end
 

@@ -34,22 +34,22 @@ module Api
       # POST /devices/1/attributes_status_update.json
       def attributes_status_update
         if !params.has_key?(:da)
-          render plain: ActiveSupport::JSON.encode({ msg: ['Device attributes missing'], res: :err }) and return
+          render plain: ActiveSupport::JSON.encode({ msg: 'Device attributes missing', res: :err }) and return
         end
 
         device_attributes_post = params[:da]
         device_attributes_post.each do |key, device_attribute|
           dev_attr = @device.device_attributes.where(id: device_attribute[:id]).take
           if (!dev_attr.nil?)
-            puts device_attribute
-            puts dev_attr.inspect
-            dev_attr.current_value = device_attribute[:cur]
-            dev_attr.set_value     = device_attribute[:set]
-            puts dev_attr.inspect
+            if device_attribute[:cur]
+              dev_attr.current_value = device_attribute[:cur]
+            end
+            if device_attribute[:set]
+              dev_attr.set_value = device_attribute[:set]
+            end
             dev_attr.save()
-            puts dev_attr.errors.inspect
           else
-            render plain: ActiveSupport::JSON.encode({ msg: ['Device attribute not exists'], res: :err }) and return
+            render plain: ActiveSupport::JSON.encode({ msg: 'Device attribute not exists', res: :err }) and return
           end
         end
 
@@ -63,25 +63,36 @@ module Api
 
         # and now send to the device the requested info
         if params.has_key?(:t)
-
           request_type = params[:t]
 
+          mqtt_client = Mosquitto::Client.new()
+
           if request_type == 'all' || request_type == 'da'
-            mqtt_client = Mosquitto::Client.new()
             @device.device_attributes.each do |device_attribute|
-              mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
               payload = ActiveSupport::JSON.encode({ da: { idx: device_attribute.index_on_device, id: device_attribute.id, name: device_attribute.name, set: device_attribute.set_value } })
+              mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
               mqtt_client.publish(nil, @device.uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
             end
-            mqtt_client.disconnect()
-          elsif request_type == 'all' || request_type == 'schedule'
+          end
+          if request_type == 'all' || request_type == 'schedule'
             puts 'give schedule'
-          elsif request_type == 'all' || request_type == 'dqb'
-            puts 'give quick buttons'
+          end
+          if request_type == 'all' || request_type == 'qb'
+            @device.quick_buttons.each do |quick_button|
+              payload = ActiveSupport::JSON.encode({ qb: { idx: quick_button.index_on_device, id: quick_button.id, dur: quick_button.duration } })
+              mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
+              mqtt_client.publish(nil, @device.uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+              quick_button.actions.each do |quick_button_action|
+                payload = ActiveSupport::JSON.encode({ qb_a: { idx: quick_button.index_on_device, da_idx: quick_button_action.device_attribute.index_on_device, start: quick_button_action.device_attribute_start_value, end: quick_button_action.device_attribute_end_value } })
+                mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
+                mqtt_client.publish(nil, @device.uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+              end
+            end
           end
 
-        end
+          mqtt_client.disconnect()
 
+        end
       end
 
       ##########################################################################
@@ -89,20 +100,20 @@ module Api
       ##########################################################################
       private def set_device
         if !params.has_key?(:uid)
-          render plain: ActiveSupport::JSON.encode({ msg: ['Device UID is missing'], res: :err }) and return
+          render plain: ActiveSupport::JSON.encode({ msg: 'Device UID is missing', res: :err }) and return
         end
 
         begin
           @device = Device.find(params[:uid])
         rescue ActiveRecord::RecordNotFound
-          render plain: ActiveSupport::JSON.encode({ msg: ['Device UID not exists'], res: :err }) and return
+          render plain: ActiveSupport::JSON.encode({ msg: 'Device UID not exists', res: :err }) and return
         end
       end
 
       private def update_last_contact_time
         @device.last_contact_at = Time.now
         if !@device.save
-          render plain: ActiveSupport::JSON.encode({ msg: ['Internal server err'], res: :err }) and return
+          render plain: ActiveSupport::JSON.encode({ msg: 'Internal server err', res: :err }) and return
         end
       end
 
