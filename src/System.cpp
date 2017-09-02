@@ -131,7 +131,7 @@ void readUriFromFlash(const char src[], char buf[]) {
   }
   buf[buf_index++] = '/';
   for (i=0; i<strlen(DEVICE_SERIAL_NUMBER); i++) {
-   buf[buf_index++] = DEVICE_SERIAL_NUMBER[i];
+    buf[buf_index++] = DEVICE_SERIAL_NUMBER[i];
   }
   for (i=0; i<strlen_P(src); i++) {
     buf[buf_index++] = pgm_read_byte_near(src + i);
@@ -168,8 +168,11 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
 
   if(root.containsKey("qb")) {
     byte index = root["qb"]["idx"];
+    if (index >= NUMBER_OF_QUICK_BUTTONS) {
+      return;
+    }
     if (quickButtons[index].isInitialized == false) {
-      quickButtons[index].actions = (attributeSettings *)malloc(NUMBER_OF_ATTRIBUTES * sizeof(attributeSettings));
+      quickButtons[index].actions = (attributeSettings *)calloc(NUMBER_OF_ATTRIBUTES, sizeof(attributeSettings));
       quickButtons[index].isInitialized = true;
     }
     if (strlen(root["qb"]["dur"]) > 0) {
@@ -180,9 +183,21 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   if(root.containsKey("qb_a")) {
     byte actionIndex = root["qb_a"]["idx"];
     byte deviceAttributeIndex = root["qb_a"]["da_idx"];
+    if (actionIndex >= NUMBER_OF_QUICK_BUTTONS || deviceAttributeIndex >= NUMBER_OF_ATTRIBUTES) {
+      return;
+    }
     quickButtons[actionIndex].actions[deviceAttributeIndex].deviceAttributeIndex = deviceAttributeIndex;
     quickButtons[actionIndex].actions[deviceAttributeIndex].startSetValue = root["qb_a"]["start"];
     quickButtons[actionIndex].actions[deviceAttributeIndex].endSetValue = root["qb_a"]["end"];
+  }
+
+  if(root.containsKey("qb_del")) {
+    byte index = root["qb_del"]["idx"];
+    if (index >= NUMBER_OF_QUICK_BUTTONS) {
+      return;
+    }
+    quickButtons[index].isInitialized = false;
+    free(quickButtons[index].actions);
   }
 }
 

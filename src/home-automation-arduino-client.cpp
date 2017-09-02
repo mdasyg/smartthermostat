@@ -19,6 +19,7 @@
 // custom data structures
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
 quickButton quickButtons[NUMBER_OF_QUICK_BUTTONS];
+schedule schedules[MAX_NUMBER_OF_SCHEDULES];
 // buffers
 char flashReadBuffer[FLASH_READ_BUFFER_MAX_SIZE];
 // clients
@@ -36,6 +37,9 @@ dht dht22;
 // help vars for button presses
 bool stateButtonPressed = false;
 bool quickButtonPressed[3] = {false, false, false};
+
+time_t lastHeartbeatTimestamp = now();
+long unsigned int loop_counter = 0;
 
 byte i;
 
@@ -92,9 +96,6 @@ void setup() {
   Serial.println(DEVICE_FIRMWARE_VERSION);
 
 }
-
-time_t heartbeat = now();
-long unsigned int loop_counter = 0;
 
 void loop() {
   if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
@@ -157,14 +158,31 @@ void loop() {
   // device status update to Serial
   // statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
-  loop_counter++;
-  if (now() - heartbeat >= 1) {
-    Serial.println(now());
-    Serial.print(F("Loop count: ")); Serial.println(loop_counter);
-    Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
-    loop_counter = 0;
-    heartbeat = now();
-  }
+  // loop_counter++;
+  // if (now() - lastHeartbeatTimestamp >= 5) {
+  //   Serial.println(now());
+  //   Serial.print(F("Loop count: ")); Serial.println(loop_counter);
+  //   Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+  //
+  //   byte i,j;
+  //   for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
+  //     Serial.print("qb: "); Serial.print(i);
+  //     Serial.print(", dur: "); Serial.print(quickButtons[i].duration);
+  //     Serial.print(", init?: "); Serial.print(quickButtons[i].isInitialized);
+  //     Serial.print(", active?: "); Serial.print(quickButtons[i].isActive);
+  //     Serial.println();
+  //     for(j=0; j<NUMBER_OF_ATTRIBUTES; j++) {
+  //       Serial.print("qb_a: "); Serial.print(j);
+  //       Serial.print(", start: "); Serial.print(quickButtons[i].actions[j].startSetValue);
+  //       Serial.print(", end: "); Serial.print(quickButtons[i].actions[j].endSetValue);
+  //       Serial.println();
+  //     }
+  //   }
+  //   Serial.println();
+  //
+  //   loop_counter = 0;
+  //   lastHeartbeatTimestamp = now();
+  // }
 
   wdt_reset();
 
