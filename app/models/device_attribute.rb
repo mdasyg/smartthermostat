@@ -33,6 +33,11 @@ class DeviceAttribute < ApplicationRecord
       BOOL:    { ID: 3, LABEL: 'Bool' },
   }
 
+  BOOL_VALUES = {
+      MIN: { ID: 0, LABEL: 'OFF' },
+      MAX: { ID: 1, LABEL: 'ON' },
+  }
+
   DIRECTIONS = {
       SIGNALING_AND_FEEDBACK: { ID: 1, LABEL: 'Bi-directional' },
       SIGNALING_ONLY:         { ID: 2, LABEL: 'Signaling' },

@@ -1,6 +1,30 @@
 module DevicesHelper
 
-  def compute_device_status_indication(device_last_contact_time)
+  def get_min_value_text(device_attribute_primitive_type, device_attribute_value)
+    if device_attribute_value.nil?
+      return 'N/A'
+    else
+      if (device_attribute_primitive_type == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID])
+        return DeviceAttribute::BOOL_VALUES[:MIN][:LABEL]
+      else
+        return device_attribute_value
+      end
+    end
+  end
+
+  def get_max_value_text(device_attribute_primitive_type, device_attribute_value)
+    if device_attribute_value.nil?
+      return 'N/A'
+    else
+      if (device_attribute_primitive_type == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID])
+        return DeviceAttribute::BOOL_VALUES[:MAX][:LABEL]
+      else
+        return device_attribute_value
+      end
+    end
+  end
+
+  def get_device_status_indication(device_last_contact_time)
     if device_last_contact_time.nil?
       return 'No contact yet'
     else
@@ -13,17 +37,19 @@ module DevicesHelper
     end
   end
 
-  def compute_device_attribute_text(device_attribute_current_value, device_attribute_unit, device_attribute_last_update_time)
-    if device_attribute_current_value.nil?
-      return '-'
+  def compute_device_attribute_set_or_current_value(device_attribute_primitive_type, device_attribute_value, asText = false)
+    if device_attribute_value.nil?
+      return (asText) ? 'N/A' : ''
     else
-      return_text = device_attribute_current_value.to_s + ' ' + device_attribute_unit
-      # if device_attribute_last_update_time.nil?
-      #   return return_text + ' (-)'
-      # else
-      #   return return_text + ' (' + distance_of_time_in_words(Time.current() - device_attribute_last_update_time) + ' ago)'
-      # end
-      return return_text
+      if device_attribute_primitive_type == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]
+        if device_attribute_value == DeviceAttribute::BOOL_VALUES[:MAX][:ID]
+          return (asText) ? DeviceAttribute::BOOL_VALUES[:MAX][:LABEL] : DeviceAttribute::BOOL_VALUES[:MAX][:ID].to_s
+        else
+          return (asText) ? DeviceAttribute::BOOL_VALUES[:MIN][:LABEL] : DeviceAttribute::BOOL_VALUES[:MIN][:ID].to_s
+        end
+      else
+        return device_attribute_value
+      end
     end
   end
 

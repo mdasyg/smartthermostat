@@ -20,7 +20,7 @@
   <div class="panel-body">
     <div>
       <span id="device-status-indicator-text">
-        <%= compute_device_status_indication(@device.last_contact_at) %>
+        <%= get_device_status_indication(@device.last_contact_at) %>
       </span>
     </div>
   </div>
@@ -32,42 +32,43 @@
     <div class="panel-heading">
       <h3 class="panel-title">Device Attributes</h3>
     </div>
+
     <div class="panel-body responsive-table">
 
-      <div id="device-attributes-header">
+      <div id="device-attributes-header" class="responsive-table-header">
         <div class="row">
           <div class="col-md-2">
-            <div class="form-group">
+            <div class="form-group responsive-table-element">
               <%= label DeviceAttribute, :name, DeviceAttribute.human_attribute_name(:name) %>
             </div>
           </div>
 
           <div class="col-md-2">
-            <div class="form-group">
+            <div class="form-group responsive-table-element">
               <%= label DeviceAttribute, :primitive_type_c_id, DeviceAttribute.human_attribute_name(:primitive_type_c_id) %>
             </div>
           </div>
 
           <div class="col-md-2">
-            <div class="form-group">
+            <div class="form-group responsive-table-element">
               <%= label DeviceAttribute, :min_value, DeviceAttribute.human_attribute_name(:min_value) %>
             </div>
           </div>
 
           <div class="col-md-2">
-            <div class="form-group">
+            <div class="form-group responsive-table-element">
               <%= label DeviceAttribute, :max_value, DeviceAttribute.human_attribute_name(:max_value) %>
             </div>
           </div>
 
           <div class="col-md-2">
-            <div class="form-group">
+            <div class="form-group responsive-table-element">
               <%= label DeviceAttribute, :set_value, DeviceAttribute.human_attribute_name(:set_value) %>
             </div>
           </div>
 
           <div class="col-md-2">
-            <div class="form-group">
+            <div class="form-group responsive-table-element">
               <%= label DeviceAttribute, :current_value, DeviceAttribute.human_attribute_name(:current_value) %>
             </div>
           </div>
@@ -80,13 +81,13 @@
             <div class="row">
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:name) %>" class="col-md-2">
-                <div class="form-group">
+                <div class="form-group responsive-table-element">
                   <span class="device-attribute-name"><%= device_attribute.name %></span>
                 </div>
               </div>
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:primitive_type_c_id) %>" class="col-md-2">
-                <div class="form-group">
+                <div class="form-group responsive-table-element">
                   <% DeviceAttribute::PRIMITIVE_TYPES.each do |key, value| %>
                     <% if value[:ID] == device_attribute.primitive_type_c_id %>
                       <span class="device-attribute-primitve-type-text"><%= value[:LABEL] %></span>
@@ -97,34 +98,56 @@
               </div>
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:min_value) %>" class="col-md-2">
-                <div class="form-group">
-                  <span class="device-attribute-min-value"><%= (device_attribute.min_value.nil? || device_attribute.min_value.blank?) ? '-' : device_attribute.min_value %></span>
+                <div class="form-group responsive-table-element">
+                  <span class="device-attribute-min-value">
+                    <%= get_min_value_text(device_attribute.primitive_type_c_id, device_attribute.min_value) %>
+                  </span>
                 </div>
               </div>
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:max_value) %>" class="col-md-2">
-                <div class="form-group">
-                  <span class="device-attribute-max-value"><%= (device_attribute.max_value.nil? || device_attribute.max_value.blank?) ? '-' : device_attribute.max_value %></span>
+                <div class="form-group responsive-table-element">
+                  <span class="device-attribute-max-value">
+                    <%= get_max_value_text(device_attribute.primitive_type_c_id, device_attribute.max_value) %>
+                  </span>
                 </div>
               </div>
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:set_value) %>" class="col-md-2">
-                <div class="form-group">
+                <div class="form-group responsive-table-element">
                   <% if (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID]) || (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]) %>
                     <% params = ActiveSupport::JSON.encode({ device_uid: device_attribute.device_uid.to_s }) %>
-                    <% field_type = (device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) ? 'text' : 'text' %>
-                    <a href="#" class="device-attribute-set-value editable-device-attribute-set-value" data-type="<%= field_type %>" data-params="<%= params %>" data-pk="<%= device_attribute.id %>" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
-                      <%= device_attribute.set_value %>
+                    <% if device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID] %>
+                      <% field_type = 'select' %>
+                      <% data_source = ActiveSupport::JSON.encode(
+                          [
+                              { value: '', text: 'N/A' },
+                              { value: DeviceAttribute::BOOL_VALUES[:MIN][:ID], text: DeviceAttribute::BOOL_VALUES[:MIN][:LABEL] },
+                              { value: DeviceAttribute::BOOL_VALUES[:MAX][:ID], text: DeviceAttribute::BOOL_VALUES[:MAX][:LABEL] },
+                          ]
+                      ) %>
+                      <% data_value = (device_attribute.set_value.nil?) ? nil : device_attribute.set_value.to_i %>
+                    <% else %>
+                      <% field_type = 'text' %>
+                      <% data_source = nil %>
+                      <% data_value = device_attribute.set_value %>
+                    <% end %>
+                    <a href="#" class="device-attribute-set-value editable-device-attribute-set-value" data-type="<%= field_type %>" data-source="<%= data_source %>" data-params="<%= params %>" data-pk="<%= device_attribute.id %>" data-value="<%= data_value %>" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
+                      <%= compute_device_attribute_set_or_current_value(device_attribute.primitive_type_c_id, device_attribute.set_value, true) %>
                     </a>
+                    <span><%= device_attribute.unit %></span>
                   <% else %>
-                    -
+                    N/A
                   <% end %>
                 </div>
               </div>
 
               <div data-label="<%= DeviceAttribute.human_attribute_name(:current_value) %>" class="col-md-2">
-                <div class="form-group">
-                  <span class="device-attribute-current-value"><%= compute_device_attribute_text(device_attribute.current_value, device_attribute.unit, device_attribute.updated_at) %></span>
+                <div class="form-group responsive-table-element">
+                  <span class="device-attribute-current-value">
+                    <%= compute_device_attribute_set_or_current_value(device_attribute.primitive_type_c_id, device_attribute.current_value, true) %>
+                  </span>
+                  <span><%= device_attribute.unit %></span>
                 </div>
               </div>
 
@@ -132,6 +155,7 @@
           </div>
         <% end %>
       </div>
+
     </div>
   </div>
 <% end %>
@@ -176,23 +200,21 @@
 
         <div class="row">
 
-          <div class="col-md-3">
-            <%= stat.stat_name %>:
+          <div class="col-md-4">
+            <%= (stat.label) ? stat.label : stat.stat_name %>
           </div>
 
-          <div class="col-md-3">
+          <div class="col-md-4">
             <%= stat.value %>
           </div>
 
-          <div class="col-md-3">
+          <div class="col-md-4">
             <%= stat.last_update_at %>
           </div>
 
-          <div class="col-md-3">
-            <%= stat.label %>
-          </div>
-
         </div>
+
+        <br>
 
       <% end %>
 
