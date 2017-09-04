@@ -62,18 +62,18 @@ $(document).on('turbolinks:load', function () { // we need this because of turbo
         if ($thisDeviceAttribute.find('.device-attribute-direction-selector').val() == deviceAttributeDirectionConstants["FEEDBACK_ONLY"]["ID"]) {
             $thisDeviceAttribute.find('.device-attribute-set-value').val('').prop('disabled', true);
             if ($thisDeviceAttribute.find('.device-attribute-primitive-type-selector').val() == deviceAttributePrimitiveTypesConstants["BOOL"]["ID"]) {
-                $thisDeviceAttribute.find('.device-attribute-min-value').val('ON').prop('disabled', true);
-                $thisDeviceAttribute.find('.device-attribute-max-value').val('OFF').prop('disabled', true);
+                $thisDeviceAttribute.find('.device-attribute-min-value').val(deviceAttributeBoolValuesData["MIN"]["ID"]).prop('readonly', true);
+                $thisDeviceAttribute.find('.device-attribute-max-value').val(deviceAttributeBoolValuesData["MAX"]["ID"]).prop('readonly', true);
             } else {
-                $thisDeviceAttribute.find('.device-attribute-min-value, .device-attribute-max-value').val('').prop('disabled', true);
+                $thisDeviceAttribute.find('.device-attribute-min-value, .device-attribute-max-value').val('').prop('readonly', true);
             }
         } else {
             $thisDeviceAttribute.find('.device-attribute-set-value').prop('disabled', false);
             if ($thisDeviceAttribute.find('.device-attribute-primitive-type-selector').val() == deviceAttributePrimitiveTypesConstants["BOOL"]["ID"]) {
-                $thisDeviceAttribute.find('.device-attribute-min-value').val('ON').prop('disabled', true);
-                $thisDeviceAttribute.find('.device-attribute-max-value').val('OFF').prop('disabled', true);
+                $thisDeviceAttribute.find('.device-attribute-min-value').val(deviceAttributeBoolValuesData["MIN"]["ID"]).prop('readonly', true);
+                $thisDeviceAttribute.find('.device-attribute-max-value').val(deviceAttributeBoolValuesData["MAX"]["ID"]).prop('readonly', true);
             } else {
-                $thisDeviceAttribute.find('.device-attribute-min-value, .device-attribute-max-value').val('').prop('disabled', false);
+                $thisDeviceAttribute.find('.device-attribute-min-value, .device-attribute-max-value').val('').prop('readonly', false);
             }
         }
 
