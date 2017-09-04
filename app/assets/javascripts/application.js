@@ -25,6 +25,7 @@
 var deviceDetailShowViewUpdateIntervalInSeconds = null;
 var deviceAttributeDirectionConstants = null;
 var deviceAttributePrimitiveTypesConstants = null;
+var deviceAttributeBoolValuesData = null;
 
 function replaceUrlParams(url, data = {}) {
     if (!url) {
@@ -60,6 +61,7 @@ $(document).on("turbolinks:load", function () { // we need this because of turbo
     deviceDetailShowViewUpdateIntervalInSeconds = $('meta[name="device-detail-show-view-update-interval-in-seconds"]').attr('content');
     deviceAttributeDirectionConstants = $('#device-attribute-direction-constants').data('constants');
     deviceAttributePrimitiveTypesConstants = $('#device-attribute-primitive-types-constants').data('constants');
+    deviceAttributeBoolValuesData = $('#device-attribute-bool-values-data').data('constants');
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
