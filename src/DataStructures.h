@@ -16,19 +16,20 @@ struct attributeSettings {
 };
 
 struct quickButton {
+  bool isInitialized = false;
+  bool isActive = false;
   uint32_t duration;
   uint32_t activiationTimeTimestampInSeconds;
   attributeSettings *actions;
-  bool isInitialized = false;
-  bool isActive = false;
 };
 
 struct schedule {
+  bool isInitialized = false;
+  bool isActive = false;
   uint32_t startTimestamp;
   uint32_t endTimestamp;
   uint32_t recurrenceFrequency;
-  byte status;
-  attributeSettings *action;
+  attributeSettings *actions;
 };
 
 #endif

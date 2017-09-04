@@ -15,6 +15,7 @@
 #include "Requests.h"
 #include "System.h"
 #include "QuickButtons.h"
+#include "Schedule.h"
 
 // custom data structures
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
@@ -84,7 +85,9 @@ void setup() {
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
   // Request devices info initialization and wait the reponse on MQTT
   readUriFromFlash(deviceDataRequestUri, flashReadBuffer);
-  sendHttpGetRequest(ethClient, flashReadBuffer, "all");
+  char queryStringDataTmpBuf[15] = "t=all&sc_s=";
+  itoa(MAX_NUMBER_OF_SCHEDULES, &queryStringDataTmpBuf[11], 10);
+  sendHttpGetRequest(ethClient, flashReadBuffer, queryStringDataTmpBuf);
 
   // watchdog enable
   wdt_enable(WDTO_2S);
@@ -98,6 +101,8 @@ void setup() {
 }
 
 void loop() {
+
+  // check device state button has been pressed
   if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
     if (stateButtonPressed == false) {
       stateButtonPressed = true;
@@ -113,6 +118,7 @@ void loop() {
     }
   }
 
+  // check for quick button press
   for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
     if ((digitalRead(quickButtonsPin[i]) == HIGH)) {
       if (quickButtonPressed[i] == false) {
@@ -126,8 +132,13 @@ void loop() {
     }
   }
 
+  // check if some quick button had been pressed and now must stop working
   checkQuickButtonsStatus(quickButtons, stateOfAttributes);
 
+  // check for schedule enable-disable
+  checkScheduleStatus(schedules, stateOfAttributes);
+
+  // mqtt connect to broker
   if (!mqttClient.connected()) {
     mqttConnectToBrokerCallback(mqttClient);
   }

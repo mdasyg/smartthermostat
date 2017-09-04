@@ -11,6 +11,7 @@
 // device information
 const char DEVICE_SERIAL_NUMBER[] =  "973214849367374423"; // BE CAREFUL TO UPDATE DEVICE SERIAL NUMBER
 const char DEVICE_FIRMWARE_VERSION[] = "0.0.1";
+const char DEVICE_ACCESS_TOKEN[] = "";
 
 // info about  device's attributes
 const byte NUMBER_OF_ATTRIBUTES = 3; // be carefull to update according of attributes count, and the appropriate constants
@@ -25,7 +26,7 @@ const byte QUICK_BUTTON_2_INDEX = 1;
 const byte QUICK_BUTTON_3_INDEX = 2;
 
 // schedules
-const byte MAX_NUMBER_OF_SCHEDULES = 4;
+const byte MAX_NUMBER_OF_SCHEDULES = 2;
 
 // mqtt ifno
 const char MQTT_USERNAME[] = "";
@@ -41,7 +42,7 @@ const char mqttServerUrl[] = "home-auto.eu";
 const unsigned int mqttServerPort = 1883;
 const unsigned int localUdpPort = 8888;  // local port to listen for UDP packets
 const PROGMEM char apiBaseUrl[] = "/api/v1/devices";
-const PROGMEM char deviceDataRequestUri[] = "/get_info?t=";
+const PROGMEM char deviceDataRequestUri[] = "/get_info?";
 const PROGMEM char deviceStatsUpdateUri[] = "/stats_update";
 const PROGMEM char deviceAttributesUpdateUri[] = "/attributes_status_update";
 
