@@ -44,7 +44,7 @@ module Api
             if device_attribute[:cur]
               dev_attr.current_value = device_attribute[:cur]
             end
-            if device_attribute[:set]
+            if device_attribute[:set] && (dev_attr.direction_c_id != DeviceAttribute::DIRECTIONS[:FEEDBACK_ONLY][:ID])
               dev_attr.set_value = device_attribute[:set]
             end
             dev_attr.save()
