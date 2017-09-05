@@ -190,14 +190,13 @@
 <!--INFO FROM DEVICE-->
 <% if @device.device_stats.any? %>
   <div class="panel panel-default">
+
     <div class="panel-heading">
       <h3 class="panel-title">Device info</h3>
     </div>
 
     <div class="panel-body">
-
       <% @device.device_stats.each do |stat| %>
-
         <div class="row">
 
           <div class="col-md-4">
@@ -209,16 +208,14 @@
           </div>
 
           <div class="col-md-4">
-            <%= stat.last_update_at %>
+            <%= stat.last_update_at.strftime('%d/%m/%Y %H:%M') %>
           </div>
 
         </div>
-
         <br>
-
       <% end %>
-
     </div>
+
   </div>
 <% end %>
 
@@ -231,7 +228,41 @@
     </div>
 
     <div class="panel-body">
-      <%= @device.schedule_events.inspect %>
+      <% @device.schedule_events.each do |schedule_event| %>
+        <div class="row">
+
+          <div class="col-md-2">
+            <%= schedule_event.schedule.title %>
+          </div>
+
+          <div class="col-md-2">
+            <%= schedule_event.schedule.start_datetime.strftime('%d/%m/%Y %H:%M') %>
+          </div>
+
+          <div class="col-md-2">
+            <%= schedule_event.schedule.end_datetime.strftime('%d/%m/%Y %H:%M') %>
+          </div>
+
+          <% if schedule_event.schedule.is_recurrent %>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+              Recurring event
+            </div>
+            <div class="col-md-2">
+            </div>
+          <% else %>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+              Single Time event
+            </div>
+            <div class="col-md-2">
+            </div>
+          <% end %>
+
+        </div>
+      <% end %>
     </div>
 
   </div>
@@ -246,7 +277,27 @@
     </div>
 
     <div class="panel-body">
-      <%= @device.quick_buttons.inspect %>
+      <% @device.quick_buttons.each do |quick_button| %>
+        <div class="row">
+
+          <div class="col-md-3">
+            <%= quick_button.title %>
+          </div>
+
+          <div class="col-md-3">
+            <%= quick_button.description %>
+          </div>
+
+          <div class="col-md-3">
+            <%= quick_button.duration %>
+          </div>
+
+          <div class="col-md-3">
+            <%= quick_button.index_on_device %>
+          </div>
+
+        </div>
+      <% end %>
     </div>
 
   </div>
