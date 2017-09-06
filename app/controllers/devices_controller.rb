@@ -3,6 +3,7 @@ class DevicesController < ApplicationController
   before_action :set_device, only: [:show, :edit, :update, :destroy, :get_device_attributes_list]
   before_action :set_primitive_types, only: [:new, :edit]
   before_action :set_directions, only: [:new, :edit]
+  before_action :set_types, only: [:new, :edit]
 
   # GET /devices
   # GET /devices.json
@@ -211,9 +212,16 @@ class DevicesController < ApplicationController
     end
   end
 
+  private def set_types
+    @types = []
+    Device::TYPES.each do |key, type|
+      @types << [type[:LABEL], type[:ID]]
+    end
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   private def safe_device_params
-    params.require(:device).permit(:name, :location, :description)
+    params.require(:device).permit(:name, :location, :description, :type_c_id)
   end
 
   private def safe_device_attribute_params(unsafe_attribute)

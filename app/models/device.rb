@@ -1,6 +1,11 @@
 class Device < ApplicationRecord
   has_secure_token :access_token
 
+  TYPES = {
+      THERMOSTAT:      { ID: 1, LABEL: 'Thermostat' },
+      WEATHER_STATION: { ID: 2, LABEL: 'Weather Station' },
+  }
+
   validates :name, :location, presence: true
 
   before_create do
