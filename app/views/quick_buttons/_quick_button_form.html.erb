@@ -22,28 +22,28 @@
 
   <div class="row">
 
-    <div class="col-sm-3">
+    <div class="col-md-3">
       <div class="form-group">
         <%= quick_button_form.label :title %>
         <%= quick_button_form.text_field :title, class: 'form-control' %>
       </div>
     </div>
 
-    <div class="col-sm-3">
+    <div class="col-md-3">
       <div class="form-group">
         <%= quick_button_form.label :description %>
         <%= quick_button_form.text_field :description, class: 'form-control' %>
       </div>
     </div>
 
-    <div class="col-sm-3">
+    <div class="col-md-3">
       <div class="form-group">
         <%= quick_button_form.label :index_on_device %>
         <%= quick_button_form.text_field(:index_on_device, class: 'form-control') %>
       </div>
     </div>
 
-    <div class="col-sm-3">
+    <div class="col-md-3">
       <div class="form-group">
         <%= quick_button_form.label :duration %>
         <%= quick_button_form.text_field(:duration, class: 'form-control') %>
@@ -54,8 +54,8 @@
 
   <div class="select-device-for-quick-button-container">
     <div class="row">
-      <div class="col-sm-3"></div>
-      <div class="col-sm-6">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
         <div class="form-group">
           <% if quick_button && quick_button.device && quick_button.device.name && quick_button.device_uid %>
             <% selectOptionName = quick_button.device.name %>
@@ -67,7 +67,7 @@
           <%= quick_button_form.select(:device_uid, [[selectOptionName, selectOptionValue]], {}, { class: 'form-control quick-button-device-selector' }) %>
         </div>
       </div>
-      <div class="col-sm-3"></div>
+      <div class="col-md-3"></div>
     </div>
   </div>
 
