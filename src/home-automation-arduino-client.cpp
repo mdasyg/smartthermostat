@@ -175,21 +175,21 @@ void loop() {
   //   Serial.print(F("Loop count: ")); Serial.println(loop_counter);
   //   Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
   //
-  //   byte i,j;
-  //   for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
-  //     Serial.print("qb: "); Serial.print(i);
-  //     Serial.print(", dur: "); Serial.print(quickButtons[i].duration);
-  //     Serial.print(", init?: "); Serial.print(quickButtons[i].isInitialized);
-  //     Serial.print(", active?: "); Serial.print(quickButtons[i].isActive);
-  //     Serial.println();
-  //     for(j=0; j<NUMBER_OF_ATTRIBUTES; j++) {
-  //       Serial.print("qb_a: "); Serial.print(j);
-  //       Serial.print(", start: "); Serial.print(quickButtons[i].actions[j].startSetValue);
-  //       Serial.print(", end: "); Serial.print(quickButtons[i].actions[j].endSetValue);
-  //       Serial.println();
-  //     }
-  //   }
-  //   Serial.println();
+  //   // byte i,j;
+  //   // for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
+  //   //   Serial.print("qb: "); Serial.print(i);
+  //   //   Serial.print(", dur: "); Serial.print(quickButtons[i].duration);
+  //   //   Serial.print(", init?: "); Serial.print(quickButtons[i].isInitialized);
+  //   //   Serial.print(", active?: "); Serial.print(quickButtons[i].isActive);
+  //   //   Serial.println();
+  //   //   for(j=0; j<NUMBER_OF_ATTRIBUTES; j++) {
+  //   //     Serial.print("qb_a: "); Serial.print(j);
+  //   //     Serial.print(", start: "); Serial.print(quickButtons[i].actions[j].startSetValue);
+  //   //     Serial.print(", end: "); Serial.print(quickButtons[i].actions[j].endSetValue);
+  //   //     Serial.println();
+  //   //   }
+  //   // }
+  //   // Serial.println();
   //
   //   loop_counter = 0;
   //   lastHeartbeatTimestamp = now();
