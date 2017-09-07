@@ -175,6 +175,7 @@ DEPENDENCIES
   chartkick (~> 2.2)
   coffee-rails (~> 4.2)
   devise (~> 4.3)
+  i18n (~> 0.8.6)
   jbuilder (~> 2.5)
   listen (~> 3.0.5)
   mosquitto (~> 0.3)

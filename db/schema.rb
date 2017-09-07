@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170829080727) do
+ActiveRecord::Schema.define(version: 20170906191919) do
 
   create_table "actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "device_attribute_id", null: false, unsigned: true
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 20170829080727) do
 
   create_table "devices", primary_key: "uid", id: :bigint, unsigned: true, default: nil, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "user_id", null: false, unsigned: true
+    t.integer "type_c_id", limit: 1, unsigned: true
     t.string "name", null: false
     t.string "location", null: false
     t.text "description"
@@ -108,6 +109,25 @@ ActiveRecord::Schema.define(version: 20170829080727) do
     t.index ["user_id"], name: "fk_rails_3c900465fa"
   end
 
+  create_table "smart_thermostat_device_attributes", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "device_uid", null: false, unsigned: true
+    t.integer "device_attribute_id", null: false, unsigned: true
+    t.integer "type_c_id", limit: 1, null: false, unsigned: true
+    t.index ["device_attribute_id"], name: "fk_rails_55821beec7"
+    t.index ["device_uid", "device_attribute_id", "type_c_id"], name: "dev_uid_and_dev_attr_id_and_type_c_id_unique_idx", unique: true
+  end
+
+  create_table "smart_thermostat_history", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "device_uid", null: false, unsigned: true
+    t.datetime "sample_datetime", null: false
+    t.integer "energy_mode", limit: 1, null: false, comment: "If heating, cooling or something else", unsigned: true
+    t.integer "energy_source_status", limit: 1, null: false, comment: "Energy source woriking or not during the sample", unsigned: true
+    t.integer "outside_temperature"
+    t.float "inside_temperature", limit: 24
+    t.float "set_temperature", limit: 24
+    t.index ["device_uid", "sample_datetime"], name: "index_smart_thermostat_history_on_device_uid_and_sample_datetime", unique: true
+  end
+
   create_table "users", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "email", null: false
     t.string "encrypted_password", null: false
@@ -147,4 +167,6 @@ ActiveRecord::Schema.define(version: 20170829080727) do
   add_foreign_key "schedule_events", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "schedule_events", "schedules"
   add_foreign_key "schedules", "users"
+  add_foreign_key "smart_thermostat_device_attributes", "device_attributes"
+  add_foreign_key "smart_thermostat_history", "devices", column: "device_uid", primary_key: "uid"
 end

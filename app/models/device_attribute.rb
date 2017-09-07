@@ -68,4 +68,6 @@ class DeviceAttribute < ApplicationRecord
   belongs_to :device, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device_attributes
   has_many :actions, inverse_of: :device_attribute
 
+  has_many :smart_thermostat_device_attributes
+
 end
