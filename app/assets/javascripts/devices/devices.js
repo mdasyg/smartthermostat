@@ -13,6 +13,31 @@ function updateDevicePage(data) {
     });
 }
 
+function initSmartThermostatDeviceAttributesSourceSelectiorSelect2() {
+    $('.smart-thermostat-device-attributes-source-selector.outside').select2({
+        ajax: {
+            dataType: 'json',
+            url: $('#devices-search-url').data('url'),
+            processResults: function (response, params) {
+                if (response.result == 'ok') {
+                    return {
+                        results: response.data
+                    };
+                } else {
+                    return {
+                        results: []
+                    };
+                }
+            },
+            delay: 250
+        },
+        dropdownParent: $('.smart-thermostat-device-attributes-source-selector-container.outside'),
+        minimumInputLength: 1,
+        allowClear: false,
+        width: '100%' // responsive workaround
+    });
+}
+
 function getDeviceInfo() {
     let url = $('#get-device-status-info').data('url');
     if (!url) {
@@ -42,7 +67,7 @@ function getDeviceInfo() {
     });
 }
 
-function getDeviceAttributes(deviceUid, callback) {
+function getDeviceAttributes(deviceUid, returnAllAttributes, callback, extraParamsToCallback = {}) {
     let data = {
         deviceUid: deviceUid
     };
@@ -50,6 +75,7 @@ function getDeviceAttributes(deviceUid, callback) {
     url = replaceUrlParams(url, data);
 
     // attributes request
+
     let request = $.ajax({
         url: url,
         beforeSend: function (xhr) {
@@ -57,6 +83,9 @@ function getDeviceAttributes(deviceUid, callback) {
         },
         type: 'get',
         dataType: 'json',
+        data: {
+            return_all_attributes: returnAllAttributes
+        }
     });
     request.done(function (responseData, textStatus, jqXHR) {
         if (responseData.result == 'ok') {
@@ -67,7 +96,7 @@ function getDeviceAttributes(deviceUid, callback) {
                     device_attribute_name: deviceAttribute.name
                 });
             });
-            callback(deviceAttributesData);
+            callback(deviceAttributesData, extraParamsToCallback);
         } else {
             alert('Error getting device attributes');
         }
@@ -80,12 +109,32 @@ function getDeviceAttributes(deviceUid, callback) {
     });
 }
 
-$(document).on("turbolinks:load", function () { // we need this because of turbolinks
+function updateSmartThermostatDeviceAttributesSelectOptions(deviceAttributes, extraParams) {
+    let $smartThermostatDeviceAttributeSelector = extraParams.closestRow.find('select.smart-thermostat-device-attribute-selector');
 
+    $smartThermostatDeviceAttributeSelector.find('option').remove();
+
+    let $newSmartThermostatDeivceAttributeOption = null;
+    deviceAttributes.forEach(function (deviceAttribute) {
+        $newSmartThermostatDeivceAttributeOption = new Option(deviceAttribute.device_attribute_name, deviceAttribute.device_attribute_id);
+        $smartThermostatDeviceAttributeSelector.append($newSmartThermostatDeivceAttributeOption);
+    });
+
+}
+
+$(document).on("turbolinks:load", function () { // we need this because of turbolinks
+    $deviceForm = $('#device-form');
+
+    initSmartThermostatDeviceAttributesSourceSelectiorSelect2();
     $('.editable-device-attribute-set-value').editable();
 
     if ($('#get-device-status-info').data('url')) {
         setTimeout(getDeviceInfo, deviceDetailShowViewUpdateIntervalInSeconds * 1000);
     }
+
+    $('.smart-thermostat-device-attributes-source-selector').on('select2:select', function () {
+        let deviceUid = $(this).val();
+        getDeviceAttributes(deviceUid, true, updateSmartThermostatDeviceAttributesSelectOptions, {closestRow: $(this).closest('.row')});
+    });
 
 });

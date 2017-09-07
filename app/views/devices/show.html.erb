@@ -161,7 +161,7 @@
 <% end %>
 
 <!-- DEVICE TYPE SETUP -->
-<% if @device.type_c_id == Device::TYPES[:THERMOSTAT][:ID] %>
+<% if @device.type_c_id == Device::TYPES[:SMART_THERMOSTAT][:ID] %>
   <div class="panel panel-default">
 
     <div class="panel-heading">
@@ -169,7 +169,7 @@
     </div>
 
     <div class="panel-body">
-      SETUP
+      <span>Go to edit device mode to setup smart thermostat associations with device attributes</span>
     </div>
 
   </div>

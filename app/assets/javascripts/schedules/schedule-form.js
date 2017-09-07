@@ -175,7 +175,7 @@ function addNewScheduleEvent() {
         return false;
     }
 
-    getDeviceAttributes(deviceUid, appendScheduleEventWithActions);
+    getDeviceAttributes(deviceUid, false, appendScheduleEventWithActions);
 
 }
 

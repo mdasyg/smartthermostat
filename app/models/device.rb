@@ -2,8 +2,8 @@ class Device < ApplicationRecord
   has_secure_token :access_token
 
   TYPES = {
-      THERMOSTAT:      { ID: 1, LABEL: 'Thermostat' },
-      WEATHER_STATION: { ID: 2, LABEL: 'Weather Station' },
+      SMART_THERMOSTAT: { ID: 1, LABEL: 'Smart Thermostat' },
+      WEATHER_STATION:  { ID: 2, LABEL: 'Weather Station' },
   }
 
   validates :name, :location, presence: true
@@ -18,5 +18,6 @@ class Device < ApplicationRecord
   has_many :device_stats, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
   has_many :schedule_events, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
   has_many :quick_buttons, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
+
 
 end

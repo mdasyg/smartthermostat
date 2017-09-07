@@ -1,3 +1,6 @@
+<div id="devices-search-url" class="hidden" data-url="<%= devices_search_url %>"></div>
+<div id="get-device-attributes-list-url" class="hidden" data-url="<%= device_url('DEVICE_ID') + '/get_device_attributes_list' %>"></div>
+
 <div id="device-form-container">
 
   <%= form_for(device, html: { id: 'device-form' }) do |device_form| %>
@@ -15,25 +18,32 @@
     <% end %>
 
     <div class="row">
+      <div class="col-md-12">
+        <h4>Basic Info</h4>
+        <hr/>
+      </div>
+    </div>
 
-      <div class="col-sm-4">
+    <div class="row">
+
+      <div class="col-md-4">
         <div class="form-group">
           <%= device_form.label :name %>
           <%= device_form.text_field :name, class: 'form-control' %>
         </div>
       </div>
 
-      <div class="col-sm-4">
+      <div class="col-md-4">
         <div class="form-group">
           <%= device_form.label :location %>
           <%= device_form.text_field :location, class: 'form-control' %>
         </div>
       </div>
 
-      <div class="col-sm-4">
+      <div class="col-md-4">
         <div class="form-group">
           <%= device_form.label :type_c_id %>
-          <%= device_form.select(:type_c_id, {}, {include_blank: '- Select type -' }, { class: 'form-control' }) do %>
+          <%= device_form.select(:type_c_id, {}, { include_blank: '- Select type -' }, { class: 'form-control' }) do %>
             <% options_for_select(@types, device.type_c_id) %>
           <% end %>
         </div>
@@ -42,7 +52,7 @@
     </div>
 
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-md-12">
         <div class="form-group">
           <%= device_form.label :description %>
           <%= device_form.text_area :description, class: 'form-control' %>
@@ -50,18 +60,82 @@
       </div>
     </div>
 
-    <hr/>
+    <% if device.type_c_id == Device::TYPES[:SMART_THERMOSTAT][:ID] %>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Smart thermostat with device attributes associations</h4>
+          <hr/>
+        </div>
+      </div>
+
+      <% SmartThermostatDeviceAttribute::TYPES.each do |key, smart_thermostat_type| %>
+
+        <% smart_thermostat_device_attribute = SmartThermostatDeviceAttribute.find_by(type_c_id: smart_thermostat_type[:ID]) %>
+
+        <% if smart_thermostat_device_attribute.nil? %>
+          <% device_select_data = [[device.name, device.uid]] %>
+          <% device_attributes_select_data = device.device_attributes.collect {|da| [da.name, da.id]} %>
+          <% device_attributes_selected = nil %>
+        <% else %>
+          <% device_select_data = [[smart_thermostat_device_attribute.device_attribute.device.name, smart_thermostat_device_attribute.device_attribute.device_uid]] %>
+          <% device_attributes_select_data = Device.find(smart_thermostat_device_attribute.device_attribute.device_uid).device_attributes.collect {|da| [da.name, da.id]} %>
+          <% device_attributes_selected = smart_thermostat_device_attribute.device_attribute_id %>
+        <% end %>
+
+        <%= device_select_data %>
+        <%= device_attributes_select_data %>
+
+        <%= fields_for('smart_thermostat[device_attributes]', SmartThermostatDeviceAttribute.new, index: smart_thermostat_type[:ID]) do |smart_thermostat_device_attribute_form| %>
+          <div class="row">
+
+            <%= smart_thermostat_device_attribute_form.hidden_field(:type_c_id, value: smart_thermostat_type[:ID]) %>
+
+            <div class="col-md-3 col-xs-4">
+              <div class="form-group">
+                <%= smart_thermostat_device_attribute_form.label :type_c_id, smart_thermostat_type[:LABEL] %>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-xs-4">
+
+              <div class="form-group smart-thermostat-device-attributes-source-selector-container <%= (smart_thermostat_type[:ID] == SmartThermostatDeviceAttribute::TYPES[:OUTSIDE_TEMPERATURE][:ID]) ? 'outside' : 'hidden' %>">
+                <%= smart_thermostat_device_attribute_form.select(:device_uid, device_select_data, {}, { class: 'form-control smart-thermostat-device-attributes-source-selector ' + ((smart_thermostat_type[:ID] == SmartThermostatDeviceAttribute::TYPES[:OUTSIDE_TEMPERATURE][:ID]) ? 'outside' : '') }) %>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-xs-4">
+              <div class="form-group">
+                <%= smart_thermostat_device_attribute_form.select(:device_attribute_id, {}, {}, { class: 'form-control smart-thermostat-device-attribute-selector' }) do %>
+                  <%= options_for_select(device_attributes_select_data, device_attributes_selected) %>
+                <% end %>
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+
+      <% end %>
+
+    <% end %>
 
     <div class="row">
-      <div class="col-sm-3"></div>
-      <div class="col-sm-6">
+      <div class="col-md-12">
+        <h4>Device Attributes</h4>
+        <hr/>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
         <div class="form-group">
           <button type="button" class="action-button active add-new-device-attribute form-control">
             <span>Add Device Attribute</span>
           </button>
         </div>
       </div>
-      <div class="col-sm-3"></div>
+      <div class="col-md-3"></div>
     </div>
 
     <%= render partial: 'device_attribute_form', locals: { device_attributes: device.device_attributes } %>
