@@ -19,5 +19,7 @@ class Device < ApplicationRecord
   has_many :schedule_events, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
   has_many :quick_buttons, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
 
+  has_many :smart_thermostat_smart_devices, class_name: 'SmartThermostat', foreign_key: :smart_device_uid, primary_key: :uid, inverse_of: :smart_device
+  has_many :smart_thermostat_source_devices, class_name: 'SmartThermostat', foreign_key: :source_device_uid, primary_key: :uid, inverse_of: :source_device
 
 end
