@@ -28,11 +28,13 @@ namespace :smart_thermostat do
           sample.inside_temperature   = inside_temperature
           sample.set_temperature      = set_temperature
           sample.save
+        else
+          puts 'Smart thermostat associations missing'
         end
       end
+    else
+      puts 'No Smart Thermostat'
     end
   end
-
-  
 
 end
