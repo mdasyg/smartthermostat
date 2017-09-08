@@ -19,7 +19,7 @@ namespace :smart_thermostat do
           # Find set temperature
           device_attribute_id         = smart_thermostat_attributes_associations.find_by(smart_device_attribute_type_c_id: SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES[:SET_TEMPERATURE][:ID]).source_device_attribute_id
           set_temperature             = DeviceAttribute.find(device_attribute_id).set_value
-          sample                      = SmartThermostatHistory.new
+          sample                      = SmartThermostatHistorySample.new
           sample.device_uid           = smart_thermostat_device.uid
           sample.sample_datetime      = Time.now.change(sec: 0)
           sample.energy_mode          = SmartThermostat::ENERGY_MODE[:HEATING][:ID]
