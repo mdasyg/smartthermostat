@@ -109,14 +109,6 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.index ["user_id"], name: "fk_rails_3c900465fa"
   end
 
-  create_table "smart_thermostat_device_attributes", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint "device_uid", null: false, unsigned: true
-    t.integer "device_attribute_id", null: false, unsigned: true
-    t.integer "type_c_id", limit: 1, null: false, unsigned: true
-    t.index ["device_attribute_id"], name: "fk_rails_55821beec7"
-    t.index ["device_uid", "device_attribute_id", "type_c_id"], name: "dev_uid_and_dev_attr_id_and_type_c_id_unique_idx", unique: true
-  end
-
   create_table "smart_thermostat_history", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
     t.datetime "sample_datetime", null: false
@@ -126,6 +118,16 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.float "inside_temperature", limit: 24
     t.float "set_temperature", limit: 24
     t.index ["device_uid", "sample_datetime"], name: "index_smart_thermostat_history_on_device_uid_and_sample_datetime", unique: true
+  end
+
+  create_table "smart_thermostats", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "smart_device_uid", null: false, unsigned: true
+    t.integer "smart_device_attribute_type_c_id", limit: 1, null: false, unsigned: true
+    t.bigint "source_device_uid", null: false, unsigned: true
+    t.integer "source_device_attribute_id", null: false, unsigned: true
+    t.index ["smart_device_uid", "smart_device_attribute_type_c_id", "source_device_attribute_id"], name: "sm_dev_uid_and_sm_dev_attr_type_and_src_dev_attr_id_unique_idx", unique: true
+    t.index ["source_device_attribute_id"], name: "fk_rails_c4ebcce6a0"
+    t.index ["source_device_uid"], name: "fk_rails_f1ad4a1a95"
   end
 
   create_table "users", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -167,6 +169,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
   add_foreign_key "schedule_events", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "schedule_events", "schedules"
   add_foreign_key "schedules", "users"
-  add_foreign_key "smart_thermostat_device_attributes", "device_attributes"
   add_foreign_key "smart_thermostat_history", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "smart_thermostats", "device_attributes", column: "source_device_attribute_id"
+  add_foreign_key "smart_thermostats", "devices", column: "smart_device_uid", primary_key: "uid"
+  add_foreign_key "smart_thermostats", "devices", column: "source_device_uid", primary_key: "uid"
 end
