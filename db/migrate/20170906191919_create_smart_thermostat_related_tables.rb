@@ -10,7 +10,7 @@ class CreateSmartThermostatRelatedTables < ActiveRecord::Migration[5.1]
       t.integer :source_device_attribute_id, null: false, unsigned: true
     end
 
-    create_table :smart_thermostat_histories, id: false do |t|
+    create_table :smart_thermostat_history_samples, id: false do |t|
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.bigint :device_uid, null: false, unsigned: true
       t.datetime :sample_datetime, null: false
@@ -22,12 +22,12 @@ class CreateSmartThermostatRelatedTables < ActiveRecord::Migration[5.1]
     end
 
     add_index(:smart_thermostats, [:smart_device_uid, :smart_device_attribute_type_c_id, :source_device_attribute_id], { unique: true, name: 'sm_dev_uid_and_sm_dev_attr_type_and_src_dev_attr_id_unique_idx' })
-    add_index(:smart_thermostat_histories, [:device_uid, :sample_datetime], { unique: true, name: 'device_uid_and_sample_datetime_unique_idx' })
+    add_index(:smart_thermostat_history_samples, [:device_uid, :sample_datetime], { unique: true, name: 'device_uid_and_sample_datetime_unique_idx' })
 
     add_foreign_key(:smart_thermostats, :devices, column: :smart_device_uid, primary_key: :uid)
     add_foreign_key(:smart_thermostats, :devices, column: :source_device_uid, primary_key: :uid)
     add_foreign_key(:smart_thermostats, :device_attributes, column: :source_device_attribute_id)
-    add_foreign_key(:smart_thermostat_histories, :devices, column: :device_uid, primary_key: :uid)
+    add_foreign_key(:smart_thermostat_history_samples, :devices, column: :device_uid, primary_key: :uid)
 
   end
 
