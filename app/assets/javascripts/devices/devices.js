@@ -134,7 +134,7 @@ $(document).on("turbolinks:load", function () { // we need this because of turbo
 
     $('.smart-thermostat-device-attributes-source-selector').on('select2:select', function () {
         let deviceUid = $(this).val();
-        getDeviceAttributes(deviceUid, true, updateSmartThermostatDeviceAttributesSelectOptions, {closestRow: $(this).closest('.row')});
+        getDeviceAttributes(deviceUid, 1, updateSmartThermostatDeviceAttributesSelectOptions, {closestRow: $(this).closest('.row')});
     });
 
 });

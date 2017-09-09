@@ -17,14 +17,14 @@ default_mysql: &default_mysql
   pool: 5
   username: <%= Rails.application.secrets.database[:username] %>
   password: <%= Rails.application.secrets.database[:password] %>
-  socket: /var/run/mysqld/mysqld.sock
+  socket: <%= Rails.application.secrets.database[:db_socket] %>
 
 #development:
 #  <<: *default
 #  database: db/development.sqlite3
 development:
   <<: *default_mysql
-  database: home_automation_dev
+  database: <%= Rails.application.secrets.database[:db_name] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -35,4 +35,4 @@ test:
 
 production:
   <<: *default_mysql
-  database: home_automation_prod
+  database: <%= Rails.application.secrets.database[:db_name] %>
