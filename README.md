@@ -4,12 +4,12 @@
 
 1. Ruby v2.3 or later
 2. RubyGems manager
-3. Bundler
-4. Mosquitto Broker v1.3.1 or later ([see mosquitto ruby gem on github for help](https://github.com/xively/mosquitto))
-5. MySQL database server
-6. Web server with phusion passenger module (e.g install passenger gem)
-7. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
-8. Latest NodeJs
+3. MySQL database server
+4. A Web server with phusion passenger module (e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))
+5. Latest NodeJs
+6. Mosquitto Broker
+7. Bundler
+8. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
 
 # Installation
 
@@ -76,4 +76,3 @@ with `$(document).on("turbolinks:load", function() {})`
 
 + Database [my-thesis-db-schema-design](https://dbdesigner.net/designer/schema/54771)
 + Wireframe [my-thesis-wireframe](https://app.mockflow.com/index.jsp?editor=on&publicid=Da8f54e4c4cd2adeb757a8f5723ca6d64&projectid=D09b31f58b04a901571e0d79f7f8e17c0&perm=Owner&template=)
-
