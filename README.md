@@ -9,6 +9,7 @@
 5. MySQL database server
 6. Web server with phusion passenger module (e.g install passenger gem)
 7. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
+8. Latest NodeJs
 
 # Installation
 

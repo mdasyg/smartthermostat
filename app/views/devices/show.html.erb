@@ -26,6 +26,27 @@
   </div>
 </div>
 
+<%= line_chart(
+        SmartThermostatHistorySample.all.collect do |hs|
+          [hs.sample_time, hs.inside_temperature]
+        end
+    ) %>
+
+<% line_chart(
+       [
+           { name: 'Tasos', data: { 20.day.ago => 5, '2017-05-07 00:00:00 UTC' => 7, '2017-05-08 00:00:00 UTC' => 32 } },
+           { name: 'Tasob', data: { 20.day.ago => 15, '2017-05-07 00:00:00 UTC' => 23, '2017-05-08 00:00:00 UTC' => 20 } }
+       ]
+   ) %>
+
+
+<% line_chart(
+       [
+           { name: 'Stefh', data: { 20.day.ago => 8, '2017-06-07 00:00:00 UTC' => 9, '2017-05-08 00:00:00 UTC' => 19 } },
+           { name: 'Tasos', data: { 20.day.ago => 5, '2017-06-07 00:00:00 UTC' => 7, '2017-05-08 00:00:00 UTC' => 15 } }
+       ]
+   ) %>
+
 <!-- DEVICE ATTRIBUTES -->
 <% if @device.device_attributes.any? %>
   <div class="panel panel-default responsive-table-container">

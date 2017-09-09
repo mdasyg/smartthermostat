@@ -161,29 +161,37 @@ class QuickButtonsController < ApplicationController
   end
 
   private def mqtt_send_quick_button_data
-    mqtt_client = Mosquitto::Client.new()
-    mqtt_client.on_connect do |rc|
-      puts "Connected with return code #{rc}"
-    end
+    mqtt_client      = MQTT::Client.new()
+    mqtt_client.host = Rails.application.secrets.mqtt[:host]
+    mqtt_client.port = Rails.application.secrets.mqtt[:port]
+
+    # mqtt_client.on_connect do |rc|
+    #   puts "Connected with return code #{rc}"
+    # end
+
     payload = ActiveSupport::JSON.encode({ qb: { idx: @quick_button.index_on_device, id: @quick_button.id, dur: @quick_button.duration } })
-    mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
-    mqtt_client.publish(nil, @quick_button.device_uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+    mqtt_client.connect()
+    mqtt_client.publish(@quick_button.device_uid.to_s, payload, false, 0)
     @quick_button.actions.each do |quick_button_action|
       payload = ActiveSupport::JSON.encode({ qb_a: { idx: @quick_button.index_on_device, da_idx: quick_button_action.device_attribute.index_on_device, start: quick_button_action.device_attribute_start_value, end: quick_button_action.device_attribute_end_value } })
-      mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
-      mqtt_client.publish(nil, @quick_button.device_uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+      mqtt_client.connect()
+      mqtt_client.publish(@quick_button.device_uid.to_s, payload, false, 0)
     end
     mqtt_client.disconnect()
   end
 
   private def mqtt_destroy_quick_button(device_uid, index)
-    mqtt_client = Mosquitto::Client.new()
-    mqtt_client.on_connect do |rc|
-      puts "Connected with return code #{rc}"
-    end
+    mqtt_client      = MQTT::Client.new()
+    mqtt_client.host = Rails.application.secrets.mqtt[:host]
+    mqtt_client.port = Rails.application.secrets.mqtt[:port]
+
+    # mqtt_client.on_connect do |rc|
+    #   puts "Connected with return code #{rc}"
+    # end
+
     payload = ActiveSupport::JSON.encode({ qb_del: { idx: index.to_s } })
-    mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
-    mqtt_client.publish(nil, device_uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+    mqtt_client.connect()
+    mqtt_client.publish(device_uid.to_s, payload, false, 0)
     mqtt_client.disconnect()
   end
 

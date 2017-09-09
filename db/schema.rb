@@ -109,15 +109,24 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.index ["user_id"], name: "fk_rails_3c900465fa"
   end
 
-  create_table "smart_thermostat_history", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "smart_thermostat_history_samples", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
-    t.datetime "sample_datetime", null: false
+    t.date "sample_date", null: false
+    t.time "sample_time", null: false
     t.integer "energy_mode", limit: 1, null: false, comment: "If heating, cooling or something else", unsigned: true
-    t.integer "energy_source_status", limit: 1, null: false, comment: "Energy source woriking or not during the sample", unsigned: true
+    t.integer "energy_source_status", limit: 1, null: false, comment: "Energy source working or not during the sample", unsigned: true
     t.integer "outside_temperature"
     t.float "inside_temperature", limit: 24
     t.float "set_temperature", limit: 24
-    t.index ["device_uid", "sample_datetime"], name: "index_smart_thermostat_history_on_device_uid_and_sample_datetime", unique: true
+    t.index ["device_uid", "sample_date", "sample_time"], name: "device_uid_and_sample_date_and_sample_time_unique_idx", unique: true
+  end
+
+  create_table "smart_thermostat_training", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "device_uid", null: false, unsigned: true
+    t.time "sample_time", null: false
+    t.integer "outside_temperature"
+    t.float "inside_temperature", limit: 24
+    t.index ["device_uid", "sample_time", "outside_temperature"], name: "device_uid_and_sample_time_and_outside_temp_unique_idx", unique: true
   end
 
   create_table "smart_thermostats", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -169,7 +178,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
   add_foreign_key "schedule_events", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "schedule_events", "schedules"
   add_foreign_key "schedules", "users"
-  add_foreign_key "smart_thermostat_history", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "smart_thermostat_history_samples", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "smart_thermostat_training", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "smart_thermostats", "device_attributes", column: "source_device_attribute_id"
   add_foreign_key "smart_thermostats", "devices", column: "smart_device_uid", primary_key: "uid"
   add_foreign_key "smart_thermostats", "devices", column: "source_device_uid", primary_key: "uid"

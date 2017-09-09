@@ -65,13 +65,15 @@ module Api
         if params.has_key?(:t)
           request_type = params[:t]
 
-          mqtt_client = Mosquitto::Client.new()
+          mqtt_client      = MQTT::Client.new()
+          mqtt_client.host = Rails.application.secrets.mqtt[:host]
+          mqtt_client.port = Rails.application.secrets.mqtt[:port]
 
           if request_type == 'all' || request_type == 'da'
             @device.device_attributes.each do |device_attribute|
               payload = ActiveSupport::JSON.encode({ da: { idx: device_attribute.index_on_device, id: device_attribute.id, name: device_attribute.name, set: device_attribute.set_value } })
-              mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
-              mqtt_client.publish(nil, @device.uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+              mqtt_client.connect()
+              mqtt_client.publish(@device.uid.to_s, payload, false, 0)
             end
           end
           if request_type == 'all' || request_type == 'schedule'
@@ -80,12 +82,12 @@ module Api
           if request_type == 'all' || request_type == 'qb'
             @device.quick_buttons.each do |quick_button|
               payload = ActiveSupport::JSON.encode({ qb: { idx: quick_button.index_on_device, id: quick_button.id, dur: quick_button.duration } })
-              mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
-              mqtt_client.publish(nil, @device.uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+              mqtt_client.connect()
+              mqtt_client.publish(@device.uid.to_s, payload, false, 0)
               quick_button.actions.each do |quick_button_action|
                 payload = ActiveSupport::JSON.encode({ qb_a: { idx: quick_button.index_on_device, da_idx: quick_button_action.device_attribute.index_on_device, start: quick_button_action.device_attribute_start_value, end: quick_button_action.device_attribute_end_value } })
-                mqtt_client.connect(Rails.application.secrets.mqtt[:host], Rails.application.secrets.mqtt[:port], 10)
-                mqtt_client.publish(nil, @device.uid.to_s, payload, Mosquitto::AT_MOST_ONCE, false)
+                mqtt_client.connect()
+                mqtt_client.publish(@device.uid.to_s, payload, false, 0)
               end
             end
           end
