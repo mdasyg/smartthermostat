@@ -176,10 +176,6 @@ int httpResponseReader(EthernetClient &ethClient) {
     // }
     // Serial.println();
 
-
-    // some response found. Examine it.
-    ethClient.setTimeout(10000);
-
     bool ok;
 
     // // first read Content-length

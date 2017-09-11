@@ -37,7 +37,7 @@ time_t lastDeviceStatusDisplayUpdateTimestamp; // when the digital clock was dis
 dht dht22;
 // help vars for button presses
 bool stateButtonPressed = false;
-bool quickButtonPressed[3] = {false, false, false};
+bool quickButtonPressed[NUMBER_OF_QUICK_BUTTONS] = {false, false, false};
 
 time_t lastHeartbeatTimestamp = now();
 long unsigned int loop_counter = 0;
@@ -45,6 +45,9 @@ long unsigned int loop_counter = 0;
 byte i;
 
 void setup() {
+  ethClient.setTimeout(2000);
+  ethClientForMqtt.setTimeout(2000);
+
   Serial.begin(19200);
 
   Serial.println("Loading...");
@@ -76,7 +79,7 @@ void setup() {
   // Init NTP system
   setSyncProvider(getNtpTime);
   // Init PubSubClient
-  mqttConnectToBrokerCallback(mqttClient);
+  mqttConnectToBrokerCallback(ethClientForMqtt, mqttClient);
   // Send device info to application server
   readUriFromFlash(deviceStatsUpdateUri, flashReadBuffer);
   sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBuffer);
@@ -90,8 +93,8 @@ void setup() {
   sendHttpGetRequest(ethClient, flashReadBuffer, queryStringDataTmpBuf);
 
   // watchdog enable
-  wdt_enable(WDTO_2S);
-  wdt_reset();
+  wdt_enable(WDTO_4S);
+  wdt_reset(); // seems to need that, because restart happened before reaching the end of the first loop.
 
   Serial.print(F("S/N: "));
   Serial.println(DEVICE_SERIAL_NUMBER);
@@ -140,7 +143,7 @@ void loop() {
 
   // mqtt connect to broker
   if (!mqttClient.connected()) {
-    mqttConnectToBrokerCallback(mqttClient);
+    mqttConnectToBrokerCallback(ethClientForMqtt, mqttClient);
   }
 
   // read server response
@@ -169,12 +172,15 @@ void loop() {
   // device status update to Serial
   // statusUpdateToSerial(lastDeviceStatusDisplayUpdateTimestamp, stateOfAttributes);
 
+
+  // ##### HEART BEAT DEVICE STATUSES ##########################################
   // loop_counter++;
   // if (now() - lastHeartbeatTimestamp >= 5) {
   //   Serial.println(now());
-  //   Serial.print(F("Loop count: ")); Serial.println(loop_counter);
+  //   // Serial.print(F("Loop count: ")); Serial.println(loop_counter);
   //   Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
   //
+  //   // // Quick Buttons
   //   // byte i,j;
   //   // for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
   //   //   Serial.print("qb: "); Serial.print(i);
@@ -191,9 +197,29 @@ void loop() {
   //   // }
   //   // Serial.println();
   //
+  //   // Schedules
+  //   byte m,n;
+  //   for(m=0; m<MAX_NUMBER_OF_SCHEDULES; m++) {
+  //     Serial.print("sc: "); Serial.print(m);
+  //     Serial.print(", s: "); Serial.print(schedules[m].startTimestamp);
+  //     Serial.print(", e: "); Serial.print(schedules[m].endTimestamp);
+  //     Serial.print(", r: "); Serial.print(schedules[m].recurrenceFrequency);
+  //     Serial.print(", init?: "); Serial.print(schedules[m].isInitialized);
+  //     Serial.print(", active?: "); Serial.print(schedules[m].isActive);
+  //     Serial.println();
+  //     // for(n=0; n<NUMBER_OF_ATTRIBUTES; n++) {
+  //     //   Serial.print("qb_a: "); Serial.print(n);
+  //     //   Serial.print(", start: "); Serial.print(schedules[m].actions[n].startSetValue);
+  //     //   Serial.print(", end: "); Serial.print(schedules[m].actions[n].endSetValue);
+  //     //   Serial.println();
+  //     // }
+  //   }
+  //   Serial.println();
+  //
   //   loop_counter = 0;
   //   lastHeartbeatTimestamp = now();
   // }
+  // ##### HEART BEAT DEVICE STATUSES ##########################################
 
   wdt_reset();
 

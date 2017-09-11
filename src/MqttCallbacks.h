@@ -6,7 +6,7 @@
 #ifndef MQTT_CALLBACKS_H
 #define MQTT_CALLBACKS_H
 
-void mqttConnectToBrokerCallback(PubSubClient &mqttClient);
+void mqttConnectToBrokerCallback(EthernetClient &ethClientForMqtt, PubSubClient &mqttClient);
 void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length);
 
 #endif

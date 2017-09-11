@@ -3,6 +3,7 @@
 
 #include "DeviceConfigs.h"
 #include "System.h"
+#include "QuickButtons.h"
 
 IPAddress ntpTimeServer(10, 168, 10, 60); // TODO REMOVE from here
 byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED }; // TODO REMOVE from here
@@ -180,6 +181,26 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
     }
   }
 
+  if(root.containsKey("sc")) {
+    byte index = root["sc"]["idx"];
+    if (index >= MAX_NUMBER_OF_SCHEDULES) {
+      return;
+    }
+    if (schedules[index].isInitialized == false) {
+      schedules[index].actions = (attributeSettings *)calloc(NUMBER_OF_ATTRIBUTES, sizeof(attributeSettings));
+      schedules[index].isInitialized = true;
+    }
+    if (strlen(root["sc"]["s"]) > 0) {
+      schedules[index].startTimestamp = (uint32_t)root["sc"]["s"];
+    }
+    if (strlen(root["sc"]["e"]) > 0) {
+      schedules[index].endTimestamp = (uint32_t)root["sc"]["e"];
+    }
+    if (strlen(root["sc"]["r"]) > 0) {
+      schedules[index].recurrenceFrequency = (uint32_t)root["sc"]["r"];
+    }
+  }
+
   if(root.containsKey("qb_a")) {
     byte actionIndex = root["qb_a"]["idx"];
     byte deviceAttributeIndex = root["qb_a"]["da_idx"];
@@ -196,8 +217,16 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
     if (index >= NUMBER_OF_QUICK_BUTTONS) {
       return;
     }
-    quickButtons[index].isInitialized = false;
-    free(quickButtons[index].actions);
+    disableQuickButton(quickButtons, stateOfAttributes, index);
+  }
+
+  if (root.containsKey("sc_del")) {
+    byte i;
+    for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
+      free(schedules[i].actions);
+      schedules[i].isActive = false;
+      schedules[i].isInitialized = false;
+    }
   }
 }
 

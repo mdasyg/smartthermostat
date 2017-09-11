@@ -18,6 +18,7 @@ const byte FLASH_READ_BUFFER_MAX_SIZE = 110;
 
 extern deviceAttribute stateOfAttributes[];
 extern quickButton quickButtons[];
+extern schedule schedules[];
 
 void initEthernetShieldNetwork();
 void sendNTPpacket(IPAddress &address);

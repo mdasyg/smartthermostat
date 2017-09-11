@@ -38,3 +38,16 @@ void checkQuickButtonsStatus(quickButton quickButtons[], deviceAttribute stateOf
     }
   }
 }
+
+void disableQuickButton(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex) {
+  byte i;
+  if (quickButtons[quickButtonIndex].isActive == true) {
+    quickButtons[quickButtonIndex].isActive = false;
+    for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+      stateOfAttributes[quickButtons[quickButtonIndex].actions[i].deviceAttributeIndex].setValue = quickButtons[quickButtonIndex].actions[i].endSetValue;
+    }
+    registerWrite(quickButtonLedIndex[quickButtonIndex], LOW);
+    quickButtons[quickButtonIndex].isInitialized = false;
+    free(quickButtons[quickButtonIndex].actions);
+  }
+}
