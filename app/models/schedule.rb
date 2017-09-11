@@ -1,5 +1,7 @@
 class Schedule < ApplicationRecord
 
+  attr_accessor :original_schedule
+
   validates :title, presence: true
   # validates :datetime, presence: true
 
