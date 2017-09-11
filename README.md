@@ -72,7 +72,12 @@ for more info. To workaround this we need to replace the `$(document).ready(func
 with `$(document).on("turbolinks:load", function() {})`
 + Use `puts request.env.select {|k, v| k =~ /^HTTP_/}` to print out on console HTTP headers
 
++ For time use the `Time.current`, for getting timestamp from this, when timezone is in effect, use `.time.to_i`
+
 # Resources
+
++ [Rails internals](http://andrewberls.com/blog/post/rails-from-request-to-response-part-1--introduction)
++ [Rails init](http://guides.rubyonrails.org/initialization.html)
 
 + Database [my-thesis-db-schema-design](https://dbdesigner.net/designer/schema/54771)
 + Wireframe [my-thesis-wireframe](https://app.mockflow.com/index.jsp?editor=on&publicid=Da8f54e4c4cd2adeb757a8f5723ca6d64&projectid=D09b31f58b04a901571e0d79f7f8e17c0&perm=Owner&template=)

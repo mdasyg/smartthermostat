@@ -20,7 +20,7 @@ namespace :smart_thermostat do
           device_attribute_id = smart_thermostat_attributes_associations.find_by(smart_device_attribute_type_c_id: SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES[:SET_TEMPERATURE][:ID]).source_device_attribute_id
           set_temperature     = DeviceAttribute.find(device_attribute_id).set_value
           # Time now
-          sample_datetime = Time.now.change(sec: 0)
+          sample_datetime = Time.current.change(sec: 0)
 
           # Prepare the sample
           sample                      = SmartThermostatHistorySample.new
@@ -49,7 +49,7 @@ namespace :smart_thermostat do
   #     smart_thermostat_devices.each do |smart_thermostat_device|
   #       # init help vars
   #       samples_to_check = (24*60)/5
-  #       sample_time      = Time.now.change(hour: 0, min: 0, sec: 0)
+  #       sample_time      = Time.current.change(hour: 0, min: 0, sec: 0)
   #
   #       # Loop through the day
   #       (1..samples_to_check).each do |i|
