@@ -1,4 +1,5 @@
 json.id schedule.id.to_s
+json.original_schedule schedule.original_schedule
 json.title schedule.title
 json.description schedule.description
 json.start schedule.start_datetime

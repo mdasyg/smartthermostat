@@ -29,7 +29,6 @@ class SchedulesController < ApplicationController
 
     @schedules = current_user.schedules.select('*').where([query_string, query_params]).find_each # UNTIL HERE GOOD CODE
 
-
     ### UNDER HERE TESTING!!!!
 
     if params.include?(:start)
@@ -59,11 +58,10 @@ class SchedulesController < ApplicationController
     # puts start_time.advance(months: 12)
     # puts start_time.advance(months: 13)
 
-    recurrent_schedules = current_user.schedules.select('*').where(['is_recurrent = :is_recurrent', { is_recurrent: '1' }]).find_each
-
+    recurrent_schedules = current_user.schedules.select('*').where(['is_recurrent = :is_recurrent', { is_recurrent: '1' }])
 
     @recurrent_schedules_array = []
-    recurrent_schedules.each do |schedule|
+    recurrent_schedules.find_each do |schedule|
       if schedule.start_datetime >= start_time
         start_time_loop = schedule.start_datetime
       else
@@ -91,15 +89,17 @@ class SchedulesController < ApplicationController
         puts "Diff: #{diff}"
         if (diff == 0)
           puts "BINGO"
+          schedule.original_schedule = 1 # TRUE
           @recurrent_schedules_array << schedule
         elsif (diff != 0)
           if (diff % frequency) == 0
             puts "BINGO"
             puts "Time executing: #{(diff / frequency).to_i}"
-            new_schedule                = schedule.dup
-            new_schedule.id             = schedule.id
-            new_schedule.start_datetime = start_time_loop
-            new_schedule.end_datetime   = new_schedule.start_datetime + (schedule.end_datetime - schedule.start_datetime)
+            new_schedule                   = schedule.dup
+            new_schedule.id                = schedule.id
+            new_schedule.original_schedule = 0 # FALSE
+            new_schedule.start_datetime    = start_time_loop
+            new_schedule.end_datetime      = new_schedule.start_datetime + (schedule.end_datetime - schedule.start_datetime)
             @recurrent_schedules_array << new_schedule
           end
         end
@@ -109,7 +109,7 @@ class SchedulesController < ApplicationController
       end
     end
 
-    # puts @recurrent_schedules_array.inspect
+    puts @recurrent_schedules_array.inspect
 
   end
 
@@ -193,7 +193,21 @@ class SchedulesController < ApplicationController
   # PATCH/PUT /schedules/1
   # PATCH/PUT /schedules/1.json
   def update
+    old_schedule         = @schedule.dup
     @schedule.attributes = safe_schedule_params
+
+    if params.require(:schedule).include?(:original_schedule)
+      if params.require(:schedule).fetch(:original_schedule).empty?
+        original_schedule = true
+      else
+        original_schedule = params.require(:schedule).fetch(:original_schedule).to_i
+      end
+    end
+
+    if original_schedule == 0
+      @schedule.start_datetime = @schedule.start_datetime.change(yaer: old_schedule.start_datetime.year, month: old_schedule.start_datetime.month, day: old_schedule.start_datetime.day)
+      @schedule.end_datetime   = @schedule.end_datetime.change(yaer: old_schedule.end_datetime.year, month: old_schedule.end_datetime.month, day: old_schedule.end_datetime.day)
+    end
 
     if !schedules_overlaps_ok?(@schedule.start_datetime, @schedule.end_datetime)
       return false

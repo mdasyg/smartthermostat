@@ -56,6 +56,7 @@ function initScheduleDatetimePickers() {
 
 function loadScheduleValues(data) {
     $scheduleForm.find('#schedule_id').val(data.id);
+    $scheduleForm.find('#schedule_original_schedule').val(data.original_schedule);
     $scheduleForm.find('#schedule_device_uid').val(data.device_uid);
     $scheduleForm.find('#schedule_title').val(data.title);
     $scheduleForm.find('#schedule_description').val(data.description);
