@@ -66,10 +66,7 @@ class SchedulesController < ApplicationController
         start_time_loop = schedule.start_datetime
       else
         start_time_loop = start_time
-        puts schedule.start_datetime.hour
-        puts start_time_loop
         start_time_loop = start_time_loop.change(hour: schedule.start_datetime.hour, minutes: schedule.start_datetime.min, seconds: schedule.start_datetime.sec)
-        puts start_time_loop
       end
 
       frequency = nil
@@ -85,8 +82,10 @@ class SchedulesController < ApplicationController
 
       while start_time_loop <= end_time do
         puts "Time to check: #{start_time_loop} against: #{schedule.start_datetime}"
+
         diff = start_time_loop - schedule.start_datetime
         puts "Diff: #{diff}"
+
         if (diff == 0)
           puts "BINGO"
           schedule.original_schedule = 1 # TRUE
@@ -196,17 +195,18 @@ class SchedulesController < ApplicationController
     old_schedule         = @schedule.dup
     @schedule.attributes = safe_schedule_params
 
+    #  If schedule post is from a non original schedule(this has effect on recurrent schedules), dont permit date change, only time. For date change must update the original event.
     if params.require(:schedule).include?(:original_schedule)
       if params.require(:schedule).fetch(:original_schedule).empty?
-        original_schedule = true
+        original_schedule = 1
       else
         original_schedule = params.require(:schedule).fetch(:original_schedule).to_i
       end
     end
 
     if original_schedule == 0
-      @schedule.start_datetime = @schedule.start_datetime.change(yaer: old_schedule.start_datetime.year, month: old_schedule.start_datetime.month, day: old_schedule.start_datetime.day)
-      @schedule.end_datetime   = @schedule.end_datetime.change(yaer: old_schedule.end_datetime.year, month: old_schedule.end_datetime.month, day: old_schedule.end_datetime.day)
+      @schedule.start_datetime = @schedule.start_datetime.change(year: old_schedule.start_datetime.year, month: old_schedule.start_datetime.month, day: old_schedule.start_datetime.day)
+      @schedule.end_datetime   = @schedule.end_datetime.change(year: old_schedule.end_datetime.year, month: old_schedule.end_datetime.month, day: old_schedule.end_datetime.day)
     end
 
     if !schedules_overlaps_ok?(@schedule.start_datetime, @schedule.end_datetime)
