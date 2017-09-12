@@ -28,6 +28,7 @@ void sendNTPpacket(IPAddress &address);
 time_t getNtpTime();
 void ledStatusShiftRegisterHandler(byte whichPin, byte whihchState);
 void setDeviceAttributesValue(attributeSettings actions[], deviceAttribute stateOfAttributes[], bool setStart);
+void setAction(attributeSettings &action, byte deviceAttributeIndex, float startValue, float endValue);
 void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
 void readUriFromFlash(const char src[], char buf[]);

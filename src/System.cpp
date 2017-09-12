@@ -80,36 +80,8 @@ void ledStatusShiftRegisterHandler(byte whichPin, byte whihchState) {
   digitalWrite(latchPin, HIGH);
 }
 
-// void printDigits(int digits) {
-//   // utility for digital clock display: prints preceding colon and leading 0
-//   Serial.print(":");
-//   if(digits < 10)
-//   Serial.print("0");
-//   Serial.print(digits);
-// }
-//
-// void digitalClockDisplay(bool brackets) {
-//   if(brackets) {
-//     Serial.print("[");
-//   }
-//   Serial.print(day());
-//   Serial.print("-");
-//   Serial.print(month());
-//   Serial.print("-");
-//   Serial.print(year());
-//   Serial.print(" ");
-//   Serial.print(hour());
-//   printDigits(minute());
-//   printDigits(second());
-//   if(brackets) {
-//     Serial.print("] ");
-//   } else {
-//     Serial.println();
-//   }
-// }
-
 void setDeviceAttributesValue(attributeSettings actions[], deviceAttribute stateOfAttributes[], bool setStart) {
-  byte i;
+  byte i, idx;
   for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
     float valueToSet;
     if (actions[i].inUse) {
@@ -118,9 +90,17 @@ void setDeviceAttributesValue(attributeSettings actions[], deviceAttribute state
       } else {
         valueToSet = actions[i].endSetValue;
       }
-      stateOfAttributes[actions[i].deviceAttributeIndex].setValue = valueToSet;
+      idx = actions[i].deviceAttributeIndex;
+      stateOfAttributes[idx].setValue = valueToSet;
     }
   }
+}
+
+void setAction(attributeSettings &action, byte deviceAttributeIndex, float startValue, float endValue) {
+  action.deviceAttributeIndex = deviceAttributeIndex;
+  action.startSetValue = startValue;
+  action.endSetValue = endValue;
+  action.inUse = true;
 }
 
 void readUriFromFlash(const char src[], char buf[]) {
@@ -212,22 +192,17 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
     if (quickButtonIndex >= NUMBER_OF_QUICK_BUTTONS || deviceAttributeIndex >= NUMBER_OF_ATTRIBUTES) {
       return;
     }
-    quickButtons[quickButtonIndex].actions[deviceAttributeIndex].deviceAttributeIndex = deviceAttributeIndex;
-    quickButtons[quickButtonIndex].actions[deviceAttributeIndex].startSetValue = root["qb_a"]["start"];
-    quickButtons[quickButtonIndex].actions[deviceAttributeIndex].endSetValue = root["qb_a"]["end"];
-    quickButtons[quickButtonIndex].actions[deviceAttributeIndex].inUse = true;
+    setAction(quickButtons[quickButtonIndex].actions[deviceAttributeIndex], deviceAttributeIndex, root["qb_a"]["start"], root["qb_a"]["end"]);
   }
 
-  // if(root.containsKey("sc_a")) {
-  //   byte scheduleIndex = root["sc_a"]["idx"];
-  //   byte deviceAttributeIndex = root["sc_a"]["da_idx"];
-  //   if (scheduleIndex >= MAX_NUMBER_OF_SCHEDULES || deviceAttributeIndex >= NUMBER_OF_ATTRIBUTES) {
-  //     return;
-  //   }
-  //   schedules[scheduleIndex].actions[deviceAttributeIndex].deviceAttributeIndex = deviceAttributeIndex;
-  //   schedules[scheduleIndex].actions[deviceAttributeIndex].startSetValue = root["sc_a"]["start"];
-  //   schedules[scheduleIndex].actions[deviceAttributeIndex].endSetValue = root["sc_a"]["end"];
-  // }
+  if(root.containsKey("sc_a")) {
+    byte scheduleIndex = root["sc_a"]["idx"];
+    byte deviceAttributeIndex = root["sc_a"]["da_idx"];
+    if (scheduleIndex >= MAX_NUMBER_OF_SCHEDULES || deviceAttributeIndex >= NUMBER_OF_ATTRIBUTES) {
+      return;
+    }
+    setAction(schedules[scheduleIndex].actions[deviceAttributeIndex], deviceAttributeIndex, root["sc_a"]["start"], root["sc_a"]["end"]);
+  }
 
   if(root.containsKey("qb_del")) {
     byte index = root["qb_del"]["idx"];
@@ -246,3 +221,31 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
     }
   }
 }
+
+// void printDigits(int digits) {
+//   // utility for digital clock display: prints preceding colon and leading 0
+//   Serial.print(":");
+//   if(digits < 10)
+//   Serial.print("0");
+//   Serial.print(digits);
+// }
+//
+// void digitalClockDisplay(bool brackets) {
+//   if(brackets) {
+//     Serial.print("[");
+//   }
+//   Serial.print(day());
+//   Serial.print("-");
+//   Serial.print(month());
+//   Serial.print("-");
+//   Serial.print(year());
+//   Serial.print(" ");
+//   Serial.print(hour());
+//   printDigits(minute());
+//   printDigits(second());
+//   if(brackets) {
+//     Serial.print("] ");
+//   } else {
+//     Serial.println();
+//   }
+// }

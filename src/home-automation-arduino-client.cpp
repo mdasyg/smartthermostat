@@ -141,7 +141,7 @@ void loop() {
   checkQuickButtonsStatus(quickButtons, stateOfAttributes);
 
   // check for schedule enable-disable
-  // checkScheduleStatus(ethClient, schedules, stateOfAttributes);
+  checkScheduleStatus(ethClient, schedules, stateOfAttributes);
 
   // mqtt connect to broker
   if (!mqttClient.connected()) {
