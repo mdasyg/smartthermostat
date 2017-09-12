@@ -1,3 +1,5 @@
+#include <Ethernet.h>
+
 #include "DataStructures.h"
 
 #ifndef SCHEDULE_H
@@ -6,4 +8,4 @@
 #endif
 
 
-void checkScheduleStatus(schedule schedules[], deviceAttribute stateOfAttributes[]);
+void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], deviceAttribute stateOfAttributes[]);

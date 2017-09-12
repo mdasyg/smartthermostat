@@ -68,7 +68,7 @@ time_t getNtpTime() {
   return 0; // return 0 if unable to get the time
 }
 
-void registerWrite(byte whichPin, byte whihchState) {
+void ledStatusShiftRegisterHandler(byte whichPin, byte whihchState) {
   // turn off the output so the pins don't light up
   // while you're shifting bits:
   digitalWrite(latchPin, LOW);
@@ -107,6 +107,21 @@ void registerWrite(byte whichPin, byte whihchState) {
 //     Serial.println();
 //   }
 // }
+
+void setDeviceAttributesValue(attributeSettings actions[], deviceAttribute stateOfAttributes[], bool setStart) {
+  byte i;
+  for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+    float valueToSet;
+    if (actions[i].inUse) {
+      if (setStart) {
+        valueToSet = actions[i].startSetValue;
+      } else {
+        valueToSet = actions[i].endSetValue;
+      }
+      stateOfAttributes[actions[i].deviceAttributeIndex].setValue = valueToSet;
+    }
+  }
+}
 
 void readUriFromFlash(const char src[], char buf[]) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
@@ -192,15 +207,27 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   }
 
   if(root.containsKey("qb_a")) {
-    byte actionIndex = root["qb_a"]["idx"];
+    byte quickButtonIndex = root["qb_a"]["idx"];
     byte deviceAttributeIndex = root["qb_a"]["da_idx"];
-    if (actionIndex >= NUMBER_OF_QUICK_BUTTONS || deviceAttributeIndex >= NUMBER_OF_ATTRIBUTES) {
+    if (quickButtonIndex >= NUMBER_OF_QUICK_BUTTONS || deviceAttributeIndex >= NUMBER_OF_ATTRIBUTES) {
       return;
     }
-    quickButtons[actionIndex].actions[deviceAttributeIndex].deviceAttributeIndex = deviceAttributeIndex;
-    quickButtons[actionIndex].actions[deviceAttributeIndex].startSetValue = root["qb_a"]["start"];
-    quickButtons[actionIndex].actions[deviceAttributeIndex].endSetValue = root["qb_a"]["end"];
+    quickButtons[quickButtonIndex].actions[deviceAttributeIndex].deviceAttributeIndex = deviceAttributeIndex;
+    quickButtons[quickButtonIndex].actions[deviceAttributeIndex].startSetValue = root["qb_a"]["start"];
+    quickButtons[quickButtonIndex].actions[deviceAttributeIndex].endSetValue = root["qb_a"]["end"];
+    quickButtons[quickButtonIndex].actions[deviceAttributeIndex].inUse = true;
   }
+
+  // if(root.containsKey("sc_a")) {
+  //   byte scheduleIndex = root["sc_a"]["idx"];
+  //   byte deviceAttributeIndex = root["sc_a"]["da_idx"];
+  //   if (scheduleIndex >= MAX_NUMBER_OF_SCHEDULES || deviceAttributeIndex >= NUMBER_OF_ATTRIBUTES) {
+  //     return;
+  //   }
+  //   schedules[scheduleIndex].actions[deviceAttributeIndex].deviceAttributeIndex = deviceAttributeIndex;
+  //   schedules[scheduleIndex].actions[deviceAttributeIndex].startSetValue = root["sc_a"]["start"];
+  //   schedules[scheduleIndex].actions[deviceAttributeIndex].endSetValue = root["sc_a"]["end"];
+  // }
 
   if(root.containsKey("qb_del")) {
     byte index = root["qb_del"]["idx"];
@@ -227,8 +254,8 @@ void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, device
       byte i;
       lastDeviceStatusDisplayUpdateTimestamp = now();
       Serial.println();
-      Serial.println(now());
-      Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+      // Serial.println(now());
+      // Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
       for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
         Serial.print(stateOfAttributes[i].id);
         Serial.print(F("-> Cur: "));

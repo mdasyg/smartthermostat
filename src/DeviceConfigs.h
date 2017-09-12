@@ -10,7 +10,7 @@
 
 // device information
 const char DEVICE_SERIAL_NUMBER[] =  "905725254349731219"; // BE CAREFUL TO UPDATE DEVICE SERIAL NUMBER
-const char DEVICE_ACCESS_TOKEN[] = "askldjfkl435lkdfj3434oit";
+// const char DEVICE_ACCESS_TOKEN[] = "askldjfkl435lkdfj3434oit";
 
 // info about  device's attributes
 const byte NUMBER_OF_ATTRIBUTES = 3; // be carefull to update according of attributes count, and the appropriate constants
@@ -25,7 +25,7 @@ const byte QUICK_BUTTON_2_INDEX = 1;
 const byte QUICK_BUTTON_3_INDEX = 2;
 
 // schedules
-const byte MAX_NUMBER_OF_SCHEDULES = 3;
+const byte MAX_NUMBER_OF_SCHEDULES = 2;
 
 // mqtt ifno
 const char MQTT_USERNAME[] = "";
@@ -67,5 +67,7 @@ const byte quickButtonLedIndex[NUMBER_OF_QUICK_BUTTONS] = {
   [QUICK_BUTTON_2_INDEX] = 5,
   [QUICK_BUTTON_3_INDEX] = 4
 };
+// schedule inidicator PIN index
+const byte scheduleStateLedIndex = 3;
 
 #endif

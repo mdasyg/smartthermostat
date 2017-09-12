@@ -65,8 +65,8 @@ void setup() {
   pinMode(quickButtonsPin[QUICK_BUTTON_2_INDEX], INPUT);
   pinMode(quickButtonsPin[QUICK_BUTTON_3_INDEX], INPUT);
 
-  // initialize led status to 'all off'
-  shiftOut(dataPin, clockPin, MSBFIRST, 0b00000000);
+  // initialize led status to 'some on' to indicate device loading status
+  shiftOut(dataPin, clockPin, MSBFIRST, 0b10101000);
 
   // init timestamp counters
   lastAttrUpdateTimestamp = millis();
@@ -96,6 +96,9 @@ void setup() {
   // watchdog enable
   wdt_enable(WDT_TIMEOUT_TIME);
   wdt_reset(); // seems to need that, because restart happened before reaching the end of the first loop.
+
+  // initialize led status to 'all of' to indicate device init complete
+  shiftOut(dataPin, clockPin, MSBFIRST, 0b00000000);
 
   Serial.print(F("S/N: "));
   Serial.println(DEVICE_SERIAL_NUMBER);
@@ -140,7 +143,7 @@ void loop() {
   checkQuickButtonsStatus(quickButtons, stateOfAttributes);
 
   // check for schedule enable-disable
-  checkScheduleStatus(schedules, stateOfAttributes);
+  // checkScheduleStatus(ethClient, schedules, stateOfAttributes);
 
   // mqtt connect to broker
   if (!mqttClient.connected()) {
@@ -175,46 +178,46 @@ void loop() {
 
   // ##### HEART BEAT DEVICE STATUSES ##########################################
   // loop_counter++;
-  // if (now() - lastHeartbeatTimestamp >= 1) {
-  //   Serial.println(now());
+  // if (now() - lastHeartbeatTimestamp >= 3) {
+    // Serial.println(now());
   //   // Serial.print(F("Loop count: ")); Serial.println(loop_counter);
     // Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
-  //
-  //   // // Quick Buttons
-  //   // byte i,j;
-  //   // for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
-  //   //   Serial.print("qb: "); Serial.print(i);
-  //   //   Serial.print(", dur: "); Serial.print(quickButtons[i].duration);
-  //   //   Serial.print(", init?: "); Serial.print(quickButtons[i].isInitialized);
-  //   //   Serial.print(", active?: "); Serial.print(quickButtons[i].isActive);
-  //   //   Serial.println();
-  //   //   for(j=0; j<NUMBER_OF_ATTRIBUTES; j++) {
-  //   //     Serial.print("qb_a: "); Serial.print(j);
-  //   //     Serial.print(", start: "); Serial.print(quickButtons[i].actions[j].startSetValue);
-  //   //     Serial.print(", end: "); Serial.print(quickButtons[i].actions[j].endSetValue);
-  //   //     Serial.println();
-  //   //   }
-  //   // }
-  //   // Serial.println();
-  //
+
+    // // Quick Buttons
+    // byte i,j;
+    // for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
+    //   Serial.print("qb: "); Serial.print(i);
+    //   Serial.print(", dur: "); Serial.print(quickButtons[i].duration);
+    //   Serial.print(", init?: "); Serial.print(quickButtons[i].isInitialized);
+    //   Serial.print(", active?: "); Serial.print(quickButtons[i].isActive);
+    //   Serial.println();
+    //   for(j=0; j<NUMBER_OF_ATTRIBUTES; j++) {
+    //     Serial.print("qb_a: "); Serial.print(j);
+    //     Serial.print(", start: "); Serial.print(quickButtons[i].actions[j].startSetValue);
+    //     Serial.print(", end: "); Serial.print(quickButtons[i].actions[j].endSetValue);
+    //     Serial.println();
+    //   }
+    // }
+    // Serial.println();
+
   //   // Schedules
-  //   byte m,n;
-  //   for(m=0; m<MAX_NUMBER_OF_SCHEDULES; m++) {
-  //     Serial.print("sc: "); Serial.print(m);
-  //     Serial.print(", s: "); Serial.print(schedules[m].startTimestamp);
-  //     Serial.print(", e: "); Serial.print(schedules[m].endTimestamp);
-  //     Serial.print(", r: "); Serial.print(schedules[m].recurrenceFrequency);
-  //     Serial.print(", init?: "); Serial.print(schedules[m].isInitialized);
-  //     Serial.print(", active?: "); Serial.print(schedules[m].isActive);
-  //     Serial.println();
-  //     // for(n=0; n<NUMBER_OF_ATTRIBUTES; n++) {
-  //     //   Serial.print("qb_a: "); Serial.print(n);
-  //     //   Serial.print(", start: "); Serial.print(schedules[m].actions[n].startSetValue);
-  //     //   Serial.print(", end: "); Serial.print(schedules[m].actions[n].endSetValue);
-  //     //   Serial.println();
-  //     // }
-  //   }
-  //   Serial.println();
+    // byte m,n;
+    // for(m=0; m<MAX_NUMBER_OF_SCHEDULES; m++) {
+      // Serial.print("sc: "); Serial.print(m);
+      // Serial.print(", s: "); Serial.print(schedules[m].startTimestamp);
+      // Serial.print(", e: "); Serial.print(schedules[m].endTimestamp);
+      // Serial.print(", r: "); Serial.print(schedules[m].recurrenceFrequency);
+      // Serial.print(", init?: "); Serial.print(schedules[m].isInitialized);
+      // Serial.print(", active?: "); Serial.print(schedules[m].isActive);
+      // Serial.println();
+      // for(n=0; n<NUMBER_OF_ATTRIBUTES; n++) {
+        // Serial.print("sc_a: "); Serial.print(n);
+        // Serial.print(", start: "); Serial.print(schedules[m].actions[n].startSetValue);
+        // Serial.print(", end: "); Serial.print(schedules[m].actions[n].endSetValue);
+        // Serial.println();
+      // }
+    // }
+    // Serial.println();
   //
   //   loop_counter = 0;
     // lastHeartbeatTimestamp = now();

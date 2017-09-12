@@ -3,25 +3,21 @@
 #include "System.h"
 
 void updateQuickButtonsState(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex) {
-  byte i;
   if (quickButtons[quickButtonIndex].isInitialized == true) {
     if (quickButtons[quickButtonIndex].isActive == true) {
+      setDeviceAttributesValue(quickButtons[quickButtonIndex].actions, stateOfAttributes, false);
+      ledStatusShiftRegisterHandler(quickButtonLedIndex[quickButtonIndex], LOW);
       quickButtons[quickButtonIndex].isActive = false;
-      for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-        stateOfAttributes[quickButtons[quickButtonIndex].actions[i].deviceAttributeIndex].setValue = quickButtons[quickButtonIndex].actions[i].endSetValue;
-      }
-      registerWrite(quickButtonLedIndex[quickButtonIndex], LOW);
     } else {
+      byte i;
       for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
         quickButtons[i].isActive = false;
-        registerWrite(quickButtonLedIndex[i], LOW);
+        ledStatusShiftRegisterHandler(quickButtonLedIndex[i], LOW);
       }
-      quickButtons[quickButtonIndex].isActive = true;
       quickButtons[quickButtonIndex].activiationTimeTimestampInSeconds = millis() / 1000;
-      for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-        stateOfAttributes[quickButtons[quickButtonIndex].actions[i].deviceAttributeIndex].setValue = quickButtons[quickButtonIndex].actions[i].startSetValue;
-      }
-      registerWrite(quickButtonLedIndex[quickButtonIndex], HIGH);
+      setDeviceAttributesValue(quickButtons[quickButtonIndex].actions, stateOfAttributes, true);
+      ledStatusShiftRegisterHandler(quickButtonLedIndex[quickButtonIndex], HIGH);
+      quickButtons[quickButtonIndex].isActive = true;
     }
   }
 }
@@ -40,13 +36,10 @@ void checkQuickButtonsStatus(quickButton quickButtons[], deviceAttribute stateOf
 }
 
 void disableQuickButton(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex) {
-  byte i;
   if (quickButtons[quickButtonIndex].isActive == true) {
+    setDeviceAttributesValue(quickButtons[quickButtonIndex].actions, stateOfAttributes, false);
+    ledStatusShiftRegisterHandler(quickButtonLedIndex[quickButtonIndex], LOW);
     quickButtons[quickButtonIndex].isActive = false;
-    for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-      stateOfAttributes[quickButtons[quickButtonIndex].actions[i].deviceAttributeIndex].setValue = quickButtons[quickButtonIndex].actions[i].endSetValue;
-    }
-    registerWrite(quickButtonLedIndex[quickButtonIndex], LOW);
     quickButtons[quickButtonIndex].isInitialized = false;
     free(quickButtons[quickButtonIndex].actions);
   }

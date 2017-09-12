@@ -10,6 +10,7 @@ struct deviceAttribute {
 };
 
 struct attributeSettings {
+  bool inUse = false;
   uint16_t deviceAttributeIndex;
   float startSetValue;
   float endSetValue;
