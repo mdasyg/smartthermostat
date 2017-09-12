@@ -60,7 +60,7 @@ function getDeviceInfo() {
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
-        // alert(errorThrown + ': ' + textStatus);
+        alert(errorThrown + ': ' + textStatus);
     });
     request.always(function () {
         setTimeout(getDeviceInfo, deviceDetailShowViewUpdateIntervalInSeconds * 1000);
@@ -105,7 +105,7 @@ function getDeviceAttributes(deviceUid, returnAllAttributes, callback, extraPara
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
-        // alert(errorThrown + ': ' + textStatus);
+        alert(errorThrown + ': ' + textStatus);
     });
 }
 

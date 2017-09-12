@@ -356,7 +356,7 @@ class SchedulesController < ApplicationController
   def update_overlapping_schedules_priorities
     if !params.include?(:overlap_schedules)
       respond_to do |format|
-        format.json {render json: { messages: 'No overlaps', result: :error }}
+        format.json {render json: { messages: 'No overlaps posted', result: :error }}
       end and return
     end
 
@@ -389,7 +389,6 @@ class SchedulesController < ApplicationController
     query_string += 'end_datetime >= :start_datetime'
     query_string += ' AND '
     query_string += 'start_datetime <= :end_datetime'
-
     query_params = {
         start_datetime: start_datetime,
         end_datetime:   end_datetime,
@@ -398,7 +397,6 @@ class SchedulesController < ApplicationController
     if (@schedule.id)
       query_string += ' AND '
       query_string += 'id <> :schedule_id'
-
       query_params[:schedule_id] = @schedule.id
     end
 
