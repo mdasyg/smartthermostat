@@ -12,7 +12,7 @@ bool connectToApplicationServer(EthernetClient &ethClient) {
   if (ethClient.connected()) {
     isEthClientConnectedToServer = true;
   } else {
-    // Serial.print(F("Connection to the app srv failed: "));
+    // Serial.println(F("Connection to the app srv failed: "));
     return false;
   }
   return true;
@@ -22,9 +22,10 @@ void prepareHttpRequestBuffer(char buf[], const char data[]) {
   if (strlen(buf)+strlen(data) < HTTP_REQUEST_BUFFER_SIZE){
     strncpy(&buf[strlen(buf)], data, strlen(data)+1);
     return;
+  } else {
+    Serial.println(F("HTTP buffer size limit reached, abort"));
+    while(1);
   }
-  Serial.println(F("HTTP buffer size limit reached, abort"));
-  while(1);
 }
 
 void setHttpHost(EthernetClient &ethClient) {
@@ -42,10 +43,10 @@ void setHttpHost(EthernetClient &ethClient) {
   return;
 }
 
-void sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char queryStringData[]) {
+bool sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char queryStringData[]) {
   if(!connectToApplicationServer(ethClient)) {
     // Serial.println(F("Abort get request send"));
-    return;
+    return false;
   }
 
   char httpRequestBuffer[HTTP_REQUEST_BUFFER_SIZE];
@@ -64,13 +65,13 @@ void sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char 
   // finalize request
   ethClient.print(F("\r\n\r\n"));
 
-  return;
+  return true;
 }
 
-void sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const char postRequestData[]) {
+bool sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const char postRequestData[]) {
   if(!connectToApplicationServer(ethClient)) {
     // Serial.println(F("Abort post request send"));
-    return;
+    return false;
   }
 
   char httpRequestBuffer[HTTP_REQUEST_BUFFER_SIZE];
@@ -99,7 +100,7 @@ void sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const char
   // print post data
   ethClient.print(postRequestData);
 
-  return;
+  return true;
 }
 
 void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const char uri[]) {
@@ -125,7 +126,9 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const c
     }
   }
 
-  sendHttpPostRequest(ethClient, uri, postRequestData);
+  if(!sendHttpPostRequest(ethClient, uri, postRequestData)) {
+    return false;
+  }
 
 }
 
@@ -152,7 +155,9 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
     prepareHttpRequestBuffer(postRequestData, "][set]=");
     prepareHttpRequestBuffer(postRequestData, dtostrf(stateOfAttributes[i].setValue, 6, 2, tempBuf));
 
-    sendHttpPostRequest(ethClient, uri, postRequestData);
+    if(!sendHttpPostRequest(ethClient, uri, postRequestData)) {
+      break;
+    }
 
     do {
       retValue = httpResponseReader(ethClient);
@@ -219,7 +224,7 @@ int httpResponseReader(EthernetClient &ethClient) {
     }
 
   } else {
-    return 1;
+    return -1;
   }
 
   return 0;

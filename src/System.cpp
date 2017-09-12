@@ -1,5 +1,6 @@
 #include <ArduinoJson.h>
 #include <MemoryFree.h>
+#include <avr/wdt.h>
 
 #include "DeviceConfigs.h"
 #include "System.h"
@@ -15,24 +16,13 @@ extern EthernetUDP udpClient;
 
 // ethernet shield initialization
 void initEthernetShieldNetwork() {
-  byte etherShieldConnectionRetryCount = 0;
   // Serial.println(F("Trying DHCP"));
-  bool isEthernetShieldConnected = false;
-  do {
-    if (Ethernet.begin(mac) == 0) {
-      etherShieldConnectionRetryCount++;
-      // Serial.println(F("DHCP failed, Retry later"));
-      delay(5000);
-    } else {
-      isEthernetShieldConnected = true;
-    }
-  } while (!isEthernetShieldConnected && (etherShieldConnectionRetryCount < 10));
-  // if(isEthernetShieldConnected) {
-  //   Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
-  // } else {
-  //   Serial.print(F("Keep going w/o netwrok"));
-  // }
-
+  if (Ethernet.begin(mac) == 0) {
+    // Serial.println(F("DHCP failed"));
+    while(true);
+  } else {
+    // Serial.print(F("IP: ")); Serial.println(Ethernet.localIP());
+  }
 }
 
 // send an NTP request to the time server at the given address
