@@ -75,7 +75,7 @@ function deleteSchedule($thisClick) {
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
-        // alert(errorThrown + ': ' + textStatus);
+        alert(errorThrown + ': ' + textStatus);
     });
 }
 

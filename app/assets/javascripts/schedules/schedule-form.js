@@ -84,6 +84,7 @@ function loadScheduleValues(data) {
 function resetScheduleForm() {
     $scheduleForm.trigger('reset');
     $scheduleForm.find('#schedule_id').val('');
+    $scheduleForm.find('#schedule_original_schedule').val('');
     $scheduleForm.find('#recurrent-entries').addClass('hidden')
     $scheduleEventsContainer.empty();
     $scheduleEventDeviceSelector.val(null).trigger('change');
@@ -236,7 +237,7 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
-        // alert(errorThrown + ': ' + textStatus);
+        alert(errorThrown + ': ' + textStatus);
     });
 }
 
@@ -273,11 +274,11 @@ function updateOverlapSchedulesPriorities() {
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
-        // alert(errorThrown + ': ' + textStatus);
+        alert(errorThrown + ': ' + textStatus);
     });
 }
 
-function submitScheduleForm($thicClick) {
+function submitScheduleForm($thisClick) {
     let url = null;
     let scheduleId = $scheduleForm.find('#schedule_id').val();
     if (scheduleId) {
@@ -307,11 +308,7 @@ function submitScheduleForm($thicClick) {
                 displayErrors($scheduleForm, responseData.messages);
             }
         } else if (responseData.result === 'ok') {
-            if (scheduleId) {
-                $fullCalendar.fullCalendar('refetchEvents');
-            } else {
-                $fullCalendar.fullCalendar('renderEvent', responseData.data);
-            }
+            $fullCalendar.fullCalendar('refetchEvents'); // Do this for new events also in order to bring all the events in case schedule is recurrent
             $scheduleModal.modal('hide');
         }
 
@@ -320,7 +317,7 @@ function submitScheduleForm($thicClick) {
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
-        // alert(errorThrown + ': ' + textStatus);
+        alert(errorThrown + ': ' + textStatus);
     });
 }
 
