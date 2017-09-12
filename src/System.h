@@ -31,7 +31,6 @@ void setDeviceAttributesValue(attributeSettings actions[], deviceAttribute state
 void printDigits(int digits);
 void digitalClockDisplay(bool brackets);
 void readUriFromFlash(const char src[], char buf[]);
-void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]);
 
 void updateAppropriateEntityFromJsonResponse(byte *payload);
 

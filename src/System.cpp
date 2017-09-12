@@ -246,25 +246,3 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
     }
   }
 }
-
-void statusUpdateToSerial(time_t &lastDeviceStatusDisplayUpdateTimestamp, deviceAttribute stateOfAttributes[]) {
-  // Device status in serial
-  if (timeStatus() != timeNotSet) {
-    if ((now() - lastDeviceStatusDisplayUpdateTimestamp) >= 2) { // in seconds
-      byte i;
-      lastDeviceStatusDisplayUpdateTimestamp = now();
-      Serial.println();
-      // Serial.println(now());
-      // Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
-      for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-        Serial.print(stateOfAttributes[i].id);
-        Serial.print(F("-> Cur: "));
-        Serial.print(stateOfAttributes[i].currentValue);
-        Serial.print(F(", Set: "));
-        Serial.print(stateOfAttributes[i].setValue);
-        Serial.println();
-      }
-      Serial.println();
-    }
-  }
-}
