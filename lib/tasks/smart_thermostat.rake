@@ -1,5 +1,25 @@
 namespace :smart_thermostat do
 
+  desc 'Check whihch devices are offline for a certain amount of time and send notification'
+  task(:send_notification_offline_devices => [:environment]) do |t, args|
+    offline_period = Rails.application.secrets.configs[:send_email_notification_after_device_offine_period_in_minutes]
+    puts offline_period
+
+    current_time = Time.current
+
+    puts current_time
+    minimum_offline_time = current_time.ago(offline_period.minutes)
+
+
+    offline_devices_to_send_notification_for = Device.where(['last_contact_at <= :minimum_offline_time', { minimum_offline_time: minimum_offline_time }]).find_each
+
+    puts offline_devices_to_send_notification_for.inspect
+
+    UserMailer.notify_user_for_offline_devices(User.first).deliver_now
+
+
+  end
+
   desc 'Take sample from device attributes for smart thermostat history and training'
   task(:history_sample => [:environment]) do |t, args|
     smart_thermostat_devices = Device.select(:uid).where(type_c_id: Device::TYPES[:SMART_THERMOSTAT][:ID])

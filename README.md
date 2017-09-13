@@ -28,20 +28,18 @@
 config.active_record.table_name_prefix
 config.active_record.table_name_suffix
 ```
-
 2. Create a database on MySQL
 3. Setup a user and give him access to the previously created db
 4. Run `rails db:migrate`
 
 ## Mailer
 
-1. Be sure to set a domain, otherwise email failing to send
+1. Be sure to set a domain in mail section settings, otherwise email fail to send
 
-2. Change accordingly the from address where needed
-	+ eg: app/mailers/application_mailer.rb
+2. Be sure to set the from email address in mail section settings, otherwise email fail to send
 
-3. Test emails with:
-`ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com", subject: "Test", body: "Test").deliver`
+3. Test email delivery with:
+`ActionMailer::Base.mail(from: "test@example.co", to: "valid.recipient@domain.com", subject: "Test", body: "Test").deliver`, on rails console
 
 ## web-console white-list ips
 
