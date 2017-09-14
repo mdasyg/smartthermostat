@@ -6,6 +6,8 @@
 #include "System.h"
 #include "QuickButtons.h"
 
+#include "EEPROMAnything.h"
+
 IPAddress ntpTimeServer(10, 168, 10, 60); // TODO REMOVE from here
 byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED }; // TODO REMOVE from here
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
@@ -221,6 +223,22 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
       schedules[i].isInitialized = false;
     }
   }
+
+  // now save them on EEPROM
+  unsigned int systemDataStructuresEepromAddressStartTmp = systemDataStructuresEepromAddressStart;
+  byte i;
+  for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+    systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, stateOfAttributes[i]);
+  }
+  for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
+    systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, quickButtons[i]);
+  }
+  for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
+    systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, schedules[i]);
+  }
+
+  EEPROM.write(0, 1); // indicate eeprom initialization
+
 }
 
 // void printDigits(int digits) {
