@@ -1,4 +1,4 @@
-class ValidateValues < ActiveModel::Validator
+class ValidateDeviceAttributeValues < ActiveModel::Validator
   def validate(record)
     if record.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID] || record.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]
       if record.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]
@@ -63,7 +63,7 @@ class DeviceAttribute < ApplicationRecord
   validates :set_value, numericality: true, allow_nil: true
   validates :current_value, numericality: true, allow_nil: true
 
-  validates_with ValidateValues
+  validates_with ValidateDeviceAttributeValues
 
   belongs_to :device, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device_attributes
   has_many :actions, inverse_of: :device_attribute
