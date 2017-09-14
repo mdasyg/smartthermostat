@@ -5,7 +5,8 @@
 #ifndef SCHEDULE_H
 #define SCHEDULE_H
 
-#endif
-
+extern char flashReadBuffer[];
 
 void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], deviceAttribute stateOfAttributes[]);
+
+#endif

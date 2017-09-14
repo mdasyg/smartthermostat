@@ -22,7 +22,7 @@ deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
 quickButton quickButtons[NUMBER_OF_QUICK_BUTTONS];
 schedule schedules[MAX_NUMBER_OF_SCHEDULES];
 // buffers
-char flashReadBuffer[FLASH_READ_BUFFER_MAX_SIZE];
+extern char flashReadBuffer[];
 // clients
 EthernetClient ethClient;
 EthernetClient ethClientForMqtt;

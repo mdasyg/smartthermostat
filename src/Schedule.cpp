@@ -17,7 +17,6 @@ void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], device
           schedules[i].isActive = false;
 
           // request new schedule data
-          char flashReadBuffer[FLASH_READ_BUFFER_MAX_SIZE];
           readUriFromFlash(deviceDataRequestUri, flashReadBuffer);
           char queryStringDataTmpBuf[15] = "t=sc&sc_s=";
           itoa(MAX_NUMBER_OF_SCHEDULES, &queryStringDataTmpBuf[11], 10);
@@ -31,7 +30,6 @@ void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], device
 
           ledStatusShiftRegisterHandler(scheduleStateLedIndex, HIGH);
           schedules[i].isActive = true;
-
         }
       }
     }

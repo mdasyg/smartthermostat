@@ -12,7 +12,8 @@ byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
 // led status
 byte ledStatus = 0b00000000;
 
-extern EthernetUDP udpClient;
+// system buffer for reading form flash
+char flashReadBuffer[FLASH_READ_BUFFER_MAX_SIZE];
 
 // ethernet shield initialization
 void initEthernetShieldNetwork() {
