@@ -295,16 +295,20 @@ class SchedulesController < ApplicationController
             Action.destroy(action_ids)
           end
         end
-        @schedule.save
         respond_to do |format|
-          format.html {redirect_to @schedule, notice: 'Schedule was successfully updated.'}
-          format.json {
-            full_schedule = render_to_string partial: 'schedules/schedule', locals: { schedule: @schedule }
-            render json: { data: JSON::parse(full_schedule), result: :ok }
-          }
+          if @schedule.save # this will also save the schedule and event actions
+            format.html {redirect_to @schedule, notice: 'Schedule was successfully created.'}
+            format.json {
+              full_schedule = render_to_string partial: 'schedules/schedule', locals: { schedule: @schedule }
+              render json: { data: JSON::parse(full_schedule), result: :ok }
+            }
+          else
+            format.html {set_schedule_recurrent_unit_list(); render :new}
+            format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
+          end
         end
       end
-    rescue
+    rescue Exception => e
       respond_to do |format|
         format.html {set_schedule_recurrent_unit_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
@@ -395,8 +399,8 @@ class SchedulesController < ApplicationController
     }
 
     if (@schedule.id)
-      query_string += ' AND '
-      query_string += 'id <> :schedule_id'
+      query_string               += ' AND '
+      query_string               += 'id <> :schedule_id'
       query_params[:schedule_id] = @schedule.id
     end
 

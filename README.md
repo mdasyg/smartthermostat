@@ -24,10 +24,12 @@
 ## Database
 
 1. Set the following configurations on the general application file `config/application.rb` or in the environment specific files `config/environments/...`
+
 ```
 config.active_record.table_name_prefix
 config.active_record.table_name_suffix
 ```
+
 2. Create a database on MySQL
 3. Setup a user and give him access to the previously created db
 4. Run `rails db:migrate`

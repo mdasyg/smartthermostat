@@ -46,7 +46,7 @@ class DevicesController < ApplicationController
           render json: { data: JSON::parse(full_device), result: :ok }
         }
       else
-        format.html {set_primitive_types(); set_directions(); render :new}
+        format.html {set_primitive_types(); set_directions(); set_types(); render :new}
         format.json {render json: { messages: @device.errors.full_messages, result: :error }}
       end
     end
@@ -131,7 +131,7 @@ class DevicesController < ApplicationController
           render json: { data: JSON::parse(full_device), result: :ok }
         }
       else
-        format.html {set_primitive_types(); set_directions(); render :edit}
+        format.html {set_primitive_types(); set_directions(); set_types(); render :edit}
         format.json {render json: { messages: @device.errors.full_messages, result: :error }}
       end
     end
