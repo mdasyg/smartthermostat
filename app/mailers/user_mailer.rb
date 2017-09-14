@@ -1,12 +1,12 @@
 class UserMailer < ApplicationMailer
 
-  def notify_user_for_offline_devices(user)
+  def notify_user_for_offline_devices(offline_device)
 
-    puts user
-    puts user.email
+    @user = offline_device.user
+    @device_name = offline_device.name
+    @offline_device_time_for_send_notification = Rails.application.secrets.configs[:send_email_notification_after_device_offine_period_in_minutes]
 
-    @user = user
-    mail(to: @user.email, subject: 'Welcome to My Awesome Site')
+    mail(to: @user.email, subject: 'Offline device notification')
   end
 
 end
