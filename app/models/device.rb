@@ -6,6 +6,11 @@ class Device < ApplicationRecord
       WEATHER_STATION:  { ID: 2, LABEL: 'Weather Station' },
   }
 
+  OFFLINE_NOTIFICATION_STATUS = {
+      NOT_SEND:   0,
+      EMAIL_SEND: 1
+  }
+
   validates :name, :location, presence: true
 
   before_create do

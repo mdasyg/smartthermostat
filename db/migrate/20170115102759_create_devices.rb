@@ -6,6 +6,7 @@ class CreateDevices < ActiveRecord::Migration[5.0]
       t.integer :type_c_id, null: true, unsigned: true, limit: 1
       t.string :name, null: false
       t.string :location, null: false
+      t.integer :long_offline_time_notification, null: false, default: 0, unsigned: true, limit: 1
       t.text :description
       t.string :access_token, commnent: :has_secure_token
       t.datetime :last_contact_at

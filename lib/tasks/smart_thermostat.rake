@@ -1,22 +1,28 @@
 namespace :smart_thermostat do
 
-  desc 'Check whihch devices are offline for a certain amount of time and send notification'
-  task(:send_notification_offline_devices => [:environment]) do |t, args|
+  desc 'Check which devices are offline for a certain amount of time and send notification to user owners'
+  task(:send_notification_for_offline_devices => [:environment]) do |t, args|
     offline_period = Rails.application.secrets.configs[:send_email_notification_after_device_offine_period_in_minutes]
-    puts offline_period
 
     current_time = Time.current
 
-    puts current_time
     minimum_offline_time = current_time.ago(offline_period.minutes)
 
+    offline_devices_to_send_notification_for = Device.where(
+        [
+            'long_offline_time_notification = :long_offline_time_notification AND last_contact_at <= :minimum_offline_time',
+            {
+                minimum_offline_time:           minimum_offline_time,
+                long_offline_time_notification: Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
+            }
+        ]
+    )
 
-    offline_devices_to_send_notification_for = Device.where(['last_contact_at <= :minimum_offline_time', { minimum_offline_time: minimum_offline_time }]).find_each
-
-    puts offline_devices_to_send_notification_for.inspect
-
-    UserMailer.notify_user_for_offline_devices(User.first).deliver_now
-
+    offline_devices_to_send_notification_for.find_each do |offline_device|
+      UserMailer.notify_user_for_offline_devices(offline_device).deliver_now
+      offline_device.long_offline_time_notification = Device::OFFLINE_NOTIFICATION_STATUS[:EMAIL_SEND]
+      offline_device.save
+    end
 
   end
 
