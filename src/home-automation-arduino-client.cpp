@@ -129,15 +129,15 @@ void loop() {
   if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
     if (stateButtonPressed == false) {
       stateButtonPressed = true;
+    }
+  } else {
+    if (stateButtonPressed == true) {
+      stateButtonPressed = false;
       if(stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue == 1) {
         stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
       } else {
         stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 1;
       }
-    }
-  } else {
-    if (stateButtonPressed == true) {
-      stateButtonPressed = false;
     }
   }
 
@@ -146,11 +146,11 @@ void loop() {
     if ((digitalRead(quickButtonsPin[i]) == HIGH)) {
       if (quickButtonPressed[i] == false) {
         quickButtonPressed[i] = true;
-        updateQuickButtonsState(quickButtons, stateOfAttributes, i);
       }
     } else {
       if (quickButtonPressed[i] == true) {
         quickButtonPressed[i] = false;
+        updateQuickButtonsState(quickButtons, stateOfAttributes, i);
       }
     }
   }
