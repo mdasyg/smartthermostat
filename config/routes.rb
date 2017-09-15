@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root to: 'static_pages#home'
+  root to: 'devices#index'
 
   get '/devices/search', to: 'devices#search' # must be placed before 'devices' resources
 
