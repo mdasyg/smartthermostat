@@ -14,8 +14,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
 
   create_table "actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "device_attribute_id", null: false, unsigned: true
-    t.string "device_attribute_start_value", null: false
-    t.string "device_attribute_end_value", null: false
+    t.float "device_attribute_start_value", limit: 24, null: false
+    t.float "device_attribute_end_value", limit: 24, null: false
     t.index ["device_attribute_id"], name: "fk_rails_6c4d2296a2"
   end
 

@@ -7,6 +7,7 @@ class ValidateDeviceAttributeValues < ActiveModel::Validator
         end
         return
       end
+
       if record.min_value.blank?
         record.errors[:min_value] << 'Missing'
       end
@@ -16,11 +17,15 @@ class ValidateDeviceAttributeValues < ActiveModel::Validator
       if record.errors.any?
         return
       end
-      if record.set_value < record.min_value
-        record.errors[:set_value] << 'Smaller than min value'
-      elsif record.set_value > record.max_value
-        record.errors[:set_value] << 'Bigger than max value'
+
+      if !record.set_value.nil?
+        if record.set_value < record.min_value
+          record.errors[:set_value] << 'Smaller than min value'
+        elsif record.set_value > record.max_value
+          record.errors[:set_value] << 'Bigger than max value'
+        end
       end
+
     end
   end
 end
@@ -53,6 +58,8 @@ class DeviceAttribute < ApplicationRecord
   # validates :unsigned, inclusion: { in: [true, false], message: "%{value} is not a valid state" }
   # validates :unsigned, exclusion: { in: [nil] }
 
+  validates :index_on_device, presence: true
+
   validates :direction_c_id, presence: true
   validates :direction_c_id, inclusion: { in: [1, 2, 3], message: "'%{value}' is not a valid direction" }
 
@@ -63,7 +70,7 @@ class DeviceAttribute < ApplicationRecord
   validates :set_value, numericality: true, allow_nil: true
   validates :current_value, numericality: true, allow_nil: true
 
-  validates_with ValidateDeviceAttributeValues
+  validates_with ValidateDeviceAttributeValues, allow_nil: true
 
   belongs_to :device, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device_attributes
   has_many :actions, inverse_of: :device_attribute

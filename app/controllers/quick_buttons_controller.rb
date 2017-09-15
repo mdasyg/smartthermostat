@@ -27,12 +27,20 @@ class QuickButtonsController < ApplicationController
     @quick_button         = QuickButton.new(quick_button_params)
     @quick_button.user_id = current_user.id
 
+    if !params.include?(:quick_button_event)
+      @quick_button.errors.add(:quick_button_event, 'Please select a device')
+      respond_to do |format|
+        format.html {render :new}
+        format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
+      end and return
+    end
+
     if !params.require(:quick_button_event).include?(:actions)
       @quick_button.errors.add(:quick_button_event, 'At least one action must exists')
       respond_to do |format|
         format.html {render :new}
         format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
-      end
+      end and return
     end
 
     params[:quick_button_event][:actions].each do |key, action|
@@ -64,12 +72,21 @@ class QuickButtonsController < ApplicationController
   # PATCH/PUT /quick_buttons/1
   # PATCH/PUT /quick_buttons/1.json
   def update
+
+    if !params.include?(:quick_button_event)
+      @quick_button.errors.add(:quick_button_event, 'Please select a device')
+      respond_to do |format|
+        format.html {render :edit}
+        format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
+      end and return
+    end
+
     if !params.require(:quick_button_event).include?(:actions)
       @quick_button.errors.add(:quick_button_event, 'At least one action must exists')
       respond_to do |format|
         format.html {render :edit}
         format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
-      end
+      end and return
     end
 
     old_device_uid           = @quick_button.device_uid

@@ -30,13 +30,35 @@
 
       <div class="col-sm-4">
         <div class="form-group">
-          <%= action_form.text_field :device_attribute_start_value, class: 'form-control action-device-attribute-start-value' %>
+          <% if (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
+            <%= action_form.select(:device_attribute_start_value, {}, {}, { class: 'form-control action-device-attribute-start-value' }) do %>
+              <% options_for_select(
+                     [
+                         [DeviceAttribute::BOOL_VALUES[:MIN][:LABEL], DeviceAttribute::BOOL_VALUES[:MIN][:ID]],
+                         [DeviceAttribute::BOOL_VALUES[:MAX][:LABEL], DeviceAttribute::BOOL_VALUES[:MAX][:ID]],
+                     ], action.device_attribute_start_value.to_i)
+              %>
+            <% end %>
+          <% else %>
+            <%= action_form.text_field :device_attribute_start_value, class: 'form-control action-device-attribute-start-value' %>
+          <% end %>
         </div>
       </div>
 
       <div class="col-sm-4">
         <div class="form-group">
-          <%= action_form.text_field :device_attribute_end_value, class: 'form-control action-device-attribute-end-value' %>
+          <% if (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
+            <%= action_form.select(:device_attribute_end_value, {}, {}, { class: 'form-control action-device-attribute-end-value' }) do %>
+              <% options_for_select(
+                     [
+                         [DeviceAttribute::BOOL_VALUES[:MIN][:LABEL], DeviceAttribute::BOOL_VALUES[:MIN][:ID]],
+                         [DeviceAttribute::BOOL_VALUES[:MAX][:LABEL], DeviceAttribute::BOOL_VALUES[:MAX][:ID]],
+                     ], action.device_attribute_end_value.to_i)
+              %>
+            <% end %>
+          <% else %>
+            <%= action_form.text_field :device_attribute_end_value, class: 'form-control action-device-attribute-end-value' %>
+          <% end %>
         </div>
       </div>
 
