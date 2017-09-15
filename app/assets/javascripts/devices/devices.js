@@ -75,7 +75,6 @@ function getDeviceAttributes(deviceUid, returnAllAttributes, callback, extraPara
     url = replaceUrlParams(url, data);
 
     // attributes request
-
     let request = $.ajax({
         url: url,
         beforeSend: function (xhr) {
@@ -93,7 +92,8 @@ function getDeviceAttributes(deviceUid, returnAllAttributes, callback, extraPara
             responseData.data.forEach(function (deviceAttribute) {
                 deviceAttributesData.push({
                     device_attribute_id: deviceAttribute.id,
-                    device_attribute_name: deviceAttribute.name
+                    device_attribute_name: deviceAttribute.name,
+                    device_attribute_primitive_type_c_id: deviceAttribute.primitive_type_c_id
                 });
             });
             callback(deviceAttributesData, extraParamsToCallback);
