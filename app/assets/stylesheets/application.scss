@@ -20,6 +20,20 @@
 @import 'devices';
 @import 'schedules';
 
+.select2-container--default .select2-selection--single {
+  border: 1px solid #ccc;
+  height: 34px;
+  .select2-selection__rendered {
+    height: 100%;
+    .select2-selection__placeholder {
+      line-height: 32px;
+    }
+  }
+  .select2-selection__arrow {
+    height: 100%;
+  }
+}
+
 /* hot fix for datepicker not displayed */
 .datepicker div.datepicker-days {
   display: block;
@@ -59,6 +73,22 @@ $gray-medium-light: #eaeaea;
 /* Responsive tables */
 @media screen and (max-width: 991px) {
   .responsive-table-container {
+
+    .responsive-table .responsive-table-element-field.form-row .row {
+      .col-md-1, .col-md-2, .col-md-5, .col-md-6 {
+        display: flex;
+        align-items: center;
+        &:before {
+          width: 30%;
+          text-align: left;
+        }
+        .form-group {
+          flex: 1;
+          margin: 15px;
+        }
+      }
+    }
+
     &.panel-default {
       border: none;
     }
@@ -76,6 +106,8 @@ $gray-medium-light: #eaeaea;
           text-align: right;
           font-size: 13px;
           border-bottom: 1px dotted #ccc;
+          min-height: 43px;
+
           &:before {
             content: attr(data-label);
             float: left;
@@ -87,7 +119,7 @@ $gray-medium-light: #eaeaea;
           }
           .responsive-table-element {
             font-size: 150%;
-            margin: 15px 0;
+            margin: 15px 0 0;
           }
         }
       }

@@ -20,7 +20,7 @@
 1. Install the project's required software
 2. Download the project and go to project's root directory
 3. Copy `secrets.yml.sample` to `secrets.yml` and change the appropriate values
-4. Run `bundle install`
+4. Run `bundle install` maybe you have to add `--path vendor/bundle` in order for gems to install locally
 5. Run `yarn install`
 
 ## Database
