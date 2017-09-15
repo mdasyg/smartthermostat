@@ -31,7 +31,7 @@ function initSelectDeviceForQuickButtontSelect2() {
     });
 }
 
-function changeQuickButtonDevice(deviceAttributesData) {
+function selectQuickButtonDevice(deviceAttributesData) {
     let $actionsContainer = $quickButtonEventActionsContainer.find('.actions-container').empty();
     let prefix = $quickButtonForm.find('.quick-button-event-form-prefix-for-subform').data('prefix');
     deviceAttributesData.forEach(function (deviceAttributeData) {
@@ -49,7 +49,7 @@ $(document).on('turbolinks:load', function () {
 
     $quickButtonDeviceSelector.on('select2:select', function () {
         let deviceUid = $quickButtonDeviceSelector.val();
-        getDeviceAttributes(deviceUid, 0, changeQuickButtonDevice);
+        getDeviceAttributes(deviceUid, 0, selectQuickButtonDevice);
     });
 
     initSelectDeviceForQuickButtontSelect2();

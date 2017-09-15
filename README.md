@@ -4,7 +4,7 @@
 
 # Requirements
 
-1. Ruby v2.3 or later
+1. Ruby v2.3.1 or later
 2. RubyGems manager
 3. MySQL database server
 4. A Web server with phusion passenger module installed and enabled(e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))

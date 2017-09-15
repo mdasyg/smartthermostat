@@ -22,42 +22,54 @@
 
     <div class="row">
 
-      <div class="col-sm-4">
+      <div class="col-md-4">
         <div class="form-group">
           <span class="event-action-device-attribute-name-placeholder"><%= (action && action.device_attribute) ? action.device_attribute.name : '' %></span>
         </div>
       </div>
 
-      <div class="col-sm-4">
-        <div class="form-group">
-          <% if (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
-            <%= action_form.select(:device_attribute_start_value, {}, {}, { class: 'form-control action-device-attribute-start-value' }) do %>
-              <% options_for_select(
-                     [
-                         [DeviceAttribute::BOOL_VALUES[:MIN][:LABEL], DeviceAttribute::BOOL_VALUES[:MIN][:ID]],
-                         [DeviceAttribute::BOOL_VALUES[:MAX][:LABEL], DeviceAttribute::BOOL_VALUES[:MAX][:ID]],
-                     ], action.device_attribute_start_value.to_i)
-              %>
-            <% end %>
-          <% else %>
-            <%= action_form.text_field :device_attribute_start_value, class: 'form-control action-device-attribute-start-value' %>
+      <div class="col-md-4">
+        <div class="form-group action-device-attribute-start-value-container">
+          <% if (action && action.device_attribute.nil?) || (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
+            <div class="action-device-attribute-start-value-bool">
+              <%= action_form.select(:device_attribute_start_value, {}, {}, { class: 'form-control action-device-attribute-start-value' }) do %>
+                <% options_for_select(
+                       [
+                           [DeviceAttribute::BOOL_VALUES[:MIN][:LABEL], DeviceAttribute::BOOL_VALUES[:MIN][:ID]],
+                           [DeviceAttribute::BOOL_VALUES[:MAX][:LABEL], DeviceAttribute::BOOL_VALUES[:MAX][:ID]],
+                       ], action.device_attribute_start_value.to_i)
+                %>
+              <% end %>
+            </div>
+          <% end %>
+
+          <% if (action && action.device_attribute.nil?) || (action && action.device_attribute && action.device_attribute.primitive_type_c_id != DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
+            <div class="action-device-attribute-start-value-not-bool">
+              <%= action_form.text_field :device_attribute_start_value, class: 'form-control action-device-attribute-start-value' %>
+            </div>
           <% end %>
         </div>
       </div>
 
-      <div class="col-sm-4">
-        <div class="form-group">
-          <% if (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
-            <%= action_form.select(:device_attribute_end_value, {}, {}, { class: 'form-control action-device-attribute-end-value' }) do %>
-              <% options_for_select(
-                     [
-                         [DeviceAttribute::BOOL_VALUES[:MIN][:LABEL], DeviceAttribute::BOOL_VALUES[:MIN][:ID]],
-                         [DeviceAttribute::BOOL_VALUES[:MAX][:LABEL], DeviceAttribute::BOOL_VALUES[:MAX][:ID]],
-                     ], action.device_attribute_end_value.to_i)
-              %>
-            <% end %>
-          <% else %>
-            <%= action_form.text_field :device_attribute_end_value, class: 'form-control action-device-attribute-end-value' %>
+      <div class="col-md-4">
+        <div class="form-group action-device-attribute-end-value-container">
+          <% if (action && action.device_attribute.nil?) || (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
+            <div class="action-device-attribute-end-value-bool">
+              <%= action_form.select(:device_attribute_end_value, {}, {}, { class: 'form-control action-device-attribute-end-value' }) do %>
+                <% options_for_select(
+                       [
+                           [DeviceAttribute::BOOL_VALUES[:MIN][:LABEL], DeviceAttribute::BOOL_VALUES[:MIN][:ID]],
+                           [DeviceAttribute::BOOL_VALUES[:MAX][:LABEL], DeviceAttribute::BOOL_VALUES[:MAX][:ID]],
+                       ], action.device_attribute_end_value.to_i)
+                %>
+              <% end %>
+            </div>
+          <% end %>
+
+          <% if (action && action.device_attribute.nil?) || (action && action.device_attribute && action.device_attribute.primitive_type_c_id != DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
+            <div class="action-device-attribute-end-value-not-bool">
+              <%= action_form.text_field :device_attribute_end_value, class: 'form-control action-device-attribute-end-value' %>
+            </div>
           <% end %>
         </div>
       </div>
