@@ -72,12 +72,13 @@
           <% field_params = { class: 'form-control device-attribute-set-value' } %>
           <% (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:FEEDBACK_ONLY][:ID]) ? field_params[:disabled] = true : nil %>
           <% if device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID] %>
-            <%= device_attribute_form.select(:set_value, {}, {}, { class: 'form-control  device-attribute-set-value' }) do %>
+            <%= device_attribute_form.select(:set_value, {}, {}, { class: 'form-control device-attribute-set-value' }) do %>
               <% options_for_select(
                      [
                          [DeviceAttribute::BOOL_VALUES[:MIN][:LABEL], DeviceAttribute::BOOL_VALUES[:MIN][:ID]],
                          [DeviceAttribute::BOOL_VALUES[:MAX][:LABEL], DeviceAttribute::BOOL_VALUES[:MAX][:ID]],
-                     ], device_attribute.set_value) %>
+                     ], device_attribute.set_value.to_i)
+              %>
             <% end %>
           <% else %>
             <%= device_attribute_form.text_field :set_value, field_params %>
@@ -91,7 +92,7 @@
         </div>
       </div>
 
-      <div class="col-md-1">
+      <div data-label="Action" class="col-md-1">
         <div class="form-group responsive-table-element">
           <input type="button" class="action-button active remove-form-row form-control" value="X"/>
         </div>
