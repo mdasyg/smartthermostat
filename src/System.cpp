@@ -5,7 +5,6 @@
 #include "DeviceConfigs.h"
 #include "System.h"
 #include "QuickButtons.h"
-
 #include "EEPROMAnything.h"
 
 IPAddress ntpTimeServer(10, 168, 10, 60); // TODO REMOVE from here
@@ -165,7 +164,7 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
       quickButtons[index].isInitialized = true;
     }
     if (strlen(root["qb"]["dur"]) > 0) {
-      quickButtons[index].duration = root["qb"]["dur"];
+      quickButtons[index].duration = (uint32_t)root["qb"]["dur"] * 1000;
     }
   }
 
@@ -186,6 +185,9 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
     }
     if (strlen(root["sc"]["r"]) > 0) {
       schedules[index].recurrenceFrequency = (uint32_t)root["sc"]["r"];
+    }
+    if (strlen(root["sc"]["p"]) > 0) {
+      schedules[index].priority = (byte)root["sc"]["p"];
     }
   }
 
@@ -224,20 +226,20 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
     }
   }
 
-  // now save them on EEPROM
-  unsigned int systemDataStructuresEepromAddressStartTmp = systemDataStructuresEepromAddressStart;
-  byte i;
-  for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-    systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, stateOfAttributes[i]);
-  }
-  for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
-    systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, quickButtons[i]);
-  }
-  for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
-    systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, schedules[i]);
-  }
-
-  EEPROM.write(0, 1); // indicate eeprom initialization
+  // // now save them on EEPROM
+  // unsigned int systemDataStructuresEepromAddressStartTmp = systemDataStructuresEepromAddressStart;
+  // byte i;
+  // for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+  //   systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, stateOfAttributes[i]);
+  // }
+  // for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
+  //   systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, quickButtons[i]);
+  // }
+  // for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
+  //   systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, schedules[i]);
+  // }
+  //
+  // EEPROM.write(0, 1); // indicate eeprom initialization
 
 }
 

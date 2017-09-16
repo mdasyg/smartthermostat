@@ -18,9 +18,7 @@ void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], device
 
           // request new schedule data
           readUriFromFlash(deviceDataRequestUri, flashReadBuffer);
-          char queryStringDataTmpBuf[15] = "t=sc&sc_s=";
-          itoa(MAX_NUMBER_OF_SCHEDULES, &queryStringDataTmpBuf[11], 10);
-          sendHttpGetRequest(ethClient, flashReadBuffer, queryStringDataTmpBuf);
+          sendHttpGetRequest(ethClient, flashReadBuffer, "t=sc");
         }
       } else {
         if (now() >= schedules[i].startTimestamp && now() < schedules[i].endTimestamp) {

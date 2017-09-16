@@ -20,7 +20,7 @@ struct quickButton {
   bool isInitialized = false;
   bool isActive = false;
   uint32_t duration;
-  uint32_t activiationTimeTimestampInSeconds;
+  uint32_t activiationTimeTimestampInMilliSeconds;
   attributeSettings *actions;
 };
 
@@ -30,6 +30,7 @@ struct schedule {
   uint32_t startTimestamp;
   uint32_t endTimestamp;
   uint32_t recurrenceFrequency;
+  byte priority;
   attributeSettings *actions;
 };
 

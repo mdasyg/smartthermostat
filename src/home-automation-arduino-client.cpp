@@ -16,7 +16,6 @@
 #include "System.h"
 #include "QuickButtons.h"
 #include "Schedule.h"
-
 #include "EEPROMAnything.h"
 
 // custom data structures
@@ -39,6 +38,8 @@ dht dht22;
 // help vars for button presses
 bool stateButtonPressed = false;
 bool quickButtonPressed[NUMBER_OF_QUICK_BUTTONS] = {false, false, false};
+// help vars
+bool isQuickButtonActive = false;
 
 time_t lastHeartbeatTimestamp = now();
 long unsigned int loop_counter = 0;
@@ -48,7 +49,7 @@ byte i;
 void setup() {
   Serial.begin(19200);
 
-  Serial.println("Loading...");
+  Serial.println(F("Loading..."));
 
   ethClient.setTimeout(2000);
   ethClientForMqtt.setTimeout(2000);
@@ -89,12 +90,10 @@ void setup() {
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].currentValue = 0;
   // Request devices info initialization and wait the reponse on MQTT
   readUriFromFlash(deviceDataRequestUri, flashReadBuffer);
-  char queryStringDataTmpBuf[15] = "t=all&sc_s=";
-  itoa(MAX_NUMBER_OF_SCHEDULES, &queryStringDataTmpBuf[11], 10);
-  sendHttpGetRequest(ethClient, flashReadBuffer, queryStringDataTmpBuf);
+  sendHttpGetRequest(ethClient, flashReadBuffer, "t=all");
 
   // watchdog enable
-  wdt_enable(WDT_TIMEOUT_TIME);
+  // wdt_enable(WDT_TIMEOUT_TIME);
   wdt_reset(); // seems to need that, because restart happened before reaching the end of the first loop.
 
   // initialize led status to 'all of' to indicate device init complete
@@ -105,21 +104,21 @@ void setup() {
   Serial.print(F("F/W: "));
   Serial.println(DEVICE_FIRMWARE_VERSION);
 
-  // load saved data from eeprom
-  byte systemDataStructuresEepromInit, i;
-  systemDataStructuresEepromInit = EEPROM.read(0);
-  if (systemDataStructuresEepromInit == 1) {
-    unsigned int systemDataStructuresEepromAddressStartTmp = systemDataStructuresEepromAddressStart;
-    for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-      systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, stateOfAttributes[i]);
-    }
-    for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
-      systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, quickButtons[i]);
-    }
-    for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
-      systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, schedules[i]);
-    }
-  }
+  // // load saved data from eeprom
+  // byte systemDataStructuresEepromInit, i;
+  // systemDataStructuresEepromInit = EEPROM.read(0);
+  // if (systemDataStructuresEepromInit == 1) {
+  //   unsigned int systemDataStructuresEepromAddressStartTmp = systemDataStructuresEepromAddressStart;
+  //   for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+  //     systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, stateOfAttributes[i]);
+  //   }
+  //   for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
+  //     systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, quickButtons[i]);
+  //   }
+  //   for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
+  //     systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, schedules[i]);
+  //   }
+  // }
 
 }
 
@@ -129,10 +128,12 @@ void loop() {
   if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
     if (stateButtonPressed == false) {
       stateButtonPressed = true;
+      // Serial.println("ST pre: ");
     }
   } else {
     if (stateButtonPressed == true) {
       stateButtonPressed = false;
+      // Serial.println("ST rel: ");
       if(stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue == 1) {
         stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
       } else {
@@ -146,10 +147,12 @@ void loop() {
     if ((digitalRead(quickButtonsPin[i]) == HIGH)) {
       if (quickButtonPressed[i] == false) {
         quickButtonPressed[i] = true;
+        // Serial.print("QB pre: "); Serial.println(i);
       }
     } else {
       if (quickButtonPressed[i] == true) {
         quickButtonPressed[i] = false;
+        // Serial.print("QB rel: "); Serial.println(i);
         updateQuickButtonsState(quickButtons, stateOfAttributes, i);
       }
     }
@@ -159,7 +162,9 @@ void loop() {
   checkQuickButtonsStatus(quickButtons, stateOfAttributes);
 
   // check for schedule enable-disable
-  checkScheduleStatus(ethClient, schedules, stateOfAttributes);
+  if (isQuickButtonActive == false) {
+    checkScheduleStatus(ethClient, schedules, stateOfAttributes);
+  }
 
   // mqtt connect to broker
   if (!mqttClient.connected()) {
@@ -192,10 +197,10 @@ void loop() {
   // ##### HEART BEAT DEVICE STATUSES ##########################################
   // loop_counter++;
   // byte i,j;
-  // if (now() - lastHeartbeatTimestamp >= 3) {
+  if (now() - lastHeartbeatTimestamp >= 3) {
     //   Serial.println(now());
     //   Serial.print(F("Loop count: ")); Serial.println(loop_counter);
-    //   Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+      Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
     //
     // // Quick Buttons
     // for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
@@ -245,8 +250,8 @@ void loop() {
     // Serial.println();
 
     //   loop_counter = 0;
-    // lastHeartbeatTimestamp = now();
-  // }
+    lastHeartbeatTimestamp = now();
+  }
   // ##### HEART BEAT DEVICE STATUSES ##########################################
 
   wdt_reset();
