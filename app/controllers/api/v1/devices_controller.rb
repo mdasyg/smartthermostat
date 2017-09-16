@@ -1,6 +1,9 @@
 module Api
   module V1
     class DevicesController < ApplicationController
+
+      include DevicesHelper
+
       skip_before_action :verify_authenticity_token, :only => [:stats_update, :attributes_status_update, :attributes_list]
       before_action :set_device # order matters, before 'update_last_contact_time'
       before_action :update_last_contact_time
@@ -78,55 +81,9 @@ module Api
           end
 
           if request_type == 'all' || request_type == 'sc'
-            if params.has_key?(:sc_s)
 
-              request_schedule_size = params.fetch(:sc_s).to_i
+            send_new_schedule_table_to_device(@device, mqtt_client)
 
-              # Find the begining and end of this day
-              current_time = Time.current
-              day_end      = current_time.end_of_day
-
-              # acquire one time events for this day
-              query_string = '(schedules.start_datetime BETWEEN :current_time AND :day_end)'
-              query_string += ' OR '
-              query_string += '(schedules.end_datetime BETWEEN :current_time AND :day_end)'
-              query_string += ' OR '
-              query_string += '(schedules.start_datetime <= :current_time AND :day_end <= schedules.end_datetime)'
-              query_params = {
-                  current_time: current_time.time.to_formatted_s(:db),
-                  day_end:      day_end.time.to_formatted_s(:db)
-              }
-
-              device_schedule_events = @device.schedule_events.joins(:schedule).where(schedules: { is_recurrent: false }).where(query_string, query_params).order(:start_datetime)
-
-
-              # First, tell the device to delete the schedules that already had, and wait for the new ones
-              payload = ActiveSupport::JSON.encode({ sc_del: :all })
-              mqtt_client.publish(@device.uid.to_s, payload, false, 0)
-
-              # Secondly, send the new schedules to the device
-              device_schedule_events.find_each(batch_size: request_schedule_size).with_index do |schedule_event, sc_idx|
-                puts "ESW #{sc_idx}"
-                schedule               = schedule_event.schedule
-                schedule_event_actions = schedule_event.actions
-                payload                = ActiveSupport::JSON.encode({ sc: { idx: sc_idx, s: schedule.start_datetime.time.to_i, e: schedule.end_datetime.time.to_i, r: 0 } })
-                mqtt_client.publish(@device.uid.to_s, payload, false, 0)
-                schedule_event_actions.each do |schedule_event_action|
-                  payload = ActiveSupport::JSON.encode(
-                      {
-                          sc_a: {
-                              idx:    sc_idx,
-                              da_idx: schedule_event_action.device_attribute.index_on_device,
-                              start:  schedule_event_action.device_attribute_start_value,
-                              end:    schedule_event_action.device_attribute_end_value,
-                          }
-                      }
-                  )
-                  mqtt_client.publish(@device.uid.to_s, payload, false, 0)
-                end
-              end
-
-            end
           end
 
           if request_type == 'all' || request_type == 'qb'
