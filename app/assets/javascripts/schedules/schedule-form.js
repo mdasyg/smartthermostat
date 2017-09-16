@@ -227,10 +227,6 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
             if (responseData.messages) {
                 displayErrors($scheduleForm, responseData.messages);
             }
-        } else if (responseData.result === 'ok') {
-            if (responseData.overlaps) {
-                displayOverlappingSchedules(responseData.overlaps);
-            }
         }
     });
     request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -303,6 +299,9 @@ function submitScheduleForm($thisClick) {
         if (responseData.result === 'error') {
             if (responseData.overlaps) {
                 displayOverlappingSchedules(responseData.overlaps);
+            } else {
+                $overlappingSchedulesList.empty();
+                $overlappingSchedulesContainer.addClass('hidden');
             }
             if (responseData.messages) {
                 displayErrors($scheduleForm, responseData.messages);
