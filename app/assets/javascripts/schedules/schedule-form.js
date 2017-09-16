@@ -296,6 +296,7 @@ function submitScheduleForm($thisClick) {
         data: $scheduleForm.serialize()
     });
     request.done(function (responseData, textStatus, jqXHR) {
+        console.log(responseData)
         if (responseData.result === 'error') {
             if (responseData.overlaps) {
                 displayOverlappingSchedules(responseData.overlaps);

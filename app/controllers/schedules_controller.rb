@@ -1,4 +1,7 @@
 class SchedulesController < ApplicationController
+
+  include DevicesHelper
+
   before_action :authenticate_user!
   before_action :set_schedule, only: [:show, :edit, :update, :destroy, :get_overlapping_schedules]
   before_action :set_schedule_recurrent_unit_list, only: [:new, :edit, :index]
@@ -153,8 +156,11 @@ class SchedulesController < ApplicationController
       end and return
     end
 
-    if !check_schedules_overlaps(@schedule).nil?
-      return
+    overlapping_schedules = check_schedule_overlaps(@schedule)
+    if @schedule.errors.any?
+      respond_to do |format|
+        format.json {render json: { messages: @schedule.errors.full_messages, overlaps: overlapping_schedules, result: :error }}
+      end and return
     end
 
     respond_to do |format|
@@ -164,6 +170,18 @@ class SchedulesController < ApplicationController
           full_schedule = render_to_string partial: 'schedules/schedule', locals: { schedule: @schedule }
           render json: { data: JSON::parse(full_schedule), result: :ok }
         }
+
+        mqtt_client      = MQTT::Client.new()
+        mqtt_client.host = Rails.application.secrets.mqtt[:host]
+        mqtt_client.port = Rails.application.secrets.mqtt[:port]
+        mqtt_client.connect()
+
+        @schedule.schedule_events.each do |schedule_event|
+          send_new_schedule_table_to_device(schedule_event.device, mqtt_client)
+        end
+
+        mqtt_client.disconnect()
+
       else
         format.html {set_schedule_recurrent_unit_list(); render :new}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
@@ -186,10 +204,18 @@ class SchedulesController < ApplicationController
         original_schedule = params.require(:schedule).fetch(:original_schedule).to_i
       end
     end
-
     if original_schedule == 0
       @schedule.start_datetime = @schedule.start_datetime.change(year: old_schedule.start_datetime.year, month: old_schedule.start_datetime.month, day: old_schedule.start_datetime.day)
       @schedule.end_datetime   = @schedule.end_datetime.change(year: old_schedule.end_datetime.year, month: old_schedule.end_datetime.month, day: old_schedule.end_datetime.day)
+    end
+
+    # maybe add this to model validations
+    if (@schedule.end_datetime <= @schedule.start_datetime)
+      @schedule.errors[:end_datetime] << 'Must be bigger than start datetime'
+      respond_to do |format|
+        format.html {set_schedule_recurrent_unit_list(); render :new}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
+      end and return
     end
 
     if !params.include?(:schedule_events)
@@ -263,8 +289,11 @@ class SchedulesController < ApplicationController
       end and return
     end
 
-    if !check_schedules_overlaps(@schedule).nil?
-      return
+    overlapping_schedules = check_schedule_overlaps(@schedule)
+    if @schedule.errors.any?
+      respond_to do |format|
+        format.json {render json: { messages: @schedule.errors.full_messages, overlaps: overlapping_schedules, result: :error }}
+      end and return
     end
 
     begin
@@ -285,6 +314,18 @@ class SchedulesController < ApplicationController
               full_schedule = render_to_string partial: 'schedules/schedule', locals: { schedule: @schedule }
               render json: { data: JSON::parse(full_schedule), result: :ok }
             }
+
+            mqtt_client      = MQTT::Client.new()
+            mqtt_client.host = Rails.application.secrets.mqtt[:host]
+            mqtt_client.port = Rails.application.secrets.mqtt[:port]
+            mqtt_client.connect()
+
+            @schedule.schedule_events.each do |schedule_event|
+              send_new_schedule_table_to_device(schedule_event.device, mqtt_client)
+            end
+
+            mqtt_client.disconnect()
+
           else
             format.html {set_schedule_recurrent_unit_list(); render :new}
             format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
@@ -305,12 +346,26 @@ class SchedulesController < ApplicationController
   def destroy
     begin
       @schedule.transaction do
+        devices_to_update_schedule = []
         @schedule.schedule_events.each do |schedule_event|
+          devices_to_update_schedule << schedule_event.device.dup
           action_ids = schedule_event.actions.ids
           schedule_event.destroy
           Action.destroy(action_ids)
         end
         @schedule.destroy
+
+        mqtt_client      = MQTT::Client.new()
+        mqtt_client.host = Rails.application.secrets.mqtt[:host]
+        mqtt_client.port = Rails.application.secrets.mqtt[:port]
+        mqtt_client.connect()
+
+        devices_to_update_schedule.each do |device|
+          send_new_schedule_table_to_device(device, mqtt_client)
+        end
+
+        mqtt_client.disconnect()
+
         respond_to do |format|
           format.html {redirect_to schedules_url, notice: 'Schedule was successfully destroyed.'}
           format.json {render json: { result: :ok }}
@@ -326,10 +381,12 @@ class SchedulesController < ApplicationController
   end
 
   def get_overlapping_schedules
-    overlaps = check_schedules_overlaps(@schedule)
-    if (overlaps.nil?)
-      respond_to do |format|
+    overlapping_schedules = check_schedule_overlaps(@schedule)
+    respond_to do |format|
+      if (overlapping_schedules.nil?)
         format.json {render json: { result: :ok }}
+      else
+        format.json {render json: { overlaps: overlapping_schedules, result: :error }}
       end
     end
   end
@@ -342,6 +399,9 @@ class SchedulesController < ApplicationController
     end
 
     params[:overlap_schedules].each do |index, overlap_schedule|
+      if overlap_schedule[:priority].blank?
+        next # cannot delete priority
+      end
       schedule = current_user.schedules.where(['id = :schedule_id', { schedule_id: overlap_schedule[:id] }]).take
       if !schedule.nil?
         schedule.priority = overlap_schedule[:priority]
@@ -365,7 +425,7 @@ class SchedulesController < ApplicationController
     @schedule = current_user.schedules.find(params[:id])
   end
 
-  private def check_schedules_overlaps(schedule)
+  private def check_schedule_overlaps(schedule)
     # recurrent schedules will automatically have the lowest priority and will
     # not be take into account in this phase
     if schedule.is_recurrent == true
@@ -373,17 +433,16 @@ class SchedulesController < ApplicationController
     end
 
     query_string = ''
-    query_string += 'end_datetime >= :start_datetime'
+    query_string += 'schedules.end_datetime >= :start_datetime'
     query_string += ' AND '
-    query_string += 'start_datetime <= :end_datetime'
+    query_string += 'schedules.start_datetime <= :end_datetime'
     query_params = {
         start_datetime: schedule.start_datetime,
         end_datetime:   schedule.end_datetime,
     }
 
     number_of_schedule_events = schedule.schedule_events.size-1
-
-    query_string += ' AND ('
+    query_string              += ' AND ('
     schedule.schedule_events.each_with_index do |schedule_event, index|
       query_string += 'schedule_events.device_uid = :dev_uid_' + index.to_s
       if index < number_of_schedule_events
@@ -399,7 +458,7 @@ class SchedulesController < ApplicationController
       query_params[:schedule_id] = schedule.id
     end
 
-    overlapping_schedules = current_user.schedules.select('*').joins(:schedule_events).where([query_string, query_params]).find_each
+    overlapping_schedules = current_user.schedules.select(:'schedules.id', :'schedules.title', :'schedules.start_datetime', :'schedules.end_datetime', :'schedules.priority').joins(:schedule_events).where([query_string, query_params]).find_each
     if !overlapping_schedules.any?
       return nil
     end
@@ -409,16 +468,10 @@ class SchedulesController < ApplicationController
 
     if !priorities.index(nil).nil? # This means that nil does exists on array
       @schedule.errors[:base] << 'Not all priorities has been set'
-      respond_to do |format|
-        format.json {render json: { messages: @schedule.errors.full_messages, overlaps: overlapping_schedules, result: :error }}
-      end and return overlapping_schedules
     end
 
     if priorities.uniq != priorities
       @schedule.errors[:base] << 'Duplicate priorities'
-      respond_to do |format|
-        format.json {render json: { messages: @schedule.errors.full_messages, overlaps: overlapping_schedules, result: :error }}
-      end and return overlapping_schedules
     end
 
     return overlapping_schedules
