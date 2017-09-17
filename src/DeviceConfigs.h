@@ -25,7 +25,7 @@ const byte QUICK_BUTTON_2_INDEX = 1;
 const byte QUICK_BUTTON_3_INDEX = 2;
 
 // schedules
-const byte MAX_NUMBER_OF_SCHEDULES = 4;
+const byte MAX_NUMBER_OF_SCHEDULES = 2;
 
 // application server information
 const char applicationServerUrl[] = "home-auto.eu";
