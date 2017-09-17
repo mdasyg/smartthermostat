@@ -1,34 +1,65 @@
-<p id="notice"><%= notice %></p>
+<% provide(:title, 'Quick Button Overview') %>
 
-<p>
-  <strong>User:</strong>
-  <%= @quick_button.user_id %>
-</p>
+<div class="well">
+  <h1>Overview for the Quick Button:</h1>
+  <h1>
+    <small><%= @quick_button.title %> @ <%= @quick_button.device.name %></small>
+  </h1>
+</div>
 
-<p>
-  <strong>Device uid:</strong>
-  <%= @quick_button.device_uid %>
-</p>
+<!-- DESCRIPTION -->
+<% if !@quick_button.description.empty? %>
+  <div class=" panel panel-default">
 
-<p>
-  <strong>Index on device:</strong>
-  <%= @quick_button.index_on_device %>
-</p>
+    <div class="panel-heading">
+      <h3 class="panel-title">Status</h3>
+    </div>
 
-<p>
-  <strong>Title:</strong>
-  <%= @quick_button.title %>
-</p>
+    <div class="panel-body">
 
-<p>
-  <strong>Description:</strong>
-  <%= @quick_button.description %>
-</p>
+      <div>
+        <strong>Description:</strong>
+        <%= @quick_button.description %>
+      </div>
 
-<p>
-  <strong>Duration:</strong>
-  <%= @quick_button.duration %>
-</p>
+    </div>
+
+  </div>
+<% end %>
+
+<!-- QUICK BUTTON'S SETTINGS-->
+<div class=" panel panel-default">
+
+  <div class="panel-heading">
+    <h3 class="panel-title">Settings</h3>
+  </div>
+
+  <div class="panel-body">
+
+    <div class="row">
+
+      <div class="col-md-3">
+        <strong>Index on Device:</strong>
+        <%= @quick_button.index_on_device %>
+      </div>
+
+      <div class="col-md-3">
+        <strong>Duration:</strong>
+        <%= @quick_button.duration %>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <% @quick_button.actions.each do |asdf| %>
+      <%= asdf.inspect %>
+      <br>
+    <% end %>
+
+  </div>
+
+</div>
 
 <%= link_to 'Edit', edit_quick_button_path(@quick_button) %> |
 <%= link_to 'Back', quick_buttons_path %>

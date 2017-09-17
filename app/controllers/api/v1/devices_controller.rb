@@ -5,7 +5,8 @@ module Api
       include DevicesHelper
 
       skip_before_action :verify_authenticity_token, :only => [:stats_update, :attributes_status_update, :attributes_list]
-      before_action :set_device # order matters, before 'update_last_contact_time'
+      before_action :set_device # order matters, before every other function related to device
+      before_action :check_access_token
       before_action :update_last_contact_time
 
       # POST /devices/1/stats_update
@@ -114,6 +115,16 @@ module Api
           @device = Device.find(params[:uid])
         rescue ActiveRecord::RecordNotFound
           render plain: ActiveSupport::JSON.encode({ msg: 'Device UID not exists', res: :err }) and return
+        end
+      end
+
+      private def check_access_token
+        if !params.has_key?(:tk)
+          render plain: ActiveSupport::JSON.encode({ msg: "Device's access token is missing", res: :err }) and return
+        end
+        access_token_posted = params[:tk]
+        if (access_token_posted != @device.access_token)
+          render plain: ActiveSupport::JSON.encode({ msg: "Access Token error", res: :err }) and return
         end
       end
 
