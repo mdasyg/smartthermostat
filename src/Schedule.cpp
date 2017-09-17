@@ -20,6 +20,17 @@ void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], device
       if(schedules[i].isActive == true) {
         if (now() >= schedules[i].endTimestamp) {
           powerOffSchedule(schedules, stateOfAttributes, i);
+
+          // check if schedule is recurrent to update the start and end time,
+          // or if one time event to delete it
+          if (schedules[i].recurrenceFrequency > 0) {
+            schedules[i].startTimestamp += schedules[i].recurrenceFrequency;
+            schedules[i].endTimestamp += schedules[i].recurrenceFrequency;
+          } else {
+            free(schedules[i].actions);
+            schedules[i].isInitialized = false;
+          }
+
           // request new schedule data
           readUriFromFlash(deviceDataRequestUri, flashReadBuffer);
           sendHttpGetRequest(ethClient, flashReadBuffer, "t=sc");
@@ -32,6 +43,9 @@ void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], device
           ledStatusShiftRegisterHandler(scheduleStateLedIndex, HIGH);
           schedules[i].isActive = true;
           activeSchedule = i;
+          // request new schedule data
+          readUriFromFlash(deviceDataRequestUri, flashReadBuffer);
+          sendHttpGetRequest(ethClient, flashReadBuffer, "t=sc");
         }
       }
 
@@ -48,6 +62,6 @@ void disableSchedule(schedule schedules[], deviceAttribute stateOfAttributes[], 
   if (schedules[scheduleIndex].isActive == true) {
     powerOffSchedule(schedules, stateOfAttributes, scheduleIndex);
   }
-  schedules[scheduleIndex].isInitialized = false;
   free(schedules[scheduleIndex].actions);
+  schedules[scheduleIndex].isInitialized = false;
 }
