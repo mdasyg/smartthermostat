@@ -11,5 +11,19 @@ This is a prototype for a smart thermostat, which developed for the purpose of m
 4. DHTLib by Rob Tillaart ([GitHub](https://github.com/RobTillaart/Arduino/tree/master/libraries/DHTlib))
 5. MemoryFree by maniacbug ([GitHub](https://github.com/maniacbug/MemoryFree))
 
+# Installation
 
-Be carefull when error pages return to arduino it restarts
+## Arduino IDE
+
+1. You have to manually download from library manager and from github the required libraries
+2. You can compile and upload to arduino
+
+## Atom/PlatformIO
+
+1. You have to install [atom](https://atom.io/) Text Editor 
+2. Install PlatformIO package, follow instructions [here](http://platformio.org/get-started/ide?install=atom)
+3. After that you can compile and upload the project to the arduino. The dependencies will be downloaded automatically
+
+# Notes
+
++ Be carefull when error pages return to the arduino, it restarts
