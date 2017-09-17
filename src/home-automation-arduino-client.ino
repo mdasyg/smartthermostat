@@ -183,7 +183,7 @@ void loop() {
     // // Quick Buttons
     // for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
     //   Serial.print("qb: "); Serial.print(i);
-    //   Serial.print(", dur: "); Serial.print(quickButtons[i].duration);
+    //   Serial.print(", dur: "); Serial.print(quickButtons[i].durationMilliSeconds);
     //   Serial.print(", init?: "); Serial.print(quickButtons[i].isInitialized);
     //   Serial.print(", active?: "); Serial.print(quickButtons[i].isActive);
     //   Serial.println();

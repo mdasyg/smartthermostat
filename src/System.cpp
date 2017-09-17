@@ -164,7 +164,7 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
       quickButtons[index].isInitialized = true;
     }
     if (strlen(root["qb"]["dur"]) > 0) {
-      quickButtons[index].duration = (uint32_t)root["qb"]["dur"] * 1000;
+      quickButtons[index].durationMilliSeconds = (uint32_t)root["qb"]["dur"] * 1000;
     }
   }
 

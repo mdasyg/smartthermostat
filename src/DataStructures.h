@@ -19,8 +19,8 @@ struct attributeSettings {
 struct quickButton {
   bool isInitialized = false;
   bool isActive = false;
-  uint32_t duration;
-  uint32_t activiationTimeTimestampInMilliSeconds;
+  uint32_t durationMilliSeconds;
+  uint32_t activiationTimeTimestampMilliSeconds;
   attributeSettings *actions;
 };
 

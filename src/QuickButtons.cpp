@@ -20,7 +20,7 @@ void updateQuickButtonsState(quickButton quickButtons[], deviceAttribute stateOf
         quickButtons[i].isActive = false;
         ledStatusShiftRegisterHandler(quickButtonLedIndex[i], LOW);
       }
-      quickButtons[quickButtonIndex].activiationTimeTimestampInMilliSeconds = millis();
+      quickButtons[quickButtonIndex].activiationTimeTimestampMilliSeconds = millis();
       setDeviceAttributesValue(quickButtons[quickButtonIndex].actions, stateOfAttributes, true);
       ledStatusShiftRegisterHandler(quickButtonLedIndex[quickButtonIndex], HIGH);
       quickButtons[quickButtonIndex].isActive = true;
@@ -34,14 +34,7 @@ void checkQuickButtonsStatus(quickButton quickButtons[], deviceAttribute stateOf
   for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
     if (quickButtons[i].isInitialized == true) {
       if (quickButtons[i].isActive == true) {
-        // Serial.println("Check qb");
-        // Serial.println(quickButtons[i].activiationTimeTimestampInMilliSeconds);
-        // Serial.println(quickButtons[i].duration);
-        // Serial.println(millis());
-        // Serial.println(millis()/1000);
-        // Serial.println();
-        if ((quickButtons[i].activiationTimeTimestampInMilliSeconds + quickButtons[i].duration) < millis() ) {
-          // Serial.print("Auto-dis QB: "); Serial.println(i);
+        if ((quickButtons[i].activiationTimeTimestampMilliSeconds + quickButtons[i].durationMilliSeconds) < millis() ) {
           updateQuickButtonsState(quickButtons, stateOfAttributes, i);
         }
       }
