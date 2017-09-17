@@ -21,7 +21,7 @@ void prepareHttpRequestBuffer(char buf[], const char data[]) {
     strncpy(&buf[strlen(buf)], data, strlen(data)+1);
     return;
   } else {
-    Serial.println(F("HTTP buffer size limit reached, abort"));
+    Serial.println(F("HTTP buffer o/f"));
     while(1);
   }
 }
@@ -54,6 +54,9 @@ bool sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char 
   prepareHttpRequestBuffer(httpRequestBuffer, "GET ");
   prepareHttpRequestBuffer(httpRequestBuffer, uri);
   prepareHttpRequestBuffer(httpRequestBuffer, queryStringData);
+  prepareHttpRequestBuffer(httpRequestBuffer, AMPERSAND);
+  prepareHttpRequestBuffer(httpRequestBuffer, "tk=");
+  prepareHttpRequestBuffer(httpRequestBuffer, DEVICE_ACCESS_TOKEN);
   prepareHttpRequestBuffer(httpRequestBuffer, HTTP_VERSION);
   ethClient.print(httpRequestBuffer);
   // set HOST contents
@@ -66,7 +69,7 @@ bool sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char 
   return true;
 }
 
-bool sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const char postRequestData[]) {
+bool sendHttpPostRequest(EthernetClient &ethClient, const char uri[], char postRequestData[]) {
   if(!connectToApplicationServer(ethClient)) {
     // Serial.println(F("Abort post request send"));
     return false;
@@ -74,6 +77,11 @@ bool sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const char
 
   char httpRequestBuffer[HTTP_REQUEST_BUFFER_SIZE];
   char tempBuf[6];
+
+  // append device access token
+  prepareHttpRequestBuffer(postRequestData, AMPERSAND);
+  prepareHttpRequestBuffer(postRequestData, "tk=");
+  prepareHttpRequestBuffer(postRequestData, DEVICE_ACCESS_TOKEN);
 
   // SET POST REQUEST
   httpRequestBuffer[0] = 0;
@@ -196,7 +204,7 @@ int httpResponseReader(EthernetClient &ethClient) {
     char endOfHeaders[] = "\r\n\r\n";
     ok = ethClient.find(endOfHeaders);
     if (!ok) {
-      Serial.println(F("No response or invalid http response"));
+      Serial.println(F("No/invalid HTTP response"));
       return -1;
     }
 
@@ -212,7 +220,7 @@ int httpResponseReader(EthernetClient &ethClient) {
     if(root.containsKey("res")) {
       const char* result = root["res"];
       if (strcmp(result, "ok") != 0) {
-        Serial.println(F("Result: ERROR"));
+        Serial.println(F("Res: ERR"));
       }
     }
 

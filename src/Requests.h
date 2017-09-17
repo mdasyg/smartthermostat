@@ -13,8 +13,8 @@ bool connectToApplicationServer(EthernetClient &ethClient);
 
 void prepareHttpHeader(char buf[], const char data[]);
 void setHttpHost(EthernetClient &ethClient);
-bool sendHttpPostRequest(EthernetClient &ethClient, const char uri[], const char postRequestData[]);
-bool sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char* queryStringData);
+bool sendHttpPostRequest(EthernetClient &ethClient, const char uri[], char postRequestData[]);
+bool sendHttpGetRequest(EthernetClient &ethClient, const char uri[], const char queryStringData[]);
 int httpResponseReader(EthernetClient &ethClient);
 
 void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const char uri[]);

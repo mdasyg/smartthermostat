@@ -102,22 +102,6 @@ void setup() {
   Serial.print(F("F/W: "));
   Serial.println(DEVICE_FIRMWARE_VERSION);
 
-  // // load saved data from eeprom
-  // byte systemDataStructuresEepromInit, i;
-  // systemDataStructuresEepromInit = EEPROM.read(0);
-  // if (systemDataStructuresEepromInit == 1) {
-  //   unsigned int systemDataStructuresEepromAddressStartTmp = systemDataStructuresEepromAddressStart;
-  //   for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-  //     systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, stateOfAttributes[i]);
-  //   }
-  //   for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
-  //     systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, quickButtons[i]);
-  //   }
-  //   for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
-  //     systemDataStructuresEepromAddressStartTmp += EEPROM_readAnything(systemDataStructuresEepromAddressStartTmp, schedules[i]);
-  //   }
-  // }
-
 }
 
 void loop() {
@@ -126,12 +110,10 @@ void loop() {
   if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
     if (stateButtonPressed == false) {
       stateButtonPressed = true;
-      // Serial.println("ST pre: ");
     }
   } else {
     if (stateButtonPressed == true) {
       stateButtonPressed = false;
-      // Serial.println("ST rel: ");
       if(stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue == 1) {
         stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
       } else {
@@ -145,12 +127,10 @@ void loop() {
     if ((digitalRead(quickButtonsPin[i]) == HIGH)) {
       if (quickButtonPressed[i] == false) {
         quickButtonPressed[i] = true;
-        // Serial.print("QB pre: "); Serial.println(i);
       }
     } else {
       if (quickButtonPressed[i] == true) {
         quickButtonPressed[i] = false;
-        // Serial.print("QB rel: "); Serial.println(i);
         updateQuickButtonsState(quickButtons, stateOfAttributes, i);
       }
     }

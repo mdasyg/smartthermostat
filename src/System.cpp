@@ -224,21 +224,6 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
     }
   }
 
-  // // now save them on EEPROM
-  // unsigned int systemDataStructuresEepromAddressStartTmp = systemDataStructuresEepromAddressStart;
-  // byte i;
-  // for (i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-  //   systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, stateOfAttributes[i]);
-  // }
-  // for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
-  //   systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, quickButtons[i]);
-  // }
-  // for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
-  //   systemDataStructuresEepromAddressStartTmp += EEPROM_writeAnything(systemDataStructuresEepromAddressStartTmp, schedules[i]);
-  // }
-  //
-  // EEPROM.write(0, 1); // indicate eeprom initialization
-
 }
 
 // void printDigits(int digits) {
