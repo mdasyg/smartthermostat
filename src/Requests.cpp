@@ -128,7 +128,7 @@ void sendDeviceStatsUpdateToApplicationServer(EthernetClient &ethClient, const c
   for (i=0; i<4; i++) {
     prepareHttpRequestBuffer(postRequestData,itoa(ipAddress[i], tempBuf, 10));
     if (i !=3) {
-      prepareHttpRequestBuffer(postRequestData,".");
+      prepareHttpRequestBuffer(postRequestData, ".");
     }
   }
 
@@ -213,7 +213,7 @@ int httpResponseReader(EthernetClient &ethClient) {
     JsonObject& root = jsonBuffer.parseObject(ethClient);
 
     if (!root.success()) {
-      Serial.println(F("parseObject() failed"));
+      Serial.println(F("parseObject fail"));
       return -1;
     }
 
