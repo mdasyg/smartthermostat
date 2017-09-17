@@ -3,9 +3,9 @@
 <div id="get-device-status-info" data-url="<%= device_url(@device.uid) %>"></div>
 
 <div class="well">
-  <h1>Overview</h1>
+  <h1>Overview for the device:</h1>
   <h1>
-    <small><%= @device.name %> @  <%= @device.location %></small>
+    <small><%= @device.name %> @ <%= @device.location %></small>
   </h1>
   <h4>Page content auto-updates
     every <%= Rails.application.secrets.configs[:device_detail_show_view_update_interval_in_seconds] %>

@@ -26,7 +26,7 @@
 
     <div class="row">
 
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="form-group">
           <%= device_form.label :name %>
           <%= device_form.text_field :name, class: 'form-control' %>
@@ -40,12 +40,19 @@
         </div>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="form-group">
           <%= device_form.label :type_c_id %>
           <%= device_form.select(:type_c_id, {}, { include_blank: '- Select type -' }, { class: 'form-control' }) do %>
             <% options_for_select(@types, device.type_c_id) %>
           <% end %>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-group">
+          <%= device_form.label :number_of_schedules %>
+          <%= device_form.text_field :number_of_schedules, class: 'form-control' %>
         </div>
       </div>
 

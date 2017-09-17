@@ -1,5 +1,5 @@
 class Device < ApplicationRecord
-  has_secure_token :access_token
+  has_secure_token(:access_token)
 
   TYPES = {
       SMART_THERMOSTAT: { ID: 1, LABEL: 'Smart Thermostat' },
@@ -11,10 +11,10 @@ class Device < ApplicationRecord
       EMAIL_SEND: 1
   }
 
-  validates :name, :location, presence: true
+  validates :name, :location, :number_of_schedules, presence: true
 
   before_create do
-    n        = 18 # Take this from project settings
+    n        = 15 # Take this from project settings
     self.uid = rand((10**(n - 1))..(10**n)) # make something to add error if exist something....
   end
 

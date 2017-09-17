@@ -75,10 +75,14 @@
     <%= render partial: '/actions/action_form', locals: { actions: quick_button.actions, prefix_for_subform: prefix_for_subform } %>
   </div>
 
+  <hr>
+
   <div class="actions">
     <%= quick_button_form.submit %>
   </div>
 <% end %>
+
+<hr>
 
 <div id="quick-button-subforms-templates" class="hidden">
   <div class="quick-button-action-template">

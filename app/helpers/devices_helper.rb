@@ -25,7 +25,7 @@ module DevicesHelper
       puts schedule_event
       puts schedule_event_idx
       schedules_data_to_send << { start: schedule_event.schedule.start_datetime.time.to_i, end: schedule_event.schedule.end_datetime.time.to_i, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
-      if schedule_event_idx == (2-1)
+      if schedule_event_idx == (device.number_of_schedules-1)
         break
       end
     end
