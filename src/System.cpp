@@ -4,6 +4,7 @@
 
 #include "DeviceConfigs.h"
 #include "System.h"
+#include "Schedule.h"
 #include "QuickButtons.h"
 #include "EEPROMAnything.h"
 
@@ -93,7 +94,9 @@ void setDeviceAttributesValue(attributeSettings actions[], deviceAttribute state
         valueToSet = actions[i].endSetValue;
       }
       idx = actions[i].deviceAttributeIndex;
-      stateOfAttributes[idx].setValue = valueToSet;
+      if (stateOfAttributes[idx].setValue != valueToSet) {
+        stateOfAttributes[idx].setValue = valueToSet;
+      }
     }
   }
 }
@@ -107,7 +110,7 @@ void setAction(attributeSettings &action, byte deviceAttributeIndex, float start
 
 void readUriFromFlash(const char src[], char buf[]) {
   if (strlen_P(src) > FLASH_READ_BUFFER_MAX_SIZE) {
-    Serial.println(F("Cannot read from flash, size limit reached"));
+    // Serial.println(F("Cannot read from flash, size limit reached"));
     while(true);
   }
 
@@ -127,7 +130,7 @@ void readUriFromFlash(const char src[], char buf[]) {
   buf[buf_index] = '\0';
 
   if (buf_index > FLASH_READ_BUFFER_MAX_SIZE) {
-    Serial.println(F("Cannot read from flash, size limit reached"));
+    // Serial.println(F("Cannot read from flash, size limit reached"));
     while(true);
   }
 
@@ -146,9 +149,6 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   if(root.containsKey("da")) {
     byte index = root["da"]["idx"];
     stateOfAttributes[index].id = root["da"]["id"];
-    // if (strlen(root["da"]["name"]) > 0) {
-    //   strcpy(stateOfAttributes[index].name, root["da"]["name"]);
-    // }
     if (strlen(root["da"]["set"]) > 0) {
       stateOfAttributes[index].setValue = root["da"]["set"];
     }
@@ -220,9 +220,7 @@ void updateAppropriateEntityFromJsonResponse(byte *payload) {
   if (root.containsKey("sc_del")) {
     byte i;
     for (i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
-      free(schedules[i].actions);
-      schedules[i].isActive = false;
-      schedules[i].isInitialized = false;
+      disableSchedule(schedules, stateOfAttributes, i);
     }
   }
 

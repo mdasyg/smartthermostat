@@ -40,10 +40,8 @@ bool stateButtonPressed = false;
 bool quickButtonPressed[NUMBER_OF_QUICK_BUTTONS] = {false, false, false};
 // help vars
 bool isQuickButtonActive = false;
-
 time_t lastHeartbeatTimestamp = now();
 long unsigned int loop_counter = 0;
-
 byte i;
 
 void setup() {
@@ -93,7 +91,7 @@ void setup() {
   sendHttpGetRequest(ethClient, flashReadBuffer, "t=all");
 
   // watchdog enable
-  // wdt_enable(WDT_TIMEOUT_TIME);
+  wdt_enable(WDT_TIMEOUT_TIME);
   wdt_reset(); // seems to need that, because restart happened before reaching the end of the first loop.
 
   // initialize led status to 'all of' to indicate device init complete
@@ -197,10 +195,10 @@ void loop() {
   // ##### HEART BEAT DEVICE STATUSES ##########################################
   // loop_counter++;
   // byte i,j;
-  if (now() - lastHeartbeatTimestamp >= 3) {
-    //   Serial.println(now());
+  // if (now() - lastHeartbeatTimestamp >= 5) {
+      // Serial.println(now());
     //   Serial.print(F("Loop count: ")); Serial.println(loop_counter);
-      Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+      // Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
     //
     // // Quick Buttons
     // for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
@@ -250,8 +248,8 @@ void loop() {
     // Serial.println();
 
     //   loop_counter = 0;
-    lastHeartbeatTimestamp = now();
-  }
+    // lastHeartbeatTimestamp = now();
+  // }
   // ##### HEART BEAT DEVICE STATUSES ##########################################
 
   wdt_reset();

@@ -7,6 +7,7 @@
 
 extern bool isQuickButtonActive;
 
+void powerOffSchedule(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex);
 void updateQuickButtonsState(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex);
 void checkQuickButtonsStatus(quickButton quickButtons[], deviceAttribute stateOfAttributes[]);
 void disableQuickButton(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex);

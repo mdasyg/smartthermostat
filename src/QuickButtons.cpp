@@ -3,16 +3,18 @@
 #include "QuickButtons.h"
 #include "System.h"
 
+void powerOffSchedule(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex) {
+  setDeviceAttributesValue(quickButtons[quickButtonIndex].actions, stateOfAttributes, false);
+  ledStatusShiftRegisterHandler(quickButtonLedIndex[quickButtonIndex], LOW);
+  quickButtons[quickButtonIndex].isActive = false;
+  isQuickButtonActive = false;
+}
+
 void updateQuickButtonsState(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex) {
   if (quickButtons[quickButtonIndex].isInitialized == true) {
     if (quickButtons[quickButtonIndex].isActive == true) {
-      // Serial.print("Disable QB: "); Serial.println(quickButtonIndex);
-      setDeviceAttributesValue(quickButtons[quickButtonIndex].actions, stateOfAttributes, false);
-      ledStatusShiftRegisterHandler(quickButtonLedIndex[quickButtonIndex], LOW);
-      quickButtons[quickButtonIndex].isActive = false;
-      isQuickButtonActive = false;
+      powerOffSchedule(quickButtons, stateOfAttributes, quickButtonIndex);
     } else {
-      // Serial.print("Enabling QB: "); Serial.println(quickButtonIndex);
       byte i;
       for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
         quickButtons[i].isActive = false;
@@ -23,8 +25,6 @@ void updateQuickButtonsState(quickButton quickButtons[], deviceAttribute stateOf
       ledStatusShiftRegisterHandler(quickButtonLedIndex[quickButtonIndex], HIGH);
       quickButtons[quickButtonIndex].isActive = true;
       isQuickButtonActive = true;
-      Serial.println(quickButtons[quickButtonIndex].activiationTimeTimestampInMilliSeconds);
-      Serial.println(quickButtons[quickButtonIndex].duration);
     }
   }
 }
@@ -51,10 +51,7 @@ void checkQuickButtonsStatus(quickButton quickButtons[], deviceAttribute stateOf
 
 void disableQuickButton(quickButton quickButtons[], deviceAttribute stateOfAttributes[], byte quickButtonIndex) {
   if (quickButtons[quickButtonIndex].isActive == true) {
-    setDeviceAttributesValue(quickButtons[quickButtonIndex].actions, stateOfAttributes, false);
-    ledStatusShiftRegisterHandler(quickButtonLedIndex[quickButtonIndex], LOW);
-    quickButtons[quickButtonIndex].isActive = false;
-    isQuickButtonActive = true;
+    powerOffSchedule(quickButtons, stateOfAttributes, quickButtonIndex);
   }
   quickButtons[quickButtonIndex].isInitialized = false;
   free(quickButtons[quickButtonIndex].actions);

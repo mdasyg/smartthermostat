@@ -25,7 +25,7 @@ const byte QUICK_BUTTON_2_INDEX = 1;
 const byte QUICK_BUTTON_3_INDEX = 2;
 
 // schedules
-const byte MAX_NUMBER_OF_SCHEDULES = 2;
+const byte MAX_NUMBER_OF_SCHEDULES = 4;
 
 // mqtt ifno
 const char MQTT_USERNAME[] = "";

@@ -7,6 +7,8 @@
 
 extern char flashReadBuffer[];
 
+void powerOffSchedule(schedule schedules[], deviceAttribute stateOfAttributes[], byte scheduleIndex);
 void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], deviceAttribute stateOfAttributes[]);
+void disableSchedule(schedule schedules[], deviceAttribute stateOfAttributes[], byte scheduleIndex);
 
 #endif
