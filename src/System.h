@@ -19,6 +19,9 @@ const byte NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
 const byte FLASH_READ_BUFFER_MAX_SIZE = 110;
 const byte systemDataStructuresEepromAddressStart = 1;
 
+// update interval for device's attributes
+const unsigned long attrUpdateInterval = 5000L; // in milliseconds
+
 // global variables
 extern EthernetUDP udpClient;
 extern deviceAttribute stateOfAttributes[];

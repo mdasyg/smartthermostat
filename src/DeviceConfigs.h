@@ -27,9 +27,6 @@ const byte QUICK_BUTTON_3_INDEX = 2;
 // schedules
 const byte MAX_NUMBER_OF_SCHEDULES = 4;
 
-// update interval for device's attributes
-const unsigned long attrUpdateInterval = 10000L; // in milliseconds
-
 // application server information
 const char applicationServerUrl[] = "home-auto.eu";
 const unsigned int applicationServerPort = 8080; // to unsigned anevazei poly thn xrhsh tis flash, gt?
