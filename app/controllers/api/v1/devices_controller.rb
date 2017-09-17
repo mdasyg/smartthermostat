@@ -13,7 +13,7 @@ module Api
       # POST /devices/1/stats_update.json
       def stats_update
         device_uid = @device.uid
-        stats_info = params.except(:controller, :action, :uid)
+        stats_info = params.except(:controller, :action, :uid, :tk)
 
         stats_info.each do |key, value|
           device_stat = DeviceStat.where(device_uid: device_uid, stat_name: key).take

@@ -2,7 +2,7 @@ module DevicesHelper
 
   def send_new_schedule_table_to_device(device, mqtt_client)
     # Find the beggining and end of this day
-    current_time = Time.current
+    current_time = Time.now
     day_end      = current_time.end_of_day
 
     # acquire one time events for this day
@@ -10,37 +10,111 @@ module DevicesHelper
     query_string += ' OR '
     query_string += '(schedules.end_datetime BETWEEN :current_time AND :day_end)'
     query_string += ' OR '
-    query_string += '(schedules.start_datetime <= :current_time AND :day_end <= schedules.end_datetime)'
+    query_string += '(schedules.start_datetime <= :current_time AND schedules.end_datetime >= :day_end)'
     query_params = {
-        current_time: current_time.time.to_formatted_s(:db),
-        day_end:      day_end.time.to_formatted_s(:db)
+        current_time: current_time.to_time.to_formatted_s(:db),
+        day_end:      day_end.to_time.to_formatted_s(:db)
     }
 
-    device_schedule_events_from_single_scheules = device.schedule_events.joins(:schedule).where(schedules: { is_recurrent: false }).where(query_string, query_params).order('schedules.end_datetime, schedules.priority')
+    device_schedule_events_from_single_time_schedules = device.schedule_events.joins(:schedule).where(schedules: { is_recurrent: false }).where(query_string, query_params).order('schedules.start_datetime, schedules.priority')
 
-    device_schedule_events_from_single_scheules_count = device_schedule_events_from_single_scheules.size-1
+    puts device_schedule_events_from_single_time_schedules.inspect
 
-    schedules_data_to_send = []
-    device_schedule_events_from_single_scheules.each_with_index do |schedule_event, schedule_event_idx|
-      puts schedule_event
-      puts schedule_event_idx
-      schedules_data_to_send << { start: schedule_event.schedule.start_datetime.time.to_i, end: schedule_event.schedule.end_datetime.time.to_i, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
-      if schedule_event_idx == (device.number_of_schedules-1)
-        break
+    schedule_data_to_sort       = []
+    left_over_events            = []
+    next_schedule_event_checked = false
+    device_schedule_events_from_single_time_schedules.each do |schedule_event|
+
+      puts schedule_event.inspect
+
+      if current_time > schedule_event.schedule.start_datetime && current_time < schedule_event.schedule.end_datetime
+        schedule_data_to_sort << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+      else
+        if !next_schedule_event_checked
+          schedule_data_to_sort.each do |schedule_data|
+            if schedule_event.schedule.start_datetime < schedule_data[:end]
+              schedule_data_to_sort << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+              next_schedule_event_checked = true
+            end
+            if !next_schedule_event_checked
+              left_over_events << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+              next_schedule_event_checked = true
+            end
+          end
+        else
+          left_over_events << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+        end
       end
     end
 
+    puts "TO SORT"
+    schedule_data_to_sort.each do |sc|
+      puts sc.inspect
+    end
+
+    puts "LEFT OVERS"
+    puts left_over_events.inspect
+
+
+    schedule_data_sorted = schedule_data_to_sort.sort do |sc1, sc2|
+      sc1[:priority] <=> sc2[:priority]
+    end
+
+    left_over_events.each do |left_over_sc|
+      schedule_data_sorted << left_over_sc
+    end
+
+    puts "SORTED?"
+    schedule_data_sorted.each do |sc|
+      puts sc.inspect
+    end
+
+
     # Do something for the recurrent events
+    if schedule_data_sorted.size < device.number_of_schedules
+      # acquire recurrent events for this day
+
+      #
+      # query_string = '(schedules.start_datetime BETWEEN :current_time AND :day_end)'
+      # query_string += ' OR '
+      # query_string += '(schedules.end_datetime BETWEEN :current_time AND :day_end)'
+      # query_string += ' OR '
+      # query_string += '(schedules.start_datetime <= :current_time AND schedules.end_datetime >= :day_end)'
+      # query_params = {
+      #     current_time: current_time.to_time.to_formatted_s(:db),
+      #     day_end:      day_end.to_time.to_formatted_s(:db)
+      # }
+
+      device_schedule_events_from_recurrent_schedules = device.schedule_events.joins(:schedule).where(schedules: { is_recurrent: true }).order('schedules.created_at, schedules.priority')
+
+
+      puts "RECURRENT"
+      puts device_schedule_events_from_recurrent_schedules.inspect
+
+      device_schedule_events_from_recurrent_schedules.each do |schedule_event|
+        frequency = nil
+        if schedule_event.schedule.recurrence_unit == Schedule::REPEAT_EVERY[:DAY][:ID]
+          frequency = schedule_event.schedule.recurrence_frequency.day.to_i
+        elsif schedule_events.chedule.recurrence_unit == Schedule::REPEAT_EVERY[:WEEK][:ID]
+          frequency = schedule_event.schedule.recurrence_frequency.week.to_i
+        end
+        schedule_data_sorted << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: frequency, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+      end
+
+    end
 
     # First, tell the device to delete the schedules that already had, and wait for the new ones
     payload = ActiveSupport::JSON.encode({ sc_del: :all })
     mqtt_client.publish(device.uid.to_s, payload, false, 0)
 
     # Secondly, send the new schedules to the device
-    schedules_data_to_send.each_with_index do |schedule_data, sc_idx|
+
+
+    schedule_data_sorted.each_with_index do |schedule_data, sc_idx|
       puts "EDW #{sc_idx}"
       schedule_event_actions = schedule_data[:actions]
-      payload                = ActiveSupport::JSON.encode({ sc: { idx: sc_idx, s: schedule_data[:start], e: schedule_data[:end], r: schedule_data[:recurrent], p: schedule_data[:priority] } })
+      payload                = ActiveSupport::JSON.encode({ sc: { idx: sc_idx, s: schedule_data[:start].time.to_i, e: schedule_data[:end].time.to_i, r: schedule_data[:recurrent], p: schedule_data[:priority] } })
+      puts payload
       mqtt_client.publish(device.uid.to_s, payload, false, 0)
       schedule_event_actions.each do |schedule_event_action|
         payload = ActiveSupport::JSON.encode(
@@ -55,8 +129,10 @@ module DevicesHelper
         )
         mqtt_client.publish(device.uid.to_s, payload, false, 0)
       end
+      if sc_idx == (device.number_of_schedules-1)
+        break
+      end
     end
-
   end
 
   def get_min_value_text(device_attribute_primitive_type, device_attribute_value)
