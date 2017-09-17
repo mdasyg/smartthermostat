@@ -53,6 +53,13 @@
 
 1. Set your developments' machines ips in the web-console configuration on the secrets as an array of strings. `e.g ['192.168.1.2', '192.168.1.3']`
 
+# Web server setup
+
+1. In order to serve a rails app through apache or nginx you must set:
+
++ `home-automation-server/public` as document root
++ the environment to run on with `RailsEnv ...` directive
+
 # Notes
 
 + In production machines run `rake assets:precompile` in order to precompile assets and work properly
