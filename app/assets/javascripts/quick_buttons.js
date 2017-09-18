@@ -32,8 +32,8 @@ function initSelectDeviceForQuickButtontSelect2() {
 }
 
 function selectQuickButtonDevice(deviceAttributesData) {
-    let $actionsContainer = $quickButtonEventActionsContainer.find('.actions-container').empty();
-    let prefix = $quickButtonForm.find('.quick-button-event-form-prefix-for-subform').data('prefix');
+    var $actionsContainer = $quickButtonEventActionsContainer.find('.actions-container').empty();
+    var prefix = $quickButtonForm.find('.quick-button-event-form-prefix-for-subform').data('prefix');
     deviceAttributesData.forEach(function (deviceAttributeData) {
         addNewAction($actionsContainer, $quickButtonEventActionSubFormTemplate, prefix, deviceAttributeData);
     });
@@ -48,7 +48,7 @@ $(document).on('turbolinks:load', function () {
     $quickButtonDeviceSelector = $selectDeviceForQuickButtonContainer.find('.quick-button-device-selector');
 
     $quickButtonDeviceSelector.on('select2:select', function () {
-        let deviceUid = $quickButtonDeviceSelector.val();
+        var deviceUid = $quickButtonDeviceSelector.val();
         getDeviceAttributes(deviceUid, 0, selectQuickButtonDevice);
     });
 

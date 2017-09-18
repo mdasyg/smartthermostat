@@ -45,11 +45,11 @@ function initializeFullCalendar() {
 }
 
 function deleteSchedule($thisClick) {
-    let url = null;
-    let scheduleId = $scheduleForm.find('#schedule_id').val();
+    var url = null;
+    var scheduleId = $scheduleForm.find('#schedule_id').val();
     if (scheduleId) {
         url = $scheduleForm.data('delete-url');
-        let data = {
+        var data = {
             scheduleId: scheduleId
         };
         url = replaceUrlParams(url, data);
@@ -57,7 +57,7 @@ function deleteSchedule($thisClick) {
         console.log('Error, schedule id missing.');
         return false;
     }
-    let request = $.ajax({
+    var request = $.ajax({
         url: url,
         type: 'delete',
         dataType: 'json'
@@ -97,7 +97,7 @@ $(document).on('turbolinks:load', function () {
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
-        let $thisClick = $(this);
+        var $thisClick = $(this);
         if ($thisClick.hasClass('active')) {
             if ($thisClick.hasClass('delete-schedule')) {
                 deleteSchedule($thisClick);

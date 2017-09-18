@@ -2,20 +2,20 @@ var $deviceAttributeTemplate = null;
 var $deviceAttributesContainer = null;
 
 function addNewDeviceAttribute($thisClick) {
-    let lastDeviceAttributeDomId = parseInt($deviceAttributesContainer.find('.device-attribute').last().attr('data-index'));
+    var lastDeviceAttributeDomId = parseInt($deviceAttributesContainer.find('.device-attribute').last().attr('data-index'));
     if (!lastDeviceAttributeDomId) {
         lastDeviceAttributeDomId = 0;
     }
-    let nextDeviceAttributeDomId = lastDeviceAttributeDomId + 1;
+    var nextDeviceAttributeDomId = lastDeviceAttributeDomId + 1;
 
-    let $newDeviceAttribute = $deviceAttributeTemplate.clone();
+    var $newDeviceAttribute = $deviceAttributeTemplate.clone();
 
     $newDeviceAttribute.attr('data-index', nextDeviceAttributeDomId);
 
-    let propertyName = null;
-    let propertyId = null;
+    var propertyName = null;
+    var propertyId = null;
 
-    let $newDeviceAttributeInputs = $newDeviceAttribute.find('input');
+    var $newDeviceAttributeInputs = $newDeviceAttribute.find('input');
     $newDeviceAttributeInputs.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -27,7 +27,7 @@ function addNewDeviceAttribute($thisClick) {
         }
     });
 
-    let $newDeviceAttributeSelects = $newDeviceAttribute.find('select');
+    var $newDeviceAttributeSelects = $newDeviceAttribute.find('select');
     $newDeviceAttributeSelects.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -48,7 +48,7 @@ $(document).on('turbolinks:load', function () { // we need this because of turbo
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
-        let $thisClick = $(this);
+        var $thisClick = $(this);
         // let thisRowId = ($thisClick.closest('.grid-row').data('id')) ? $thisClick.closest('.grid-row').data('id') : null;
         if ($thisClick.hasClass('active')) {
             if ($thisClick.hasClass('add-new-device-attribute')) {
