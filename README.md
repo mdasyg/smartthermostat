@@ -42,9 +42,9 @@
 + There some tasks that need to be run repeatedly, so you must setup cron for them
 
 ```cron
-*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=development smart_thermostat:history_sample
+*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=production smart_thermostat:history_sample
 # One more here
-*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=development smart_thermostat:send_notification_for_offline_devices
+*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=production smart_thermostat:send_notification_for_offline_devices
 ```
 
 + To get more info about the tasks, look at the `lib/tasks`
