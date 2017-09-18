@@ -62,7 +62,7 @@
 
 # Notes
 
-+ In production machines run `rake assets:precompile` in order to precompile assets and work properly
++ In production machines run `RAILS_ENV=production rake assets:precompile` in order to precompile assets and work properly
 
 + When using modules (e.g x-editable, bootstrap) because of assets some url/links doesn't work, so you have to override them (see application.scss for example)
 
@@ -97,5 +97,9 @@ end
 + [Rails internals](http://andrewberls.com/blog/post/rails-from-request-to-response-part-1--introduction)
 
 + [Rails init](http://guides.rubyonrails.org/initialization.html)
+
++ [UglifyJS online](https://skalman.github.io/UglifyJS-online/)
+
++ [Rails assets ugilifier](https://stackoverflow.com/questions/12574977/rake-assetsprecompile-gives-punc-error/38228770)
 
 + Wireframe [my-thesis-wireframe](https://app.mockflow.com/index.jsp?editor=on&publicid=Da8f54e4c4cd2adeb757a8f5723ca6d64&projectid=D09b31f58b04a901571e0d79f7f8e17c0&perm=Owner&template=)
