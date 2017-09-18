@@ -1,16 +1,16 @@
 function addNewAction($containerToAppendActions, $actionTemplate, prefixForActionSubForm, actionData) {
-    let lastActionDomId = parseInt($containerToAppendActions.find('.action').last().attr('data-index'));
+    var lastActionDomId = parseInt($containerToAppendActions.find('.action').last().attr('data-index'));
     if (!lastActionDomId) {
         lastActionDomId = 0;
     }
-    let nextActionDomId = lastActionDomId + 1;
+    var nextActionDomId = lastActionDomId + 1;
 
-    let $newAction = $actionTemplate.clone();
+    var $newAction = $actionTemplate.clone();
 
     $newAction.attr('data-index', nextActionDomId);
 
-    let propertyName = null;
-    let propertyId = null;
+    var propertyName = null;
+    var propertyId = null;
 
     $actionStartValueContainer = $newAction.find('.action-device-attribute-start-value-container');
     if (actionData.device_attribute_primitive_type_c_id == deviceAttributePrimitiveTypesConstants['BOOL']['ID']) {
@@ -26,7 +26,7 @@ function addNewAction($containerToAppendActions, $actionTemplate, prefixForActio
         $actionEndValueContainer.find('.action-device-attribute-end-value-bool').remove();
     }
 
-    let $newActionInputs = $newAction.find('input');
+    var $newActionInputs = $newAction.find('input');
     $newActionInputs.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -44,7 +44,7 @@ function addNewAction($containerToAppendActions, $actionTemplate, prefixForActio
         }
     });
 
-    let $newActionSelects = $newAction.find('select');
+    var $newActionSelects = $newAction.find('select');
     $newActionSelects.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -77,7 +77,7 @@ function addNewAction($containerToAppendActions, $actionTemplate, prefixForActio
 $(document).on('turbolinks:load', function () {
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
-        let $thisClick = $(this);
+        var $thisClick = $(this);
         // var thisRowId = ($thisClick.closest('.grid-row').data('id')) ? $thisClick.closest('.grid-row').data('id') : null;
         if ($thisClick.hasClass('active')) {
             if ($thisClick.hasClass('add-new-action')) {
