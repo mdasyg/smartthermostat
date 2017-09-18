@@ -109,7 +109,4 @@ Rails.application.configure do
       port: Rails.application.secrets.site[:port],
   }
 
-  ##### whitelist my ip for web-console
-  config.web_console.whitelisted_ips = Rails.application.secrets.configs[:web_console_whitelist_ips]
-
 end
