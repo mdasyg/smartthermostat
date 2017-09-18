@@ -3,6 +3,4 @@ class ApplicationController < ActionController::Base
 
   VERSION = '0.0.1'
 
-  SMART_THERMOSTAT_SAMPLE_RATE = 5
-
 end

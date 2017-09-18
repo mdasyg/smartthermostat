@@ -49,7 +49,7 @@ $(document).on('turbolinks:load', function () {
 
     $quickButtonDeviceSelector.on('select2:select', function () {
         var deviceUid = $quickButtonDeviceSelector.val();
-        getDeviceAttributes(deviceUid, 0, selectQuickButtonDevice);
+        getDeviceAttributes(deviceUid, 0, selectQuickButtonDevice, {});
     });
 
     initSelectDeviceForQuickButtontSelect2();

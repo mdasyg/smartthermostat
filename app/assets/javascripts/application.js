@@ -29,8 +29,8 @@ var deviceAttributeDirectionConstants = null;
 var deviceAttributePrimitiveTypesConstants = null;
 var deviceAttributeBoolValuesData = null;
 
-function replaceUrlParams(url, data = {}) {
-    if (!url) {
+function replaceUrlParams(url, data) {
+    if (!url || !data) {
         return false;
     }
 
@@ -47,7 +47,7 @@ function replaceUrlParams(url, data = {}) {
 function displayErrors($formToAttachErrors, errorMessages) {
     $formToAttachErrors.find('#errors-explanation').remove();
 
-    let $errorsDomBlock = $('<div/>').attr('id', 'errors-explanation');
+    var $errorsDomBlock = $('<div/>').attr('id', 'errors-explanation');
     $errorsDomBlock.append($('<h2/>').text('Erorrs'));
     $errorsDomBlock.append('<ul/>');
 
@@ -59,7 +59,6 @@ function displayErrors($formToAttachErrors, errorMessages) {
 }
 
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
-
     deviceDetailShowViewUpdateIntervalInSeconds = $('meta[name="device-detail-show-view-update-interval-in-seconds"]').attr('content');
     deviceAttributeDirectionConstants = $('#device-attribute-direction-constants').data('constants');
     deviceAttributePrimitiveTypesConstants = $('#device-attribute-primitive-types-constants').data('constants');
@@ -75,5 +74,4 @@ $(document).on("turbolinks:load", function () { // we need this because of turbo
             }
         }
     });
-
 });

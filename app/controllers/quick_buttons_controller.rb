@@ -1,4 +1,5 @@
 class QuickButtonsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_quick_button, only: [:show, :edit, :update, :destroy]
 
   # GET /quick_buttons

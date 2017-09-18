@@ -2,7 +2,7 @@ var $deviceForm = null;
 
 function updateDevicePage(data) {
     $('#device-status-indicator-text').text(data.last_contact_text);
-    let $deviceAttributeElement = null;
+    var $deviceAttributeElement = null;
     data.device_attributes.forEach(function (deviceAttributeData) {
         $deviceAttributeElement = $('#device-attributes-container .device-attribute[data-id="' + deviceAttributeData.id + '"]');
         $deviceAttributeElement.find('.device-attribute-name').text((deviceAttributeData.name) ? deviceAttributeData.name : '-');
@@ -39,16 +39,16 @@ function initSmartThermostatDeviceAttributesSourceSelectiorSelect2() {
 }
 
 function getDeviceInfo() {
-    let url = $('#get-device-status-info').data('url');
+    var url = $('#get-device-status-info').data('url');
     if (!url) {
         return false;
     }
 
     // attributes request
-    let request = $.ajax({
+    var request = $.ajax({
         url: url,
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
         },
         type: 'get',
         dataType: 'json',
@@ -67,18 +67,18 @@ function getDeviceInfo() {
     });
 }
 
-function getDeviceAttributes(deviceUid, returnAllAttributes, callback, extraParamsToCallback = {}) {
-    let data = {
+function getDeviceAttributes(deviceUid, returnAllAttributes, callback, extraParamsToCallback) {
+    var data = {
         deviceUid: deviceUid
     };
-    let url = $('#get-device-attributes-list-url').data('url');
+    var url = $('#get-device-attributes-list-url').data('url');
     url = replaceUrlParams(url, data);
 
     // attributes request
-    let request = $.ajax({
+    var request = $.ajax({
         url: url,
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
         },
         type: 'get',
         dataType: 'json',
@@ -88,7 +88,7 @@ function getDeviceAttributes(deviceUid, returnAllAttributes, callback, extraPara
     });
     request.done(function (responseData, textStatus, jqXHR) {
         if (responseData.result == 'ok') {
-            let deviceAttributesData = [];
+            var deviceAttributesData = [];
             responseData.data.forEach(function (deviceAttribute) {
                 deviceAttributesData.push({
                     device_attribute_id: deviceAttribute.id,
@@ -110,16 +110,15 @@ function getDeviceAttributes(deviceUid, returnAllAttributes, callback, extraPara
 }
 
 function updateSmartThermostatDeviceAttributesSelectOptions(deviceAttributes, extraParams) {
-    let $smartThermostatDeviceAttributeSelector = extraParams.closestRow.find('select.smart-thermostat-device-attribute-selector');
+    var $smartThermostatDeviceAttributeSelector = extraParams.closestRow.find('select.smart-thermostat-device-attribute-selector');
 
     $smartThermostatDeviceAttributeSelector.find('option').remove();
 
-    let $newSmartThermostatDeivceAttributeOption = null;
+    var $newSmartThermostatDeivceAttributeOption = null;
     deviceAttributes.forEach(function (deviceAttribute) {
         $newSmartThermostatDeivceAttributeOption = new Option(deviceAttribute.device_attribute_name, deviceAttribute.device_attribute_id);
         $smartThermostatDeviceAttributeSelector.append($newSmartThermostatDeivceAttributeOption);
     });
-
 }
 
 $(document).on("turbolinks:load", function () { // we need this because of turbolinks
@@ -133,8 +132,7 @@ $(document).on("turbolinks:load", function () { // we need this because of turbo
     }
 
     $('.smart-thermostat-device-attributes-source-selector').on('select2:select', function () {
-        let deviceUid = $(this).val();
+        var deviceUid = $(this).val();
         getDeviceAttributes(deviceUid, 1, updateSmartThermostatDeviceAttributesSelectOptions, {closestRow: $(this).closest('.row')});
     });
-
 });
