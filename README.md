@@ -83,6 +83,15 @@ location / {
 
 + For time, use the `Time.current`, for getting timestamp append `.to_i`
 
++ rails `ugilifier` gem at the time of writing, does not support es6 yet. You can use the following code, in rails console, to help you find which files causes errors
+```rails
+JS_PATH = "app/assets/javascripts/**/*.js"; 
+Dir[JS_PATH].each do |file_name|
+  puts "\n#{file_name}"
+  puts Uglifier.compile(File.read(file_name))
+end
+```
+
 # Resources
 
 + [Rails internals](http://andrewberls.com/blog/post/rails-from-request-to-response-part-1--introduction)

@@ -51,7 +51,6 @@ function initScheduleDatetimePickers() {
         sideBySide: true,
         defaultDate: moment()
     });
-
 }
 
 function loadScheduleValues(data) {
@@ -72,7 +71,7 @@ function loadScheduleValues(data) {
 
     data.schedule_events.forEach(function (scheduleEvent) {
         // separate schedule event data from actions
-        let scheduleEventData = {
+        var scheduleEventData = {
             id: scheduleEvent.id,
             device_name: scheduleEvent.device_name,
             device_uid: scheduleEvent.device_uid
@@ -85,7 +84,7 @@ function resetScheduleForm() {
     $scheduleForm.trigger('reset');
     $scheduleForm.find('#schedule_id').val('');
     $scheduleForm.find('#schedule_original_schedule').val('');
-    $scheduleForm.find('#recurrent-entries').addClass('hidden')
+    $scheduleForm.find('#recurrent-entries').addClass('hidden');
     $scheduleEventsContainer.empty();
     $scheduleEventDeviceSelector.val(null).trigger('change');
     $overlappingSchedulesContainer.addClass('hidden');
@@ -94,17 +93,17 @@ function resetScheduleForm() {
 }
 
 function addNewScheduleEventAction($scheduleEventArea, scheduleEventActionData) {
-    let $scheduleEventActionsContainer = $scheduleEventArea.find('.actions-container');
-    let prefixForScheduleEventActionSubform = $scheduleEventArea.find('.schedule-event-form-prefix-for-subform').data('prefix');
+    var $scheduleEventActionsContainer = $scheduleEventArea.find('.actions-container');
+    var prefixForScheduleEventActionSubform = $scheduleEventArea.find('.schedule-event-form-prefix-for-subform').data('prefix');
 
-    let scheduleEventIndex = $scheduleEventArea.data('index');
+    var scheduleEventIndex = $scheduleEventArea.data('index');
     prefixForScheduleEventActionSubform = prefixForScheduleEventActionSubform.replace('SCHEDULE_EVENT_INDEX', scheduleEventIndex);
 
     addNewAction($scheduleEventActionsContainer, $scheduleEventActionSubFormTemplate, prefixForScheduleEventActionSubform, scheduleEventActionData);
 }
 
-function appendScheduleEventWithActions(dataForScheduleEventActions, dataForScheduleEvent = {}) {
-    let deviceUid = null;
+function appendScheduleEventWithActions(dataForScheduleEventActions, dataForScheduleEvent) {
+    var deviceUid = null;
     if (dataForScheduleEvent && dataForScheduleEvent.device_uid) {
         deviceUid = dataForScheduleEvent.device_uid;
     } else {
@@ -115,17 +114,17 @@ function appendScheduleEventWithActions(dataForScheduleEventActions, dataForSche
         return false;
     }
 
-    let lastScheduleEventDomId = parseInt($scheduleEventsContainer.find('.schedule-event').last().attr('data-index'));
+    var lastScheduleEventDomId = parseInt($scheduleEventsContainer.find('.schedule-event').last().attr('data-index'));
     if (!lastScheduleEventDomId) {
         lastScheduleEventDomId = 0;
     }
-    let nextScheduleEventDomId = lastScheduleEventDomId + 1;
+    var nextScheduleEventDomId = lastScheduleEventDomId + 1;
 
-    let $newScheduleEvent = $scheduleEventSubFormTemplate.clone();
+    var $newScheduleEvent = $scheduleEventSubFormTemplate.clone();
 
     $newScheduleEvent.attr('data-index', nextScheduleEventDomId);
     $newScheduleEvent.attr('data-device-uid', deviceUid);
-    let deviceName = (dataForScheduleEvent.device_name) ? dataForScheduleEvent.device_name : $scheduleEventDeviceSelector.find('option:selected').text();
+    var deviceName = (dataForScheduleEvent.device_name) ? dataForScheduleEvent.device_name : $scheduleEventDeviceSelector.find('option:selected').text();
     $newScheduleEvent.find('.schedule-event-id').val(dataForScheduleEvent.id);
     $newScheduleEvent.find('.schedule-event-device-name-placeholder').text(deviceName);
     $newScheduleEvent.find('.schedule-event-device-uid').val(deviceUid);
@@ -137,10 +136,10 @@ function appendScheduleEventWithActions(dataForScheduleEventActions, dataForSche
         $newScheduleEvent.addClass('even');
     }
 
-    let propertyName = null;
-    let propertyId = null;
+    var propertyName = null;
+    var propertyId = null;
 
-    let $newScheduleEventInputs = $newScheduleEvent.find('input');
+    var $newScheduleEventInputs = $newScheduleEvent.find('input');
     $newScheduleEventInputs.each(function () {
         propertyName = $(this).attr('name');
         if (propertyName) {
@@ -160,13 +159,13 @@ function appendScheduleEventWithActions(dataForScheduleEventActions, dataForSche
 }
 
 function addNewScheduleEvent() {
-    let deviceUid = $scheduleEventDeviceSelector.val();
+    var deviceUid = $scheduleEventDeviceSelector.val();
     if (!deviceUid) {
         alert('Please select a device.');
         return false;
     }
 
-    let deviceAlreadyExists = false;
+    var deviceAlreadyExists = false;
     $scheduleEventsContainer.find('.schedule-event').each(function () {
         if ($(this).data('device-uid') == deviceUid) {
             deviceAlreadyExists = true;
@@ -177,7 +176,7 @@ function addNewScheduleEvent() {
         return false;
     }
 
-    getDeviceAttributes(deviceUid, 0, appendScheduleEventWithActions);
+    getDeviceAttributes(deviceUid, 0, appendScheduleEventWithActions, {});
 
 }
 
@@ -192,7 +191,7 @@ function scheduleRecurrenceFieldsVisibilityToggle(event) {
 function displayOverlappingSchedules(scheduleData) {
     $overlappingSchedulesList.empty();
     scheduleData.forEach(function (schedule) {
-        let $newOverlap = $overlapScheduleTemplate.clone();
+        var $newOverlap = $overlapScheduleTemplate.clone();
         $newOverlap.find('.schedule-id').val(schedule.id);
         $newOverlap.find('.schedule-title').text(schedule.title);
         $newOverlap.find('.schedule-start-datetime').text(schedule.start_datetime);
@@ -204,20 +203,20 @@ function displayOverlappingSchedules(scheduleData) {
 }
 
 function fetchAndDisplayOverlappingEvents(scheduleId) {
-    let url = null;
+    var url = null;
     if (scheduleId) {
         url = $('#get-schedule-overlaps-url').data('url');
-        let data = {
+        var data = {
             scheduleId: scheduleId
         };
         url = replaceUrlParams(url, data);
     } else {
         return false;
     }
-    let request = $.ajax({
+    var request = $.ajax({
         url: url,
         type: 'get',
-        dataType: 'json',
+        dataType: 'json'
     });
     request.done(function (responseData, textStatus, jqXHR) {
         if (responseData.result === 'error') {
@@ -238,10 +237,10 @@ function fetchAndDisplayOverlappingEvents(scheduleId) {
 }
 
 function updateOverlapSchedulesPriorities() {
-    let overlapSchedulesWithPriorities = {overlap_schedules: []};
+    var overlapSchedulesWithPriorities = {overlap_schedules: []};
     $overlappingSchedulesList.find('.overlap-schedule').each(function (index, overlapSchedule) {
-        let scheduleId = $(overlapSchedule).find('.schedule-id').val();
-        let schedulePriority = $(overlapSchedule).find('.schedule-priority').val();
+        var scheduleId = $(overlapSchedule).find('.schedule-id').val();
+        var schedulePriority = $(overlapSchedule).find('.schedule-priority').val();
         overlapSchedulesWithPriorities['overlap_schedules'].push({
             id: scheduleId,
             priority: schedulePriority
@@ -249,11 +248,11 @@ function updateOverlapSchedulesPriorities() {
     });
 
     // get url
-    let url = $('#update-schedule-overlaps-priorities-url').data('url');
-    let request = $.ajax({
+    var url = $('#update-schedule-overlaps-priorities-url').data('url');
+    var request = $.ajax({
         url: url,
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
         },
         type: 'post',
         dataType: 'json',
@@ -275,28 +274,27 @@ function updateOverlapSchedulesPriorities() {
 }
 
 function submitScheduleForm($thisClick) {
-    let url = null;
-    let scheduleId = $scheduleForm.find('#schedule_id').val();
+    var url = null;
+    var scheduleId = $scheduleForm.find('#schedule_id').val();
     if (scheduleId) {
         url = $scheduleForm.data('update-url');
-        let data = {
+        var data = {
             scheduleId: scheduleId
         };
         url = replaceUrlParams(url, data);
     } else {
         url = $scheduleForm.data('create-url');
     }
-    let request = $.ajax({
+    var request = $.ajax({
         url: url,
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
         },
         type: (scheduleId ? 'put' : 'post'),
         dataType: 'json',
         data: $scheduleForm.serialize()
     });
     request.done(function (responseData, textStatus, jqXHR) {
-        console.log(responseData)
         if (responseData.result === 'error') {
             if (responseData.overlaps) {
                 displayOverlappingSchedules(responseData.overlaps);
@@ -311,7 +309,6 @@ function submitScheduleForm($thisClick) {
             $fullCalendar.fullCalendar('refetchEvents'); // Do this for new events also in order to bring all the events in case schedule is recurrent
             $scheduleModal.modal('hide');
         }
-
     });
     request.fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR);
@@ -332,7 +329,7 @@ $(document).on('turbolinks:load', function () {
 
     $(document.body).on('click', '.action-button', function (event) {
         event.stopPropagation();
-        let $thisClick = $(this);
+        var $thisClick = $(this);
         if ($thisClick.hasClass('active')) {
             if ($thisClick.hasClass('add-new-event-to-schedule')) {
                 addNewScheduleEvent($thisClick);
@@ -343,5 +340,4 @@ $(document).on('turbolinks:load', function () {
             }
         }
     });
-
 });
