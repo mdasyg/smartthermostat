@@ -194,8 +194,8 @@ function displayOverlappingSchedules(scheduleData) {
         var $newOverlap = $overlapScheduleTemplate.clone();
         $newOverlap.find('.schedule-id').val(schedule.id);
         $newOverlap.find('.schedule-title').text(schedule.title);
-        $newOverlap.find('.schedule-start-datetime').text(schedule.start_datetime);
-        $newOverlap.find('.schedule-end-datetime').text(schedule.end_datetime);
+        $newOverlap.find('.schedule-start-datetime').text(moment(schedule.start_datetime).format('DD/MM/YYYY HH:mm'));
+        $newOverlap.find('.schedule-end-datetime').text(moment(schedule.end_datetime).format('DD/MM/YYYY HH:mm'));
         $newOverlap.find('.schedule-priority').val(schedule.priority);
         $overlappingSchedulesList.append($newOverlap);
         $overlappingSchedulesContainer.removeClass('hidden');

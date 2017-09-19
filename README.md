@@ -81,8 +81,6 @@ location / {
 
 + Use `puts request.env.select {|k, v| k =~ /^HTTP_/}` to print out on console HTTP headers
 
-+ For time, use the `Time.current`, for getting timestamp append `.to_i`
-
 + rails `ugilifier` gem at the time of writing, does not support es6 yet. You can use the following code, in rails console, to help you find which files causes errors
 ```rails
 JS_PATH = "app/assets/javascripts/**/*.js"; 
