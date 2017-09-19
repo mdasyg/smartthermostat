@@ -113,16 +113,22 @@ class QuickButtonsController < ApplicationController
 
     begin
       @quick_button.transaction do
-        @quick_button.save
-        respond_to do |format|
-          format.html {redirect_to @quick_button, notice: 'Quick button was successfully updated.'}
-          format.json {render json: { result: :ok }}
+        if @quick_button.save
+          respond_to do |format|
+            format.html {redirect_to @quick_button, notice: 'Quick button was successfully updated.'}
+            format.json {render json: { result: :ok }}
+          end
+          # Now must send update to device from MQTT
+          if old_index_on_device != @quick_button.index_on_device
+            mqtt_destroy_quick_button(@quick_button.device_uid, old_index_on_device)
+          end
+          mqtt_send_quick_button_data()
+        else
+          respond_to do |format|
+            format.html {render :edit}
+            format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
+          end
         end
-        # Now must send update to device from MQTT
-        if old_index_on_device != @quick_button.index_on_device
-          mqtt_destroy_quick_button(@quick_button.device_uid, old_index_on_device)
-        end
-        mqtt_send_quick_button_data()
       end
     rescue Exception => e
       @quick_button.errors.add(:base, 'Cannot update')
