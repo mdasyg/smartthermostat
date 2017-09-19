@@ -213,7 +213,7 @@ class SchedulesController < ApplicationController
     if (@schedule.end_datetime <= @schedule.start_datetime)
       @schedule.errors[:end_datetime] << 'Must be bigger than start datetime'
       respond_to do |format|
-        format.html {set_schedule_recurrent_unit_list(); render :new}
+        format.html {set_schedule_recurrent_unit_list(); render :edit}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end and return
     end
@@ -327,7 +327,7 @@ class SchedulesController < ApplicationController
             mqtt_client.disconnect()
 
           else
-            format.html {set_schedule_recurrent_unit_list(); render :new}
+            format.html {set_schedule_recurrent_unit_list(); render :edit}
             format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
           end
         end
