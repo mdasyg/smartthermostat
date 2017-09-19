@@ -2,7 +2,7 @@ json.uid device.uid.to_s
 json.name device.name
 json.location device.location
 json.description device.description
-json.last_contact_text get_device_status_indication(device.last_contact_at)
+json.last_contact_text get_device_online_status(device.last_contact_at)
 
 json.device_attributes device.device_attributes.each do |device_attribute|
   json.id device_attribute.id.to_s

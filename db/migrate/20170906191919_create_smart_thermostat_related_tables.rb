@@ -15,7 +15,6 @@ class CreateSmartThermostatRelatedTables < ActiveRecord::Migration[5.1]
       t.bigint :device_uid, null: false, unsigned: true
       t.date :sample_date, null: false
       t.time :sample_time, null: false
-      t.integer :energy_mode, null: false, unsigned: true, limit: 1, comment: 'If heating, cooling or something else'
       t.integer :energy_source_status, null: false, unsigned: true, limit: 1, comment: 'Energy source working or not during the sample'
       t.integer :outside_temperature
       t.float :inside_temperature

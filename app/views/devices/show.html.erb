@@ -20,7 +20,7 @@
   <div class="panel-body">
     <div>
       <span id="device-status-indicator-text">
-        <%= get_device_status_indication(@device.last_contact_at) %>
+        <%= get_device_online_status(@device.last_contact_at) %>
       </span>
     </div>
   </div>
@@ -142,7 +142,7 @@
                       <% field_type = 'select' %>
                       <% data_source = ActiveSupport::JSON.encode(
                           [
-                              { value: '', text: 'N/A' },
+                              { value: '', text: '-' },
                               { value: DeviceAttribute::BOOL_VALUES[:MIN][:ID], text: DeviceAttribute::BOOL_VALUES[:MIN][:LABEL] },
                               { value: DeviceAttribute::BOOL_VALUES[:MAX][:ID], text: DeviceAttribute::BOOL_VALUES[:MAX][:LABEL] },
                           ]
@@ -158,7 +158,7 @@
                     </a>
                     <span><%= device_attribute.unit %></span>
                   <% else %>
-                    N/A
+                    -
                   <% end %>
                 </div>
               </div>

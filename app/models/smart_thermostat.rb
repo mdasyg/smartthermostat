@@ -1,9 +1,5 @@
 class SmartThermostat < ApplicationRecord
 
-  ENERGY_MODE = {
-      HEATING: { ID: 1, LABEL: 'Heating' }
-  }
-
   SMART_DEVICE_ATTRIBUTE_TYPES = {
       OUTSIDE_TEMPERATURE: { ID: 1, LABEL: 'Outside Temperature' },
       INSIDE_TEMPERATURE:  { ID: 2, LABEL: 'Inside Temperature' },

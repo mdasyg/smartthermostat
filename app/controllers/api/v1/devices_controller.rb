@@ -19,14 +19,14 @@ module Api
           device_stat = DeviceStat.where(device_uid: device_uid, stat_name: key).take
           if (!device_stat.nil?)
             device_stat.value          = value
-            device_stat.last_update_at = Time.current # TODO correct the time is inserted to db
+            device_stat.last_update_at = Time.now.to_formatted_s(:db)
             device_stat.save()
           else
             device_stat                = DeviceStat.new
             device_stat.device_uid     = device_uid
             device_stat.stat_name      = key
             device_stat.value          = value
-            device_stat.last_update_at = Time.current # TODO correct the time is inserted to db
+            device_stat.last_update_at = Time.now.to_formatted_s(:db)
             device_stat.save()
           end
         end
@@ -129,11 +129,17 @@ module Api
       end
 
       private def update_last_contact_time
-        @device.last_contact_at                = Time.current
+        @device.last_contact_at = Time.now.to_formatted_s(:db)
+
+        puts Time.now
+        puts Time.current
+
         @device.long_offline_time_notification = Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
         if !@device.save
           render plain: ActiveSupport::JSON.encode({ msg: 'Internal server err', res: :err }) and return
         end
+
+        puts @device.inspect
       end
 
     end

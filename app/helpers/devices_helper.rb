@@ -137,7 +137,7 @@ module DevicesHelper
 
   def get_min_value_text(device_attribute_primitive_type, device_attribute_value)
     if device_attribute_value.nil?
-      return 'N/A'
+      return '-'
     else
       if (device_attribute_primitive_type == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID])
         return DeviceAttribute::BOOL_VALUES[:MIN][:LABEL]
@@ -149,7 +149,7 @@ module DevicesHelper
 
   def get_max_value_text(device_attribute_primitive_type, device_attribute_value)
     if device_attribute_value.nil?
-      return 'N/A'
+      return '-'
     else
       if (device_attribute_primitive_type == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID])
         return DeviceAttribute::BOOL_VALUES[:MAX][:LABEL]
@@ -159,11 +159,11 @@ module DevicesHelper
     end
   end
 
-  def get_device_status_indication(device_last_contact_time)
+  def get_device_online_status(device_last_contact_time)
     if device_last_contact_time.nil?
       return 'No contact yet'
     else
-      time_diff = (Time.current() - device_last_contact_time).to_i
+      time_diff = (Time.now() - device_last_contact_time.to_formatted_s(:db).to_time).to_i.abs
       if time_diff < Rails.application.secrets.configs[:time_diff_to_consider_device_as_active_in_seconds]
         return 'ONLINE'
       else
@@ -172,9 +172,22 @@ module DevicesHelper
     end
   end
 
+  def device_online?(device_last_contact_time)
+    if device_last_contact_time.nil?
+      return false
+    else
+      time_diff = (Time.now() - device_last_contact_time.to_formatted_s(:db).to_time).to_i.abs
+      if time_diff < Rails.application.secrets.configs[:time_diff_to_consider_device_as_active_in_seconds]
+        return true
+      else
+        return false
+      end
+    end
+  end
+
   def compute_device_attribute_set_or_current_value(device_attribute_primitive_type, device_attribute_value, asText = false)
     if device_attribute_value.nil?
-      return (asText) ? 'N/A' : ''
+      return (asText) ? '-' : ''
     else
       if device_attribute_primitive_type == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]
         if device_attribute_value == DeviceAttribute::BOOL_VALUES[:MAX][:ID]
