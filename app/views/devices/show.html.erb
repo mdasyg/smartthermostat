@@ -28,7 +28,7 @@
 
 <% line_chart(
         SmartThermostatHistorySample.all.collect do |hs|
-          [hs.sample_time, hs.inside_temperature]
+          [hs.sample_datetime, hs.inside_temperature]
         end
     ) %>
 
