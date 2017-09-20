@@ -208,7 +208,7 @@ namespace :smart_thermostat do
   end
 
   desc 'Take sample from device attributes for smart thermostat history and training'
-  task(:history_sample => [:environment]) do |t, args|
+  task(:training_set_sample => [:environment]) do |t, args|
     smart_thermostat_devices = Device.select(:uid, :last_contact_at).where(type_c_id: Device::TYPES[:SMART_THERMOSTAT][:ID])
     if smart_thermostat_devices.any?
 
@@ -234,10 +234,17 @@ namespace :smart_thermostat do
           # Time now
           sample_datetime = Time.now.change(sec: 0)
 
+          # Check if sample for that time exists
+          sample = SmartThermostatTrainingSetSample.where(device_uid: smart_thermostat_device.uid, sample_datetime: sample_datetime.to_formatted_s(:db))
+          if sample.empty?
+            sample                 = SmartThermostatTrainingSetSample.new
+            sample.device_uid      = smart_thermostat_device.uid
+            sample.sample_datetime = sample_datetime.to_formatted_s(:db)
+          else
+            sample = sample.take
+          end
+
           # Prepare the sample
-          sample                      = SmartThermostatTrainingSetSample.new
-          sample.device_uid           = smart_thermostat_device.uid
-          sample.sample_datetime      = sample_datetime.to_formatted_s(:db)
           sample.energy_source_status = working_state
           sample.outside_temperature  = outside_temperature
           sample.inside_temperature   = inside_temperature
