@@ -4,8 +4,8 @@ class CreateActionsTable < ActiveRecord::Migration[5.0]
     create_table :actions, id: false do |t|
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.integer :device_attribute_id, null: false, unsigned: true
-      t.float :device_attribute_start_value, null: false
-      t.float :device_attribute_end_value, null: false
+      t.decimal :device_attribute_start_value, null: false, precision: 4, scale: 1
+      t.decimal :device_attribute_end_value, null: false, precision: 4, scale: 1
     end
 
     add_foreign_key(:actions, :device_attributes)

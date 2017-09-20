@@ -5,34 +5,141 @@ namespace :smart_thermostat do
 
   desc 'Update training dataset'
   task(:training_dataset => [:environment]) do |t, args|
-    #   smart_thermostat_devices = Device.select(:uid).where(type_c_id: Device::TYPES[:SMART_THERMOSTAT][:ID])
-    #   if smart_thermostat_devices.any?
-    #     smart_thermostat_devices.each do |smart_thermostat_device|
-    #       # init help vars
-    #       samples_to_check = (24*60)/5
-    #       sample_time      = Time.now.change(hour: 0, min: 0, sec: 0)
-    #
-    #       # Loop through the day
-    #       (1..samples_to_check).each do |i|
-    #         puts sample_time.strftime('%H:%M:%S')
-    #         smart_thermostat_samples = SmartThermostatHistorySample.select(:sample_time, :outside_temperature)
-    #                                         .where(['device_uid = :device_uid AND sample_time = :sample_time', { device_uid: smart_thermostat_device.uid, sample_time: sample_time.strftime('%H:%M:%S') }])
-    #                                         .group(:outside_temperature)
-    #                                         .average(:inside_temperature)
-    #
-    #         # puts smart_thermostat_samples
-    #
-    #         smart_thermostat_samples.each do |outside_temperature, inside_temperature_avg|
-    #           puts outside_temperature, inside_temperature_avg.round(1)
-    #
-    #         end
-    #
-    #         sample_time = sample_time.advance(minutes: 5)
-    #
-    #       end
-    #
-    #     end
-    #   end
+    smart_thermostat_devices = Device.select(:uid).where(type_c_id: Device::TYPES[:SMART_THERMOSTAT][:ID])
+    smart_thermostat_devices.each do |smart_thermostat_device|
+
+      # current_day_start = Time.now.at_beginning_of_day
+      current_day_start = Time.new(2017, 9, 21, 16, 35, 32).at_beginning_of_day
+      current_day_end   = current_day_start.at_end_of_day
+
+      puts current_day_start
+      puts current_day_end
+
+      query_string = 'device_uid = :device_uid'
+      query_string += ' AND '
+      query_string += 'energy_source_status = :energy_source_status'
+      query_string += ' AND '
+      query_string += '(sample_datetime BETWEEN :current_day_start AND :current_day_end)'
+      query_params = {
+          device_uid:           smart_thermostat_device.uid,
+          energy_source_status: 1,
+          current_day_start:    current_day_start.to_formatted_s(:db),
+          current_day_end:      current_day_end.to_formatted_s(:db)
+      }
+
+      distinct_outside_temperatures = SmartThermostatHistorySample.select(:outside_temperature).where([query_string, query_params]).distinct.pluck(:outside_temperature).sort
+
+      query_string += ' AND '
+      query_string += 'outside_temperature = :distinct_outside_temperature'
+
+      query_params[:distinct_outside_temperature] = nil
+
+      distinct_outside_temperatures.each do |distinct_outside_temp|
+        query_params[:distinct_outside_temperature] = distinct_outside_temp
+        samples                                     = SmartThermostatHistorySample.where([query_string, query_params])
+
+        previous_sample_to_compare_with = samples.first
+        samples.find_each do |sample|
+          pp sample
+          temp_diff = (sample.inside_temperature - previous_sample_to_compare_with.inside_temperature).round(1)
+
+          if temp_diff >= 0.1
+            puts 'Anodos temp entopistike'
+
+            puts temp_diff
+
+            time_diff = (sample.sample_datetime.to_formatted_s(:db).to_time - previous_sample_to_compare_with.sample_datetime.to_formatted_s(:db).to_time).to_i
+            puts time_diff
+
+            # CHECK START TIME
+            puts "CHECK #{smart_thermostat_device.uid} #{distinct_outside_temp} #{previous_sample_to_compare_with.inside_temperature}"
+            start_training_temp = SmartThermostatTraining.where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp, inside_temperature: previous_sample_to_compare_with.inside_temperature)
+            if start_training_temp.any?
+              puts 'Start training temp exists'
+              start_training_set = start_training_temp.take
+              pp start_training_set
+            else
+              puts 'start Training temp not exists'
+              smaller_training_temps = SmartThermostatTraining
+                                           .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
+                                           .where(['inside_temperature < :temp_to_search', { temp_to_search: previous_sample_to_compare_with.inside_temperature }])
+                                           .order(:inside_temperature)
+
+              if smaller_training_temps.empty?
+                puts 'No smaller temps'
+                puts "INPUT TO DATABASE: OUTS=#{distinct_outside_temp}, INS=#{previous_sample_to_compare_with.inside_temperature}, TIME=#{0}"
+                start_training_set                     = SmartThermostatTraining.new
+                start_training_set.device_uid          = smart_thermostat_device.uid
+                start_training_set.outside_temperature = distinct_outside_temp
+                start_training_set.inside_temperature  = previous_sample_to_compare_with.inside_temperature
+                start_training_set.timeline            = 0
+                start_training_set.save
+              end
+            end
+
+            #  CHECK END TIME
+            end_training_set = SmartThermostatTraining.where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp, inside_temperature: sample.inside_temperature)
+            if end_training_set.empty?
+              puts 'End training temp not exists'
+              bigger_training_temps = SmartThermostatTraining
+                                          .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
+                                          .where(['inside_temperature > :temp_to_search', { temp_to_search: sample.inside_temperature }])
+                                          .order(:inside_temperature)
+
+              end_training_set                     = SmartThermostatTraining.new
+              end_training_set.device_uid          = smart_thermostat_device.uid
+              end_training_set.outside_temperature = distinct_outside_temp
+              end_training_set.inside_temperature  = sample.inside_temperature
+              if bigger_training_temps.any?
+                first_bigger = bigger_training_temps.first
+                if (start_training_set.timeline + time_diff) <= first_bigger.timeline
+                  end_training_set.timeline = start_training_set.timeline + time_diff
+                else
+                  end_training_set.timeline = start_training_set.timeline + time_diff
+                  # Must add the absolute difference to the rest sets
+                  abs_diff = (end_training_set.timeline - first_bigger.timeline).abs
+                  bigger_training_temps.each do |bigger_training_set|
+                    bigger_training_set.timeline += abs_diff
+                    bigger_training_set.save
+                  end
+                end
+              else
+                end_training_set.timeline = start_training_set.timeline + time_diff
+              end
+
+              end_training_set.save
+            else
+              puts 'End training set exists'
+              end_training_set = end_training_set.take
+              # So chedk if timeline time is different
+              if (start_training_set.timeline + time_diff) != end_training_set.timeline
+                # Must update the next values accordingly
+                diff_to_add                    = (start_training_set.timeline + time_diff) - end_training_set.timeline
+                current_and_next_training_sets = SmartThermostatTraining
+                                                     .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
+                                                     .where(['inside_temperature >= :temp_to_search', { temp_to_search: sample.inside_temperature }])
+                                                     .order(:inside_temperature)
+
+                current_and_next_training_sets.each do |training_set|
+                  training_set.timeline += diff_to_add
+                  training_set.save
+                end
+              end
+            end
+
+            previous_sample_to_compare_with = sample
+
+            puts
+          elsif temp_diff < 0
+            puts 'Kathodos temp entopistike'
+            previous_sample_to_compare_with = sample
+          end
+
+        end
+
+      end
+
+    end
   end
 
   desc 'Take sample from device attributes for smart thermostat history and training'
@@ -65,8 +172,7 @@ namespace :smart_thermostat do
           # Prepare the sample
           sample                      = SmartThermostatHistorySample.new
           sample.device_uid           = smart_thermostat_device.uid
-          sample.sample_date          = sample_datetime.strftime('%Y-%m-%d')
-          sample.sample_time          = sample_datetime.strftime('%H:%M:%S')
+          sample.sample_datetime      = sample_datetime.to_formatted_s(:db)
           sample.energy_source_status = working_state
           sample.outside_temperature  = outside_temperature
           sample.inside_temperature   = inside_temperature
@@ -97,8 +203,6 @@ namespace :smart_thermostat do
             }
         ]
     )
-
-    puts offline_devices_to_send_notification_for.to_sql
 
     offline_devices_to_send_notification_for.find_each do |offline_device|
       UserMailer.notify_user_for_offline_devices(offline_device).deliver_now
