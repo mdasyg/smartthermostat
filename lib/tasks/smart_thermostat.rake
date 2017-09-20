@@ -4,7 +4,7 @@ include DevicesHelper
 namespace :smart_thermostat do
 
   desc 'Update training dataset'
-  task(:training_dataset => [:environment]) do |t, args|
+  task(:analyze_training_set => [:environment]) do |t, args|
     smart_thermostat_devices = Device.select(:uid).where(type_c_id: Device::TYPES[:SMART_THERMOSTAT][:ID])
     smart_thermostat_devices.each do |smart_thermostat_device|
 
@@ -96,10 +96,10 @@ namespace :smart_thermostat do
                 current_previous_temp_diff = (previous_training_set_sample_to_compare_with.inside_temperature - previous_training_set.inside_temperature) * 10.to_i
                 puts current_previous_temp_diff
 
-                estimated_timeline_for_start_dataset = (((next_training_set.timeline - previous_training_set.timeline) / previous_next_temp_diff) * current_previous_temp_diff).to_i
-                puts estimated_timeline_for_start_dataset
+                estimate_timeline__value_to_add_in_start_dataset = (((next_training_set.timeline - previous_training_set.timeline) / previous_next_temp_diff) * current_previous_temp_diff).to_i
+                puts estimate_timeline__value_to_add_in_start_dataset
 
-                start_dataset.timeline = estimated_timeline_for_start_dataset
+                start_dataset.timeline = previous_training_set.timeline + estimate_timeline__value_to_add_in_start_dataset
               end
               start_dataset.save
             end
