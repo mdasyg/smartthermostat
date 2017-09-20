@@ -118,6 +118,7 @@ namespace :smart_thermostat do
               end_dataset.outside_temperature = distinct_outside_temp
               end_dataset.inside_temperature  = training_set_sample_to_analyze.inside_temperature
               if next_datasets.any?
+                puts 'NExt dataset exists'
                 first_from_next_datasets = next_datasets.first
                 if (start_dataset.timeline + time_diff) <= first_from_next_datasets.timeline
                   end_dataset.timeline = start_dataset.timeline + time_diff
@@ -131,6 +132,7 @@ namespace :smart_thermostat do
                   end
                 end
               else
+                puts 'NExt dataset not exists'
                 end_dataset.timeline = start_dataset.timeline + time_diff
               end
 
@@ -152,26 +154,33 @@ namespace :smart_thermostat do
                   next_dataset.save
                 end
 
-                # Must do something with the values between start and stop, if exists, end timeline values are smaller than end's
-                between_start_and_stop_training_sets = SmartThermostatComputedDataset
-                                                           .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
-                                                           .where(
-                                                               [
-                                                                   '(inside_temperature BETWEEN :start_training_set_inside_temp AND :end_training_set_inside_temp) AND timeline < :end_training_set_timeline',
-                                                                   {
-                                                                       start_training_set_inside_temp: start_dataset.inside_temperature,
-                                                                       end_training_set_inside_temp:   end_dataset.inside_temperature,
-                                                                       end_training_set_timeline:      end_dataset.timeline
-                                                                   }
-                                                               ]
-                                                           )
-                                                           .order(:inside_temperature)
-
-                puts between_start_and_stop_training_sets.to_sql
-
-                pp between_start_and_stop_training_sets
-
               end
+            end
+
+            # Must do something with the values between start and stop, if exists, end timeline values are smaller than end's
+            between_start_and_stop_training_sets = SmartThermostatComputedDataset
+                                                       .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
+                                                       .where(
+                                                           [
+                                                               '(inside_temperature BETWEEN :start_training_set_inside_temp AND :end_training_set_inside_temp) AND timeline > :end_training_set_timeline',
+                                                               {
+                                                                   start_training_set_inside_temp: start_dataset.inside_temperature,
+                                                                   end_training_set_inside_temp:   end_dataset.inside_temperature,
+                                                                   end_training_set_timeline:      end_dataset.timeline
+                                                               }
+                                                           ]
+                                                       )
+                                                       .order(:inside_temperature)
+
+            puts between_start_and_stop_training_sets.to_sql
+            pp between_start_and_stop_training_sets
+            if between_start_and_stop_training_sets.any?
+              puts 'Yparxoun endiamesa me timi megaliteri tou teleytaiou'
+            end
+
+            between_start_and_stop_training_sets.each do |conflicting_dataset|
+              conflicting_dataset.timeline = end_dataset.timeline
+              conflicting_dataset.save
             end
 
             previous_training_set_sample_to_compare_with = training_set_sample_to_analyze
@@ -182,6 +191,14 @@ namespace :smart_thermostat do
           end
 
           puts
+
+          # STDOUT.puts "Are you sure? (y/n)"
+          # input = STDIN.gets.strip
+          # if input == 'y'
+          #
+          # else
+          #   STDOUT.puts "So sorry for the confusion"
+          # end
 
         end
 
