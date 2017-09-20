@@ -40,6 +40,7 @@ namespace :smart_thermostat do
 
         previous_sample_to_compare_with = samples.first
         samples.find_each do |sample|
+          puts 'Current sample'
           pp sample
           temp_diff = (sample.inside_temperature - previous_sample_to_compare_with.inside_temperature).round(1)
 
@@ -60,21 +61,47 @@ namespace :smart_thermostat do
               pp start_training_set
             else
               puts 'start Training temp not exists'
-              smaller_training_temps = SmartThermostatTraining
-                                           .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
-                                           .where(['inside_temperature < :temp_to_search', { temp_to_search: previous_sample_to_compare_with.inside_temperature }])
-                                           .order(:inside_temperature)
+              smaller_training_sets = SmartThermostatTraining
+                                          .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
+                                          .where(['inside_temperature < :temp_to_search', { temp_to_search: previous_sample_to_compare_with.inside_temperature }])
+                                          .order(:inside_temperature)
 
-              if smaller_training_temps.empty?
+              start_training_set                     = SmartThermostatTraining.new
+              start_training_set.device_uid          = smart_thermostat_device.uid
+              start_training_set.outside_temperature = distinct_outside_temp
+              start_training_set.inside_temperature  = previous_sample_to_compare_with.inside_temperature
+              if smaller_training_sets.empty?
                 puts 'No smaller temps'
                 puts "INPUT TO DATABASE: OUTS=#{distinct_outside_temp}, INS=#{previous_sample_to_compare_with.inside_temperature}, TIME=#{0}"
-                start_training_set                     = SmartThermostatTraining.new
-                start_training_set.device_uid          = smart_thermostat_device.uid
-                start_training_set.outside_temperature = distinct_outside_temp
-                start_training_set.inside_temperature  = previous_sample_to_compare_with.inside_temperature
-                start_training_set.timeline            = 0
-                start_training_set.save
+
+                start_training_set.timeline = 0
+              else
+                puts 'Smaller temps exists'
+                next_training_sets = SmartThermostatTraining
+                                         .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
+                                         .where(['inside_temperature > :temp_to_search', { temp_to_search: previous_sample_to_compare_with.inside_temperature }])
+                                         .order(:inside_temperature)
+
+                previous_training_set = smaller_training_sets.last
+                next_training_set     = next_training_sets.first
+
+                puts 'previous'
+                pp previous_training_set
+                puts 'next'
+                pp next_training_set
+
+                previous_next_temp_diff = (next_training_set.inside_temperature - previous_training_set.inside_temperature) * 10.to_i
+                puts previous_next_temp_diff
+
+                current_previous_temp_diff = (previous_sample_to_compare_with.inside_temperature - previous_training_set.inside_temperature) * 10.to_i
+                puts current_previous_temp_diff
+
+                estimated_timeline_for_training_set = (((next_training_set.timeline - previous_training_set.timeline) / previous_next_temp_diff) * current_previous_temp_diff).to_i
+                puts estimated_timeline_for_training_set
+
+                start_training_set.timeline = estimated_timeline_for_training_set
               end
+              start_training_set.save
             end
 
             #  CHECK END TIME
@@ -124,16 +151,39 @@ namespace :smart_thermostat do
                   training_set.timeline += diff_to_add
                   training_set.save
                 end
+
+                # Must do something with the values between start and stop, if exists, end timeline values are smaller than end's
+                between_start_and_stop_training_sets = SmartThermostatTraining
+                                                           .where(device_uid: smart_thermostat_device.uid, outside_temperature: distinct_outside_temp)
+                                                           .where(
+                                                               [
+                                                                   '(inside_temperature BETWEEN :start_training_set_inside_temp AND :end_training_set_inside_temp) AND timeline < :end_training_set_timeline',
+                                                                   {
+                                                                       start_training_set_timeline: start_training_set.inside_temperature,
+                                                                       end_training_set_timeline:   end_training_set.inside_temperature,
+                                                                       end_training_set_timeline:   end_training_set.timeline
+                                                                   }
+                                                               ]
+                                                           )
+                                                           .order(:inside_temperature)
+
+
+                puts between_start_and_stop_training_sets.to_sql
+
+                pp between_start_and_stop_training_sets
+
               end
             end
 
             previous_sample_to_compare_with = sample
 
-            puts
+
           elsif temp_diff < 0
             puts 'Kathodos temp entopistike'
             previous_sample_to_compare_with = sample
           end
+
+          puts
 
         end
 
