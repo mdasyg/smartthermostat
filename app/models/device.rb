@@ -27,7 +27,7 @@ class Device < ApplicationRecord
   has_many :smart_thermostat_smart_devices, class_name: 'SmartThermostat', foreign_key: :smart_device_uid, primary_key: :uid, inverse_of: :smart_device
   has_many :smart_thermostat_source_devices, class_name: 'SmartThermostat', foreign_key: :source_device_uid, primary_key: :uid, inverse_of: :source_device
 
-  has_many :smart_thermostat_history_samples, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
-  has_many :smart_thermostat_trainings, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
+  has_many :smart_thermostat_training_set_samples, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
+  has_many :smart_thermostat_computed_datasets, foreign_key: :device_uid, primary_key: :uid, inverse_of: :device
 
 end

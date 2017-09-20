@@ -27,7 +27,7 @@
 </div>
 
 <% line_chart(
-        SmartThermostatHistorySample.all.collect do |hs|
+        SmartThermostatTrainingSetSample.all.collect do |hs|
           [hs.sample_datetime, hs.inside_temperature]
         end
     ) %>
