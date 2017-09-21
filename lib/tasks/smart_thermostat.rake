@@ -9,10 +9,7 @@ namespace :smart_thermostat do
     smart_thermostat_devices.each do |smart_thermostat_device|
 
       current_day_end   = Time.now
-      current_day_start = current_day_end.advance(hours: -6)
-
-      # current_day_start = Time.new(2017, 9, 21, 0, 0, 0)
-      # current_day_end   = Time.new(2017, 9, 21, 23, 59, 59)
+      current_day_start = current_day_end.advance(hours: -Rails.application.secrets.configs[:analyze_smart_thermostat_training_set_every_those_hours])
 
       # Base query string and params
       query_string = 'device_uid = :device_uid'

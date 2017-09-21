@@ -18,8 +18,10 @@
 <%= render 'layouts/header' %>
 
 <div class="container">
-  <% flash.each do |key, value| %>
-    <%= content_tag(:div, value, class: "alert alert-#{key}") %>
+
+  <% flash.each do |msg_type, message| %>
+    <% next if (msg_type == :timedout) %>
+    <%= content_tag(:div, message, class: "alert alert-#{msg_type}") %>
   <% end %>
 
   <%= yield %>
