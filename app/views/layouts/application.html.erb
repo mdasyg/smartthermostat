@@ -20,7 +20,7 @@
 <div class="container">
 
   <% flash.each do |msg_type, message| %>
-    <% next if (msg_type == :timedout) %>
+    <% next if (msg_type == 'timedout') %>
     <%= content_tag(:div, message, class: "alert alert-#{msg_type}") %>
   <% end %>
 
