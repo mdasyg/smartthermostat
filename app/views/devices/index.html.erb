@@ -10,9 +10,9 @@
 
     <div class="responsive-table-header">
       <div class="row">
-        <div class="col-md-2"><b>Name</b></div>
-        <div class="col-md-6"><b>Current Values</b></div>
-        <div class="col-md-2"><b>Location</b></div>
+        <div class="col-md-3"><b>Name</b></div>
+        <div class="col-md-4"><b>Current Values</b></div>
+        <div class="col-md-3"><b>Location</b></div>
         <div class="col-md-2"><b>Actions</b></div>
       </div>
       <hr/>
@@ -21,23 +21,22 @@
     <% @devices.each do |device| %>
 
       <div class="row">
-        <div data-label="<%= Device.human_attribute_name(:name) %>" class="col-md-2">
+        <div data-label="<%= Device.human_attribute_name(:name) %>" class="col-md-3">
           <div class="responsive-table-element"><%= device.name %></div>
         </div>
-        <div data-label="Current Values" class="col-md-6">
+        <div data-label="Current Values" class="col-md-4">
           <div class="responsive-table-element">
-            <% dev_attr_count = device.device_attributes.size-1 %>
-            <% device.device_attributes.each_with_index do |dev_attr, idx| %>
+            <% device.device_attributes.each do |dev_attr| %>
               <% if dev_attr.current_value %>
-                <%= '|' unless (idx == 0) %>
                 <%= dev_attr.name %>:
                 <%= dev_attr.current_value %> <%= dev_attr.unit %>
+                <br>
               <% end %>
             <% end %>
           </div>
         </div>
 
-        <div data-label="<%= Device.human_attribute_name(:location) %>" class="col-md-2">
+        <div data-label="<%= Device.human_attribute_name(:location) %>" class="col-md-3">
           <div class="responsive-table-element"><%= device.location %></div>
         </div>
         <div data-label="Actions" class="col-md-2">
