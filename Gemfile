@@ -14,17 +14,12 @@ gem 'jbuilder', '~> 2.7.0' # Build JSON APIs with ease. Read more: https://githu
 gem 'chartkick', '~> 2.2.4'
 gem 'i18n', '~> 0.8.6'
 
-# gem 'capistrano-rails', group: :development # Use Capistrano for deployment
-# gem 'redis', '~> 3.0' # Use Redis adapter to run Action Cable in production
-
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platform: :mri
+  gem 'byebug', platform: :mri # Call 'byebug' anywhere in the code to stop execution and get a debugger console
 end
 
 group :development do
-  # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
-  gem 'web-console'
+  gem 'web-console' # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'listen'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'

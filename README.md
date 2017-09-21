@@ -39,12 +39,14 @@
 
 ## Cron setup
 
-+ There some tasks that need to be run repeatedly, so you must setup cron for them
++ There some tasks that need to be run repeatedly, so you must setup cron jobs for them
+
++ **WARNING**: DONT FORGET TO UPDATE THE CONFIGURATION ON SECRETS FOR HOW OFTEN ANALYZE TASKS RUNS
 
 ```cron
-*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=production smart_thermostat:training_set_sample
-# One more here
-*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=production smart_thermostat:send_notification_for_offline_devices
+*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:send_notification_for_offline_devices --silent
+*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:training_set_sample --silent
+0 */6 * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:analyze_training_set --silent
 ```
 
 + To get more info about the tasks, look at the `lib/tasks`

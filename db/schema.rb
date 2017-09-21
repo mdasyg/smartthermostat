@@ -49,11 +49,13 @@ ActiveRecord::Schema.define(version: 20170906191919) do
   create_table "devices", primary_key: "uid", id: :bigint, unsigned: true, default: nil, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "user_id", null: false, unsigned: true
     t.integer "type_c_id", limit: 1, unsigned: true
+    t.integer "number_of_schedules", limit: 1, null: false
     t.string "name", null: false
     t.string "location", null: false
     t.text "description"
     t.string "access_token"
     t.datetime "last_contact_at"
+    t.integer "long_offline_time_notification", limit: 1, default: 0, null: false, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["access_token"], name: "index_devices_on_access_token", unique: true
@@ -109,24 +111,22 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.index ["user_id"], name: "fk_rails_3c900465fa"
   end
 
-  create_table "smart_thermostat_history_samples", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "smart_thermostat_computed_datasets", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
-    t.date "sample_date", null: false
-    t.time "sample_time", null: false
-    t.integer "energy_mode", limit: 1, null: false, comment: "If heating, cooling or something else", unsigned: true
-    t.integer "energy_source_status", limit: 1, null: false, comment: "Energy source working or not during the sample", unsigned: true
     t.integer "outside_temperature"
-    t.float "inside_temperature", limit: 24
-    t.float "set_temperature", limit: 24
-    t.index ["device_uid", "sample_date", "sample_time"], name: "device_uid_and_sample_date_and_sample_time_unique_idx", unique: true
+    t.decimal "inside_temperature", precision: 4, scale: 1
+    t.integer "timeline", null: false, unsigned: true
+    t.index ["device_uid", "outside_temperature", "inside_temperature"], name: "device_uid_and_outside_temp_and_inside_temperature_unique_idx", unique: true
   end
 
-  create_table "smart_thermostat_training", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "smart_thermostat_training_set_samples", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
-    t.time "sample_time", null: false
+    t.datetime "sample_datetime", null: false
+    t.integer "energy_source_status", limit: 1, null: false, comment: "Energy source working or not during the sample", unsigned: true
     t.integer "outside_temperature"
-    t.float "inside_temperature", limit: 24
-    t.index ["device_uid", "sample_time", "outside_temperature"], name: "device_uid_and_sample_time_and_outside_temp_unique_idx", unique: true
+    t.decimal "inside_temperature", precision: 4, scale: 1
+    t.decimal "set_temperature", precision: 4, scale: 1
+    t.index ["device_uid", "sample_datetime"], name: "device_uid_and_sample_datetime_unique_idx", unique: true
   end
 
   create_table "smart_thermostats", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -178,8 +178,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
   add_foreign_key "schedule_events", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "schedule_events", "schedules"
   add_foreign_key "schedules", "users"
-  add_foreign_key "smart_thermostat_history_samples", "devices", column: "device_uid", primary_key: "uid"
-  add_foreign_key "smart_thermostat_training", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "smart_thermostat_computed_datasets", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "smart_thermostat_training_set_samples", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "smart_thermostats", "device_attributes", column: "source_device_attribute_id"
   add_foreign_key "smart_thermostats", "devices", column: "smart_device_uid", primary_key: "uid"
   add_foreign_key "smart_thermostats", "devices", column: "source_device_uid", primary_key: "uid"
