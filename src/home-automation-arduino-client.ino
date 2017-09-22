@@ -60,10 +60,10 @@ void setup() {
   pinMode(dataPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   // button pin init
-  pinMode(deviceStateToggleButtonPin, INPUT);
-  pinMode(quickButtonsPin[QUICK_BUTTON_1_INDEX], INPUT);
-  pinMode(quickButtonsPin[QUICK_BUTTON_2_INDEX], INPUT);
-  pinMode(quickButtonsPin[QUICK_BUTTON_3_INDEX], INPUT);
+  pinMode(deviceStateToggleButtonPin, INPUT_PULLUP);
+  pinMode(quickButtonsPin[QUICK_BUTTON_1_INDEX], INPUT_PULLUP);
+  pinMode(quickButtonsPin[QUICK_BUTTON_2_INDEX], INPUT_PULLUP);
+  pinMode(quickButtonsPin[QUICK_BUTTON_3_INDEX], INPUT_PULLUP);
 
   // initialize led status to 'some on' to indicate device loading status
   shiftOut(dataPin, clockPin, MSBFIRST, 0b10101000);
@@ -107,7 +107,7 @@ void setup() {
 void loop() {
 
   // check device state button has been pressed
-  if ((digitalRead(deviceStateToggleButtonPin) == HIGH)) {
+  if ((digitalRead(deviceStateToggleButtonPin) == LOW)) {
     if (stateButtonPressed == false) {
       stateButtonPressed = true;
     }
@@ -124,7 +124,7 @@ void loop() {
 
   // check for quick button press
   for (i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
-    if ((digitalRead(quickButtonsPin[i]) == HIGH)) {
+    if ((digitalRead(quickButtonsPin[i]) == LOW)) {
       if (quickButtonPressed[i] == false) {
         quickButtonPressed[i] = true;
       }
