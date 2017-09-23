@@ -14,8 +14,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
 
   create_table "actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "device_attribute_id", null: false, unsigned: true
-    t.float "device_attribute_start_value", limit: 24, null: false
-    t.float "device_attribute_end_value", limit: 24, null: false
+    t.decimal "device_attribute_start_value", precision: 4, scale: 1, null: false
+    t.decimal "device_attribute_end_value", precision: 4, scale: 1, null: false
     t.index ["device_attribute_id"], name: "fk_rails_6c4d2296a2"
   end
 
@@ -26,10 +26,10 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.integer "primitive_type_c_id", limit: 1, null: false, unsigned: true
     t.integer "direction_c_id", limit: 1, null: false, unsigned: true
     t.string "unit", limit: 5
-    t.float "min_value", limit: 24
-    t.float "max_value", limit: 24
-    t.float "set_value", limit: 24
-    t.float "current_value", limit: 24
+    t.decimal "min_value", precision: 4, scale: 1
+    t.decimal "max_value", precision: 4, scale: 1
+    t.decimal "set_value", precision: 4, scale: 1
+    t.decimal "current_value", precision: 4, scale: 1
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["device_uid"], name: "fk_rails_69a3134aba"
@@ -49,13 +49,13 @@ ActiveRecord::Schema.define(version: 20170906191919) do
   create_table "devices", primary_key: "uid", id: :bigint, unsigned: true, default: nil, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "user_id", null: false, unsigned: true
     t.integer "type_c_id", limit: 1, unsigned: true
-    t.integer "number_of_schedules", limit: 1, null: false
-    t.string "name", null: false
-    t.string "location", null: false
+    t.integer "number_of_schedules", limit: 1, unsigned: true
+    t.string "name", limit: 25, null: false
+    t.string "location", limit: 50, null: false
+    t.integer "long_offline_time_notification_status", limit: 1, null: false, unsigned: true
     t.text "description"
     t.string "access_token"
     t.datetime "last_contact_at"
-    t.integer "long_offline_time_notification", limit: 1, default: 0, null: false, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["access_token"], name: "index_devices_on_access_token", unique: true
