@@ -9,7 +9,6 @@
 #include <MemoryFree.h>
 
 #include "DataStructures.h"
-#include "DeviceConfigs.h"
 #include "DeviceSecrets.h"
 #include "ProccessCallbacks.h"
 #include "MqttCallbacks.h"

@@ -1,6 +1,5 @@
 #include <ArduinoJson.h>
 
-#include "DeviceConfigs.h"
 #include "DeviceSecrets.h"
 #include "Requests.h"
 #include "System.h"

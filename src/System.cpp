@@ -2,7 +2,7 @@
 #include <MemoryFree.h>
 #include <avr/wdt.h>
 
-#include "DeviceConfigs.h"
+#include "DeviceSecrets.h"
 #include "System.h"
 #include "Schedule.h"
 #include "QuickButtons.h"

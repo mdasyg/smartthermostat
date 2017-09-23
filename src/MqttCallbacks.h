@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <PubSubClient.h>
-
-#include "DeviceConfigs.h"
+#include <Ethernet.h>
 
 #ifndef MQTT_CALLBACKS_H
 #define MQTT_CALLBACKS_H

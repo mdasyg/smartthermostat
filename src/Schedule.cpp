@@ -1,6 +1,6 @@
 #include "Schedule.h"
 #include "System.h"
-#include "DeviceConfigs.h"
+#include "DeviceSecrets.h"
 #include "Requests.h"
 
 int activeSchedule = -1;

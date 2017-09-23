@@ -4,7 +4,6 @@
 #include <TimeLib.h>
 #include <avr/wdt.h>
 
-#include "DeviceConfigs.h"
 #include "DataStructures.h"
 
 #ifndef SYSTEM_TIME_H

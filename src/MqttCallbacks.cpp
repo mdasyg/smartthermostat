@@ -1,5 +1,6 @@
 #include "MqttCallbacks.h"
 #include "System.h"
+#include "DeviceSecrets.h"
 
 void mqttConnectToBrokerCallback(EthernetClient &ethClientForMqtt, PubSubClient &mqttClient) {
   ethClientForMqtt.stop();
@@ -11,6 +12,6 @@ void mqttConnectToBrokerCallback(EthernetClient &ethClientForMqtt, PubSubClient 
 }
 
 void mqttReceiveMsgCallback(char* topic, byte* payload, unsigned int length) {
-  // Serial.print(F("MQTT msg: ")); Serial.write(payload, length); Serial.println();
+  Serial.print(F("MQTT msg: ")); Serial.write(payload, length); Serial.println();
   updateAppropriateEntityFromJsonResponse(payload);
 }
