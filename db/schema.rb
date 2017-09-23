@@ -14,8 +14,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
 
   create_table "actions", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "device_attribute_id", null: false, unsigned: true
-    t.decimal "device_attribute_start_value", precision: 4, scale: 1, null: false
-    t.decimal "device_attribute_end_value", precision: 4, scale: 1, null: false
+    t.decimal "device_attribute_start_value", precision: 10, scale: 3, null: false
+    t.decimal "device_attribute_end_value", precision: 10, scale: 3, null: false
     t.index ["device_attribute_id"], name: "fk_rails_6c4d2296a2"
   end
 
@@ -26,10 +26,10 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.integer "primitive_type_c_id", limit: 1, null: false, unsigned: true
     t.integer "direction_c_id", limit: 1, null: false, unsigned: true
     t.string "unit", limit: 5
-    t.decimal "min_value", precision: 4, scale: 1
-    t.decimal "max_value", precision: 4, scale: 1
-    t.decimal "set_value", precision: 4, scale: 1
-    t.decimal "current_value", precision: 4, scale: 1
+    t.decimal "min_value", precision: 10, scale: 3
+    t.decimal "max_value", precision: 10, scale: 3
+    t.decimal "set_value", precision: 10, scale: 3
+    t.decimal "current_value", precision: 10, scale: 3
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["device_uid"], name: "fk_rails_69a3134aba"
@@ -114,7 +114,7 @@ ActiveRecord::Schema.define(version: 20170906191919) do
   create_table "smart_thermostat_computed_datasets", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
     t.integer "outside_temperature"
-    t.decimal "inside_temperature", precision: 4, scale: 1
+    t.decimal "inside_temperature", precision: 10, scale: 3
     t.integer "timeline", null: false, unsigned: true
     t.index ["device_uid", "outside_temperature", "inside_temperature"], name: "device_uid_and_outside_temp_and_inside_temperature_unique_idx", unique: true
   end
@@ -124,8 +124,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.datetime "sample_datetime", null: false
     t.integer "energy_source_status", limit: 1, null: false, comment: "Energy source working or not during the sample", unsigned: true
     t.integer "outside_temperature"
-    t.decimal "inside_temperature", precision: 4, scale: 1
-    t.decimal "set_temperature", precision: 4, scale: 1
+    t.decimal "inside_temperature", precision: 10, scale: 3
+    t.decimal "set_temperature", precision: 10, scale: 3
     t.index ["device_uid", "sample_datetime"], name: "device_uid_and_sample_datetime_unique_idx", unique: true
   end
 

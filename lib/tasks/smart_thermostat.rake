@@ -222,17 +222,17 @@ namespace :smart_thermostat do
 
     offline_devices_to_send_notification_for = Device.where(
         [
-            'long_offline_time_notification = :long_offline_time_notification AND last_contact_at <= :minimum_offline_time',
+            'long_offline_time_notification_status = :long_offline_time_notification_status AND last_contact_at <= :minimum_offline_time',
             {
                 minimum_offline_time:           minimum_offline_time,
-                long_offline_time_notification: Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
+                long_offline_time_notification_status: Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
             }
         ]
     )
 
     offline_devices_to_send_notification_for.find_each do |offline_device|
       UserMailer.notify_user_for_offline_devices(offline_device).deliver_now
-      offline_device.long_offline_time_notification = Device::OFFLINE_NOTIFICATION_STATUS[:EMAIL_SEND]
+      offline_device.long_offline_time_notification_status = Device::OFFLINE_NOTIFICATION_STATUS[:EMAIL_SEND]
       offline_device.save
     end
   end
