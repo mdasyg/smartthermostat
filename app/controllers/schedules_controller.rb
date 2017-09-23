@@ -333,9 +333,14 @@ class SchedulesController < ApplicationController
         end
       end
     rescue Exception => e
+      if Rails.env.development?
+        msg = [e.to_s]
+      else
+        msg = ['Please contact with admin']
+      end
       respond_to do |format|
         format.html {set_schedule_recurrent_unit_list(); render :edit}
-        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
+        format.json {render json: { messages: msg, result: :error }}
       end
     end
 
