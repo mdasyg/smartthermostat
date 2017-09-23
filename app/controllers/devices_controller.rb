@@ -28,8 +28,8 @@ class DevicesController < ApplicationController
   # POST /devices
   # POST /devices.json
   def create
-    @device                                = Device.new(safe_device_params)
-    @device.user_id                        = current_user.id
+    @device                                       = Device.new(safe_device_params)
+    @device.user_id                               = current_user.id
     @device.long_offline_time_notification_status = Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
 
     if params.require(:device).include?(:attributes)
@@ -97,7 +97,7 @@ class DevicesController < ApplicationController
     respond_to do |format|
       if @device.update(safe_device_params)
 
-        if params.require(:smart_thermostat).include?(:device_attributes)
+        if params.include?(:smart_thermostat) && params.require(:smart_thermostat).include?(:device_attributes)
           params.require(:smart_thermostat).fetch(:device_attributes).each do |key, smart_thermostat_post|
 
             query_string            = 'devices.user_id = :current_user AND device_uid = :source_device_uid'

@@ -130,16 +130,10 @@ module Api
 
       private def update_last_contact_time
         @device.last_contact_at = Time.now.to_formatted_s(:db)
-
-        puts Time.now
-        puts Time.current
-
         @device.long_offline_time_notification_status = Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
         if !@device.save
           render plain: ActiveSupport::JSON.encode({ msg: 'Internal server err', res: :err }) and return
         end
-
-        puts @device.inspect
       end
 
     end
