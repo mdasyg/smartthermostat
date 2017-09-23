@@ -17,7 +17,6 @@
 #include "System.h"
 #include "QuickButtons.h"
 #include "Schedule.h"
-#include "EEPROMAnything.h"
 
 // custom data structures
 deviceAttribute stateOfAttributes[NUMBER_OF_ATTRIBUTES];
@@ -227,7 +226,7 @@ void loop() {
   //   Serial.println();
   // }
   // Serial.println();
-  // 
+  //
   //   loop_counter = 0;
   // lastHeartbeatTimestamp = now();
   // }
