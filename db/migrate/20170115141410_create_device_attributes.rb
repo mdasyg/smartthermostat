@@ -9,10 +9,10 @@ class CreateDeviceAttributes < ActiveRecord::Migration[5.0]
       t.integer :primitive_type_c_id, null: false, unsigned: true, limit: 1
       t.integer :direction_c_id, null: false, unsigned: true, limit: 1
       t.string :unit, limit: 5
-      t.decimal :min_value, precision: 4, scale: 1
-      t.decimal :max_value, precision: 4, scale: 1
-      t.decimal :set_value, precision: 4, scale: 1
-      t.decimal :current_value, precision: 4, scale: 1
+      t.decimal :min_value, precision: 10, scale: 3
+      t.decimal :max_value, precision: 10, scale: 3
+      t.decimal :set_value, precision: 10, scale: 3
+      t.decimal :current_value, precision: 10, scale: 3
 
       t.timestamps
     end

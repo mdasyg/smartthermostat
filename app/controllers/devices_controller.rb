@@ -30,7 +30,7 @@ class DevicesController < ApplicationController
   def create
     @device                                = Device.new(safe_device_params)
     @device.user_id                        = current_user.id
-    @device.long_offline_time_notification = Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
+    @device.long_offline_time_notification_status = Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
 
     if params.require(:device).include?(:attributes)
       params.require(:device).fetch(:attributes).each do |key, new_attribute|
