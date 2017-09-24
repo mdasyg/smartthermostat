@@ -97,31 +97,33 @@ class DevicesController < ApplicationController
     respond_to do |format|
       if @device.update(safe_device_params)
 
-        if params.include?(:smart_thermostat) && params.require(:smart_thermostat).include?(:device_attributes)
-          params.require(:smart_thermostat).fetch(:device_attributes).each do |key, smart_thermostat_post|
+        if (@device.type_c_id == Device::TYPES[:SMART_THERMOSTAT][:ID])
+          if params.include?(:smart_thermostat) && params.require(:smart_thermostat).include?(:device_attributes)
+            params.require(:smart_thermostat).fetch(:device_attributes).each do |key, smart_thermostat_post|
 
-            query_string            = 'devices.user_id = :current_user AND device_uid = :source_device_uid'
-            query_params            = {
-                current_user:      current_user.id,
-                source_device_uid: smart_thermostat_post.fetch(:source_device_uid)
-            }
-            stored_device_attribute = DeviceAttribute.joins(:device).where([query_string, query_params]).find_by(id: smart_thermostat_post.fetch(:source_device_attribute_id))
-
-            if stored_device_attribute
-              query_params     = {
-                  smart_device_uid:                 @device.uid,
-                  smart_device_attribute_type_c_id: smart_thermostat_post.fetch(:smart_device_attribute_type_c_id)
+              query_string            = 'devices.user_id = :current_user AND device_uid = :source_device_uid'
+              query_params            = {
+                  current_user:      current_user.id,
+                  source_device_uid: smart_thermostat_post.fetch(:source_device_uid)
               }
-              smart_thermostat = SmartThermostat.find_by(query_params)
-              if smart_thermostat.nil?
-                smart_thermostat                                  = SmartThermostat.new
-                smart_thermostat.smart_device_uid                 = @device.uid
-                smart_thermostat.smart_device_attribute_type_c_id = smart_thermostat_post.fetch(:smart_device_attribute_type_c_id)
-              end
-              smart_thermostat.source_device_uid          = stored_device_attribute.device_uid
-              smart_thermostat.source_device_attribute_id = stored_device_attribute.id
+              stored_device_attribute = DeviceAttribute.joins(:device).where([query_string, query_params]).find_by(id: smart_thermostat_post.fetch(:source_device_attribute_id))
 
-              smart_thermostat.save
+              if stored_device_attribute
+                query_params     = {
+                    smart_device_uid:                 @device.uid,
+                    smart_device_attribute_type_c_id: smart_thermostat_post.fetch(:smart_device_attribute_type_c_id)
+                }
+                smart_thermostat = SmartThermostat.find_by(query_params)
+                if smart_thermostat.nil?
+                  smart_thermostat                                  = SmartThermostat.new
+                  smart_thermostat.smart_device_uid                 = @device.uid
+                  smart_thermostat.smart_device_attribute_type_c_id = smart_thermostat_post.fetch(:smart_device_attribute_type_c_id)
+                end
+                smart_thermostat.source_device_uid          = stored_device_attribute.device_uid
+                smart_thermostat.source_device_attribute_id = stored_device_attribute.id
+
+                smart_thermostat.save
+              end
             end
           end
         end
@@ -170,17 +172,42 @@ class DevicesController < ApplicationController
   # DELETE /devices/1
   # DELETE /devices/1.json
   def destroy
-    # first we need to delete all device attributes
-    if !@device.device_attributes.empty?
-      @device.device_attributes.each do |device_attribute|
-        device_attribute.destroy
+    # delete the schedules
+    if !@device.schedule_events.empty?
+      @device.schedule_events.each do |device_schedule_event|
+        action_ids = device_schedule_event.actions.ids
+        device_schedule_event.destroy
+        Action.destroy(action_ids)
       end
     end
 
-    # then delete the schedules
-    if !@device.schedule_events.empty?
-      @device.schedule_eventss.each do |device_schedule|
-        device_schedule.destroy
+    if !@device.quick_buttons.empty?
+      @device.quick_buttons.each do |qb|
+        qb.destroy
+      end
+    end
+
+    pp @device.smart_thermostat_smart_devices
+
+    if !@device.smart_thermostat_smart_devices.empty?
+      @device.smart_thermostat_smart_devices.each do |smart_device|
+        smart_device.destroy
+      end
+    end
+
+
+    pp @device.smart_thermostat_source_devices
+
+    if !@device.smart_thermostat_source_devices.empty?
+      @device.smart_thermostat_source_devices.each do |source_device|
+        source_device.destroy
+      end
+    end
+
+    # delete all device attributes
+    if !@device.device_attributes.empty?
+      @device.device_attributes.each do |device_attribute|
+        device_attribute.destroy
       end
     end
 
