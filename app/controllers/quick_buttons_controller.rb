@@ -147,10 +147,7 @@ class QuickButtonsController < ApplicationController
       device_uid      = @quick_button.device_uid
       index_on_device = @quick_button.index_on_device
       @quick_button.transaction do
-        action_ids = @quick_button.actions.ids
-        @quick_button.quick_button_actions.destroy
         @quick_button.destroy
-        Action.destroy(action_ids)
         respond_to do |format|
           format.html {redirect_to quick_buttons_url, notice: 'Quick Button was successfully destroyed.'}
           format.json {render json: { result: :ok }}
@@ -159,7 +156,12 @@ class QuickButtonsController < ApplicationController
         mqtt_destroy_quick_button(device_uid, index_on_device)
       end
     rescue Exception => e
-      puts e.message
+      if Rails.env.development?
+        @quick_button.errors.add(:base, e.to_s)
+      else
+        @quick_button.errors.add(:base, 'Please contact with admin')
+      end
+      puts e.to_s
       respond_to do |format|
         format.html {redirect_to quick_buttons_url, notice: 'Error when destroying Quick Button.'}
         format.json {render json: { messages: @quick_button.errors.full_messages, result: :error }}
@@ -188,19 +190,15 @@ class QuickButtonsController < ApplicationController
     mqtt_client      = MQTT::Client.new()
     mqtt_client.host = Rails.application.secrets.mqtt[:host]
     mqtt_client.port = Rails.application.secrets.mqtt[:port]
-
-    # mqtt_client.on_connect do |rc|
-    #   puts "Connected with return code #{rc}"
-    # end
-
-    payload = ActiveSupport::JSON.encode({ qb: { idx: @quick_button.index_on_device, id: @quick_button.id, dur: @quick_button.duration } })
+    payload          = ActiveSupport::JSON.encode({ qb: { idx: @quick_button.index_on_device, id: @quick_button.id, dur: @quick_button.duration } })
     mqtt_client.connect()
+
     mqtt_client.publish(@quick_button.device_uid.to_s, payload, false, 0)
     @quick_button.actions.each do |quick_button_action|
       payload = ActiveSupport::JSON.encode({ qb_a: { idx: @quick_button.index_on_device, da_idx: quick_button_action.device_attribute.index_on_device, start: quick_button_action.device_attribute_start_value, end: quick_button_action.device_attribute_end_value } })
-      mqtt_client.connect()
       mqtt_client.publish(@quick_button.device_uid.to_s, payload, false, 0)
     end
+
     mqtt_client.disconnect()
   end
 
@@ -208,14 +206,11 @@ class QuickButtonsController < ApplicationController
     mqtt_client      = MQTT::Client.new()
     mqtt_client.host = Rails.application.secrets.mqtt[:host]
     mqtt_client.port = Rails.application.secrets.mqtt[:port]
-
-    # mqtt_client.on_connect do |rc|
-    #   puts "Connected with return code #{rc}"
-    # end
+    mqtt_client.connect()
 
     payload = ActiveSupport::JSON.encode({ qb_del: { idx: index.to_s } })
-    mqtt_client.connect()
     mqtt_client.publish(device_uid.to_s, payload, false, 0)
+
     mqtt_client.disconnect()
   end
 
