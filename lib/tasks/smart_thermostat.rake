@@ -178,7 +178,9 @@ namespace :smart_thermostat do
           working_state       = DeviceAttribute.find(device_attribute_id).current_value.to_i
           # Find outside temperature
           device_attribute_id = smart_thermostat_attributes_associations.find_by(smart_device_attribute_type_c_id: SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES[:OUTSIDE_TEMPERATURE][:ID]).source_device_attribute_id
-          outside_temperature = DeviceAttribute.find(device_attribute_id).current_value.round(0)
+          outside_temperature = DeviceAttribute.find(device_attribute_id).current_value
+          next if outside_temperature.blank?
+          outside_temperature = outside_temperature.round(0)
           # Find inside temperature
           device_attribute_id = smart_thermostat_attributes_associations.find_by(smart_device_attribute_type_c_id: SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES[:INSIDE_TEMPERATURE][:ID]).source_device_attribute_id
           inside_temperature  = DeviceAttribute.find(device_attribute_id).current_value.round(1)
@@ -207,10 +209,8 @@ namespace :smart_thermostat do
         else
           puts 'Smart thermostat associations missing'
         end
-      end
 
-    else
-      puts 'No Smart Thermostat'
+      end
     end
   end
 
@@ -220,15 +220,15 @@ namespace :smart_thermostat do
     current_time         = Time.now
     minimum_offline_time = current_time.ago(offline_period.minutes).to_formatted_s(:db)
 
-    offline_devices_to_send_notification_for = Device.where(
-        [
-            'long_offline_time_notification_status = :long_offline_time_notification_status AND last_contact_at <= :minimum_offline_time',
-            {
-                minimum_offline_time:           minimum_offline_time,
-                long_offline_time_notification_status: Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
-            }
-        ]
-    )
+    query_string = 'long_offline_time_notification_status = :long_offline_time_notification_status'
+    query_string += ' AND '
+    query_string += 'last_contact_at <= :minimum_offline_time'
+    query_params = {
+        minimum_offline_time:                  minimum_offline_time,
+        long_offline_time_notification_status: Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
+    }
+
+    offline_devices_to_send_notification_for = Device.where([query_string, query_params])
 
     offline_devices_to_send_notification_for.find_each do |offline_device|
       UserMailer.notify_user_for_offline_devices(offline_device).deliver_now

@@ -101,28 +101,31 @@ class DevicesController < ApplicationController
           if params.include?(:smart_thermostat) && params.require(:smart_thermostat).include?(:device_attributes)
             params.require(:smart_thermostat).fetch(:device_attributes).each do |key, smart_thermostat_post|
 
-              query_string            = 'devices.user_id = :current_user AND device_uid = :source_device_uid'
-              query_params            = {
-                  current_user:      current_user.id,
-                  source_device_uid: smart_thermostat_post.fetch(:source_device_uid)
-              }
-              stored_device_attribute = DeviceAttribute.joins(:device).where([query_string, query_params]).find_by(id: smart_thermostat_post.fetch(:source_device_attribute_id))
-
-              if stored_device_attribute
-                query_params     = {
-                    smart_device_uid:                 @device.uid,
-                    smart_device_attribute_type_c_id: smart_thermostat_post.fetch(:smart_device_attribute_type_c_id)
+              if smart_thermostat_post.include?(:source_device_attribute_id)
+                query_string            = 'devices.user_id = :current_user AND device_uid = :source_device_uid'
+                query_params            = {
+                    current_user:      current_user.id,
+                    source_device_uid: smart_thermostat_post.fetch(:source_device_uid)
                 }
-                smart_thermostat = SmartThermostat.find_by(query_params)
-                if smart_thermostat.nil?
-                  smart_thermostat                                  = SmartThermostat.new
-                  smart_thermostat.smart_device_uid                 = @device.uid
-                  smart_thermostat.smart_device_attribute_type_c_id = smart_thermostat_post.fetch(:smart_device_attribute_type_c_id)
-                end
-                smart_thermostat.source_device_uid          = stored_device_attribute.device_uid
-                smart_thermostat.source_device_attribute_id = stored_device_attribute.id
+                stored_device_attribute = DeviceAttribute.joins(:device).where([query_string, query_params]).find_by(id: smart_thermostat_post.fetch(:source_device_attribute_id))
 
-                smart_thermostat.save
+                if stored_device_attribute
+                  query_params     = {
+                      smart_device_uid:                 @device.uid,
+                      smart_device_attribute_type_c_id: smart_thermostat_post.fetch(:smart_device_attribute_type_c_id)
+                  }
+                  smart_thermostat = SmartThermostat.find_by(query_params)
+                  if smart_thermostat.nil?
+                    smart_thermostat                                  = SmartThermostat.new
+                    smart_thermostat.smart_device_uid                 = @device.uid
+                    smart_thermostat.smart_device_attribute_type_c_id = smart_thermostat_post.fetch(:smart_device_attribute_type_c_id)
+                  end
+                  smart_thermostat.source_device_uid          = stored_device_attribute.device_uid
+                  smart_thermostat.source_device_attribute_id = stored_device_attribute.id
+
+                  smart_thermostat.save
+                end
+
               end
             end
           end
