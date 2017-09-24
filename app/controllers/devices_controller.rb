@@ -159,10 +159,6 @@ class DevicesController < ApplicationController
       mqtt_client.host = Rails.application.secrets.mqtt[:host]
       mqtt_client.port = Rails.application.secrets.mqtt[:port]
 
-      # mqtt_client.on_connect do |rc|
-      #   puts "Connected with return code #{rc}"
-      # end
-
       payload = ActiveSupport::JSON.encode({ da: { idx: device_attribute.index_on_device, id: device_attribute.id, set: device_attribute.read_attribute(params[:name]) } })
       mqtt_client.connect()
       mqtt_client.publish(params[:device_uid], payload, false, 0)
@@ -250,9 +246,6 @@ class DevicesController < ApplicationController
     else
       return_all_attributes = false
     end
-
-    puts return_all_attributes
-    puts return_all_attributes.inspect
 
     device_attributes = []
     @device.device_attributes.each do |device_attribute|

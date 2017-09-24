@@ -126,6 +126,7 @@ module DevicesHelper
 
     # First, tell the device to delete the schedules that already had, and wait for the new ones
     payload = ActiveSupport::JSON.encode({ sc_del: :all })
+    puts payload
     mqtt_client.publish(device.uid.to_s, payload, false, 0)
 
     # Secondly, send the new schedules to the device

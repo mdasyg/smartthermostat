@@ -334,13 +334,13 @@ class SchedulesController < ApplicationController
       end
     rescue Exception => e
       if Rails.env.development?
-        msg = [e.to_s]
+        @schedule.errors.add(:base, e.to_s)
       else
-        msg = ['Please contact with admin']
+        @schedule.errors.add(:base, 'Please contact with admin')
       end
       respond_to do |format|
         format.html {set_schedule_recurrent_unit_list(); render :edit}
-        format.json {render json: { messages: msg, result: :error }}
+        format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
 
@@ -351,9 +351,9 @@ class SchedulesController < ApplicationController
   def destroy
     begin
       @schedule.transaction do
-        devices_to_update_schedule = []
+        device_uids_to_send_new_schedule_list = []
         @schedule.schedule_events.each do |schedule_event|
-          devices_to_update_schedule << schedule_event.device.dup
+          device_uids_to_send_new_schedule_list << schedule_event.device.uid
           action_ids = schedule_event.actions.ids
           schedule_event.destroy
           Action.destroy(action_ids)
@@ -365,7 +365,8 @@ class SchedulesController < ApplicationController
         mqtt_client.port = Rails.application.secrets.mqtt[:port]
         mqtt_client.connect()
 
-        devices_to_update_schedule.each do |device|
+        device_uids_to_send_new_schedule_list.each do |device_uid|
+          device = Device.find(device_uid)
           send_new_schedule_table_to_device(device, mqtt_client)
         end
 
@@ -376,10 +377,14 @@ class SchedulesController < ApplicationController
           format.json {render json: { result: :ok }}
         end
       end
-    rescue
+    rescue Exception => e
+      if Rails.env.development?
+        @schedule.errors.add(:base, e.to_s)
+      else
+        @schedule.errors.add(:base, 'Please contact with admin')
+      end
       respond_to do |format|
-        set_schedule_recurrent_unit_list()
-        format.html {render :index}
+        format.html {set_schedule_recurrent_unit_list(); render :index}
         format.json {render json: { messages: @schedule.errors.full_messages, result: :error }}
       end
     end
