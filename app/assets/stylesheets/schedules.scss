@@ -1,7 +1,10 @@
 .schedule-event {
-  border-style: solid;
+  padding: 10px 10px 0 10px;
+  &:not(:last-child) {
+    border-bottom: solid 1px;
+  }
   &.even {
-    background-color: cornflowerblue;
+    background-color: darkorange;
   }
   &.odd {
     background-color: cadetblue;

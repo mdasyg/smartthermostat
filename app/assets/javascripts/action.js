@@ -66,8 +66,8 @@ function addNewAction($containerToAppendActions, $actionTemplate, prefixForActio
         $newAction.find('.action-id').val(actionData.id);
         $newAction.find('.action-device-attribute-id').val(actionData.device_attribute_id);
         $newAction.find('.event-action-device-attribute-name-placeholder').text(actionData.device_attribute_name);
-        $newAction.find('.action-device-attribute-start-value').val(actionData.device_attribute_start_value);
-        $newAction.find('.action-device-attribute-end-value').val(actionData.device_attribute_end_value);
+        $newAction.find('.action-device-attribute-start-value').val((actionData.device_attribute_primitive_type_c_id == deviceAttributePrimitiveTypesConstants['BOOL']['ID']) ? parseInt(actionData.device_attribute_start_value) : actionData.device_attribute_start_value);
+        $newAction.find('.action-device-attribute-end-value').val((actionData.device_attribute_primitive_type_c_id == deviceAttributePrimitiveTypesConstants['BOOL']['ID']) ? parseInt(actionData.device_attribute_end_value) : actionData.device_attribute_end_value);
     }
 
     $containerToAppendActions.append($newAction);
