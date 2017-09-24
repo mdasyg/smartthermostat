@@ -72,7 +72,7 @@ $gray-medium-light: #eaeaea;
 @media screen and (max-width: 991px) {
   .responsive-table-container {
     .responsive-table .responsive-table-element-field.form-row .row {
-      .col-md-1, .col-md-2, .col-md-5, .col-md-6 {
+      .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6 {
         display: flex;
         align-items: center;
         &:before {
@@ -97,13 +97,12 @@ $gray-medium-light: #eaeaea;
         margin-bottom: 10px;
         display: block;
         border: 1px solid #ddd;
-        .col-md-1, .col-md-2, .col-md-5, .col-md-6 {
+        .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6 {
           display: block;
           text-align: right;
           font-size: 13px;
           border-bottom: 1px dotted #ccc;
           min-height: 43px;
-
           &:before {
             content: attr(data-label);
             float: left;
