@@ -1,6 +1,6 @@
 class DevicesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_device, only: [:show, :edit, :update, :destroy, :get_device_attributes_list]
+  before_action :set_device, only: [:show, :edit, :update, :destroy, :get_device_attributes_list, :get_smart_thermostat_analyzed_data]
   before_action :set_primitive_types, only: [:new, :edit]
   before_action :set_directions, only: [:new, :edit]
   before_action :set_types, only: [:new, :edit]
@@ -254,6 +254,36 @@ class DevicesController < ApplicationController
       end
     end
     render json: { data: device_attributes, result: :ok }
+  end
+
+  def get_smart_thermostat_analyzed_data
+    # Base query string and params
+    query_string = 'device_uid = :device_uid'
+    query_params = {
+        device_uid: @device.uid,
+    }
+
+    # Query for distinct outside temp values
+    distinct_outside_temperatures = SmartThermostatComputedDataset.select(:outside_temperature).where([query_string, query_params]).distinct.pluck(:outside_temperature).sort
+
+    query_string                         += ' AND '
+    query_string                         += 'outside_temperature = :current_distinct_temp'
+    query_params[:current_distinct_temp] = nil
+
+    chart_data = []
+    distinct_outside_temperatures.each do |distinct_outside_temp|
+      query_params[:current_distinct_temp] = distinct_outside_temp
+      new_chart_entry                      = {}
+      new_chart_entry[:name]               = distinct_outside_temp
+      new_chart_entry[:data]               = []
+      SmartThermostatComputedDataset.where([query_string, query_params]).each do |dataset|
+        new_chart_entry[:data] << [dataset.timeline, dataset.inside_temperature.to_f]
+      end
+      chart_data << new_chart_entry
+    end
+
+    render json: { data: chart_data, result: :ok }
+
   end
 
   ##############################################################################

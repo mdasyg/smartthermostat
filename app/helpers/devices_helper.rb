@@ -1,5 +1,48 @@
 module DevicesHelper
 
+  private def asdf(schedule_event)
+    # Check if data from smart thermostat for this schedule temps exists
+    # First check if device is smart thermostat
+    start_time_offset = 0
+    if schedule_event.device.type_c_id == Device::TYPES[:SMART_THERMOSTAT][:ID]
+      puts 'SMART THERMOSTAT DEVICE'
+      smart_thermostat_attributes_associations = SmartThermostat.where(smart_device_uid: schedule_event.device_uid)
+      if smart_thermostat_attributes_associations.any?
+        # Get current outside temp
+        outside_temp_device_attribute_id = smart_thermostat_attributes_associations.find_by(smart_device_attribute_type_c_id: SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES[:OUTSIDE_TEMPERATURE][:ID]).source_device_attribute_id
+        current_outside_temperature      = DeviceAttribute.find(outside_temp_device_attribute_id).current_value
+        return start_time_offset if current_outside_temperature.blank?
+        current_outside_temperature = current_outside_temperature.round(0)
+        # Get current inside temp
+        inside_temp_device_attribute_id = smart_thermostat_attributes_associations.find_by(smart_device_attribute_type_c_id: SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES[:INSIDE_TEMPERATURE][:ID]).source_device_attribute_id
+        current_inside_temperature      = DeviceAttribute.find(inside_temp_device_attribute_id).current_value.round(1)
+        # Get desired inside temp
+        desired_inside_temperature = schedule_event.actions.find_by(device_attribute_id: inside_temp_device_attribute_id).device_attribute_start_value
+
+        query_string = 'device_uid = :device_uid'
+        query_string += ' AND '
+        query_string += 'outside_temperature = :current_outside_temp'
+        query_string += ' AND '
+        query_string += '(inside_temperature = :current_inside_temp'
+        query_string += ' OR '
+        query_string += 'inside_temperature = :desired_inside_temp)'
+        query_params = {
+            device_uid:           schedule_event.device_uid,
+            current_outside_temp: current_outside_temperature,
+            current_inside_temp:  current_inside_temperature,
+            desired_inside_temp:  desired_inside_temperature
+        }
+
+        smart_thermostat_temp_analysis = SmartThermostatComputedDataset.where([query_string, query_params]).order(:timeline)
+
+        if smart_thermostat_temp_analysis.size == 2
+          start_time_offset = smart_thermostat_temp_analysis[1].timeline - smart_thermostat_temp_analysis[0].timeline
+        end
+      end
+    end
+    return start_time_offset
+  end
+
   def send_new_schedule_table_to_device(device, mqtt_client)
     # Find the beggining and end of this day
     current_time = Time.now
@@ -44,6 +87,16 @@ module DevicesHelper
         schedule_data_to_sort << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
       else
         if !next_schedule_event_checked
+
+          start_time_offset = asdf(schedule_event)
+
+          puts "OFFSET START TIME #{start_time_offset} secs"
+
+          # Subtract the offset from current schedule start time
+          puts schedule_event.schedule.start_datetime
+          schedule_event.schedule.start_datetime = schedule_event.schedule.start_datetime.advance(seconds: -start_time_offset)
+          puts schedule_event.schedule.start_datetime
+
           schedule_data_to_sort.each do |schedule_data|
             puts schedule_event.schedule.start_datetime
             puts schedule_data[:end]
@@ -51,10 +104,10 @@ module DevicesHelper
               schedule_data_to_sort << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
               next_schedule_event_checked = true
             end
-            if !next_schedule_event_checked
-              left_over_events << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
-              next_schedule_event_checked = true
-            end
+          end
+          if !next_schedule_event_checked
+            left_over_events << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+            next_schedule_event_checked = true
           end
         else
           left_over_events << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }

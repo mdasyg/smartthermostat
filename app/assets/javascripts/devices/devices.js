@@ -38,6 +38,77 @@ function initSmartThermostatDeviceAttributesSourceSelectiorSelect2() {
     });
 }
 
+function displayChart(chartData) {
+    Highcharts.chart('smart-thermostat-analyzed-data-graph-container', {
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: 'Function diagram'
+        },
+        subtitle: {
+            text: 'Irregular time data in Highcharts JS'
+        },
+        xAxis: {
+            //     type: 'datetime',
+            //     dateTimeLabelFormats: { // don't display the dummy year
+            //         month: '%e. %b',
+            //         year: '%b'
+            //     },
+            title: {
+                text: 'Timeline (secs)'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Inside Temperature (*C)'
+            }
+        },
+
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+
+        series: chartData
+    });
+}
+
+function displaySmartThermostatComputedDatasetGraph() {
+    var url = $('#get-smart-thermostat-analyzed-data').data('url');
+    if (!url) {
+        return false;
+    }
+
+    // attributes request
+    var request = $.ajax({
+        url: url,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+        },
+        type: 'get',
+        dataType: 'json'
+    });
+    request.done(function (responseData, textStatus, jqXHR) {
+        if (responseData.result == 'ok') {
+            displayChart(responseData.data);
+        } else if (responseData.result == 'error') {
+            alert('Error getting device chart data');
+        } else {
+            alert('Unknown error');
+        }
+    });
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+        alert(errorThrown + ': ' + textStatus);
+    });
+}
+
 function getDeviceInfo() {
     var url = $('#get-device-status-info').data('url');
     if (!url) {
@@ -51,7 +122,7 @@ function getDeviceInfo() {
             xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
         },
         type: 'get',
-        dataType: 'json',
+        dataType: 'json'
     });
     request.done(function (responseData, textStatus, jqXHR) {
         updateDevicePage(responseData);
@@ -135,4 +206,7 @@ $(document).on("turbolinks:load", function () { // we need this because of turbo
         var deviceUid = $(this).val();
         getDeviceAttributes(deviceUid, 1, updateSmartThermostatDeviceAttributesSelectOptions, {closestRow: $(this).closest('.row')});
     });
+
+    displaySmartThermostatComputedDatasetGraph();
+
 });
