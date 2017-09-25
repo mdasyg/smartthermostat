@@ -64,7 +64,7 @@
 
 # Notes
 
-+ In production machines run `RAILS_ENV=production rake assets:precompile` in order to precompile assets and work properly
++ In production machines run `RAILS_ENV=production rake assets:precompile` in order to precompile assets and work properly. After that web server needs restart
 
 + When using modules (e.g x-editable, bootstrap) because of assets some url/links doesn't work, so you have to override them (see application.scss for example)
 
