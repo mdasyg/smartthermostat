@@ -1,6 +1,7 @@
 <% provide(:title, 'Device Overview') %>
 
 <div id="get-device-status-info" data-url="<%= device_url(@device.uid) %>"></div>
+<div id="get-smart-thermostat-analyzed-data" data-url="<%= device_url(@device.uid) + '/get_smart_thermostat_analyzed_data' %>"></div>
 
 <div class="well">
   <h1>Overview for the device:</h1>
@@ -25,27 +26,6 @@
     </div>
   </div>
 </div>
-
-<% line_chart(
-        SmartThermostatTrainingSetSample.all.collect do |hs|
-          [hs.sample_datetime, hs.inside_temperature]
-        end
-    ) %>
-
-<% line_chart(
-       [
-           { name: 'Tasos', data: { 20.day.ago => 5, '2017-05-07 00:00:00 UTC' => 7, '2017-05-08 00:00:00 UTC' => 32 } },
-           { name: 'Tasob', data: { 20.day.ago => 15, '2017-05-07 00:00:00 UTC' => 23, '2017-05-08 00:00:00 UTC' => 20 } }
-       ]
-   ) %>
-
-
-<% line_chart(
-       [
-           { name: 'Stefh', data: { 20.day.ago => 8, '2017-06-07 00:00:00 UTC' => 9, '2017-05-08 00:00:00 UTC' => 19 } },
-           { name: 'Tasos', data: { 20.day.ago => 5, '2017-06-07 00:00:00 UTC' => 7, '2017-05-08 00:00:00 UTC' => 15 } }
-       ]
-   ) %>
 
 <!-- DEVICE ATTRIBUTES -->
 <% if @device.device_attributes.any? %>
@@ -180,6 +160,19 @@
     </div>
   </div>
 <% end %>
+
+<!-- GRAPHS -->
+<div class="panel panel-default">
+
+  <div class="panel-heading">
+    <h3 class="panel-title">Device function graph</h3>
+  </div>
+
+  <div class="panel-body">
+    <div id="smart-thermostat-analyzed-data-graph-container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+  </div>
+
+</div>
 
 <!-- DEVICE TYPE SETUP -->
 <% if @device.type_c_id == Device::TYPES[:SMART_THERMOSTAT][:ID] %>
