@@ -175,7 +175,7 @@
     <%= render partial: '/schedules/schedule_event_form', locals: { schedule_event: ScheduleEvent.new } %>
   </div>
   <div class="schedule-event-action-template">
-    <%= render partial: '/actions/action_form_element', locals: { action: Action.new, prefix_for_subform: 'REPLACE_WITH_EVENT_FORM_PREFIX' } %>
+    <%= render partial: '/actions/action_form_element', locals: { action: Action.new, prefix_for_subform: 'REPLACE_WITH_EVENT_FORM_PREFIX', idx: nil } %>
   </div>
   <div class="overlap-schedule-template">
     <div class="overlap-schedule">
