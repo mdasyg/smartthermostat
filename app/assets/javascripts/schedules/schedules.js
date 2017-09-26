@@ -34,13 +34,7 @@ function initializeFullCalendar() {
             fetchAndDisplayOverlappingEvents(calEvent.id);
             $scheduleModal.modal('show');
             return false;
-        },
-        // eventDrop: function (event, delta, revertFunc) {
-        //     console.log(event.title + " was dropped on " + event.start.format());
-        //     if (!confirm("Are you sure about this change?")) {
-        //         revertFunc();
-        //     }
-        // }
+        }
     });
 }
 
