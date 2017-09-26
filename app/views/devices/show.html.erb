@@ -3,7 +3,7 @@
 <div id="get-device-status-info" data-url="<%= device_url(@device.uid) %>"></div>
 <div id="get-smart-thermostat-analyzed-data" data-url="<%= device_url(@device.uid) + '/get_smart_thermostat_analyzed_data' %>"></div>
 
-<div class="well">
+<div class="page-header-title">
   <h1>Overview for the device:</h1>
   <h1>
     <small><%= @device.name %> @ <%= @device.location %></small>
@@ -31,7 +31,7 @@
 <% if @device.device_attributes.any? %>
   <div class="panel panel-default responsive-table-container">
     <div class="panel-heading">
-      <h3 class="panel-title">Device Attributes</h3>
+      <h3 class="panel-title">Attributes settings & status</h3>
     </div>
 
     <div class="panel-body responsive-table">
@@ -165,7 +165,7 @@
 <div class="panel panel-default">
 
   <div class="panel-heading">
-    <h3 class="panel-title">Device function graph</h3>
+    <h3 class="panel-title">Graphs</h3>
   </div>
 
   <div class="panel-body">
@@ -253,7 +253,7 @@
   <div class="panel panel-default">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Device's schedules</h3>
+      <h3 class="panel-title">Schedules</h3>
     </div>
 
     <div class="panel-body">
@@ -302,7 +302,7 @@
   <div class="panel panel-default">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Device's quick buttons</h3>
+      <h3 class="panel-title">Quick buttons</h3>
     </div>
 
     <div class="panel-body">
