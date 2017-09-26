@@ -16,6 +16,7 @@
 @import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker';
 @import 'fullcalendar/dist/fullcalendar';
 @import 'x-editable/dist/bootstrap3-editable/css/bootstrap-editable';
+@import 'color_variables';
 @import 'devise';
 @import 'devices';
 @import 'schedules';
@@ -45,11 +46,6 @@
 }
 
 /* mixins, variables, etc. */
-$gray: #eaea88;
-$gray-darker: #eaeaff;
-$gray-light: #00aaaa;
-$gray-medium-light: #eaeaea;
-
 @mixin box_sizing {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -125,6 +121,7 @@ $gray-medium-light: #eaeaea;
 /* universal */
 body {
   padding-top: 60px;
+  background-color: #f8f8f8;
 }
 
 section {
@@ -172,14 +169,6 @@ p {
   line-height: 1.7em;
 }
 
-/* footer */
-footer {
-  margin-top: 45px;
-  padding-top: 5px;
-  border-top: 1px solid $gray-medium-light;
-  color: $gray-light;
-}
-
 /* editable */
 span.editable {
   cursor: pointer;
@@ -192,4 +181,32 @@ span.editable {
   width: 100%;
   margin-top: 45px;
   @include box_sizing;
+}
+
+/* navbar */
+.navbar-default {
+  background-color: #bababa;
+  .navbar-brand {
+    color: #b043d8;
+    &:hover {
+      color: #84459b;
+    }
+  }
+}
+
+/* footer */
+footer {
+  margin-top: 45px;
+  padding-top: 5px;
+  border-top: 1px solid $gray-medium-light;
+  color: $gray-light;
+}
+
+/* general rules */
+.page-header-title {
+  padding: 25px 0 25px 0;
+}
+
+.asdf {
+  color: #00aaaa;
 }
