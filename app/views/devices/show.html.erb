@@ -4,13 +4,19 @@
 <div id="get-smart-thermostat-analyzed-data" data-url="<%= device_url(@device.uid) + '/get_smart_thermostat_analyzed_data' %>"></div>
 
 <div class="page-header-title">
+
   <h1>Overview for the device:</h1>
+
   <h1>
     <small><%= @device.name %> @ <%= @device.location %></small>
   </h1>
-  <h4>Page content auto-updates
-    every <%= Rails.application.secrets.configs[:device_detail_show_view_update_interval_in_seconds] %>
-    seconds</h4>
+
+  <% if !@device.description.empty? %>
+    <h2>
+      <%= @device.description %>
+    </h2>
+  <% end %>
+
 </div>
 
 <!-- STATUS -->
@@ -32,6 +38,9 @@
   <div class="panel panel-default responsive-table-container">
     <div class="panel-heading">
       <h3 class="panel-title">Attributes settings & status</h3>
+      Content of this section auto-updates
+      every <%= Rails.application.secrets.configs[:device_detail_show_view_update_interval_in_seconds] %>
+      seconds
     </div>
 
     <div class="panel-body responsive-table">
@@ -179,7 +188,7 @@
   <div class="panel panel-default">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Device mode setup</h3>
+      <h3 class="panel-title">Smart Thermostat device type selected</h3>
     </div>
 
     <div class="panel-body">
@@ -191,32 +200,25 @@
 
 <!-- SYSTEM INFO FOR DEVICE -->
 <div class="panel panel-default">
+
   <div class="panel-heading">
     <h3 class="panel-title">System info for device</h3>
   </div>
+
   <div class="panel-body">
-
-    <% if !@device.description.empty? %>
-      <div>
-        <strong>Description:</strong>
-        <%= @device.description %>
-      </div>
-    <% end %>
-
     <div>
-      <strong>Serial No:</strong>
+      <strong>UID:</strong>
       <%= @device.uid %>
     </div>
-
     <div>
       <strong>Access token:</strong>
       <%= @device.access_token %>
     </div>
-
   </div>
+
 </div>
 
-<!--INFO FROM DEVICE-->
+<!-- INFO FROM DEVICE -->
 <% if @device.device_stats.any? %>
   <div class="panel panel-default">
 
@@ -241,7 +243,6 @@
           </div>
 
         </div>
-        <br>
       <% end %>
     </div>
 
@@ -332,5 +333,7 @@
   </div>
 <% end %>
 
-<%= link_to 'Edit', edit_device_path(@device) %> |
-<%= link_to 'Back', devices_path %>
+<div class="entity-view-footer-links">
+  <%= link_to 'Edit', edit_device_path(@device) %> |
+  <%= link_to 'Back', devices_path %>
+</div>
