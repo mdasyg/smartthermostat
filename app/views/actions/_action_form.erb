@@ -1,37 +1,43 @@
-<div class="actions-form-container">
+<div class="responsive-table-container">
 
-  <div class="actions-header">
+  <div class="responsive-table">
 
-    <div class="row">
+    <div class="actions-form-container">
 
-      <div class="col-sm-4">
-        <div class="form-group">
-          <%= label(Action, :device_attribute_id) %>
+      <div class="actions-header responsive-table-header">
+
+        <div class="row">
+
+          <div class="col-sm-4">
+            <div class="form-group">
+              <%= label(Action, :device_attribute_id) %>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="form-group">
+              <%= label(Action, :device_attribute_start_value) %>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="form-group">
+              <%= label(Action, :device_attribute_end_value) %>
+            </div>
+          </div>
+
         </div>
+
       </div>
 
-      <div class="col-sm-4">
-        <div class="form-group">
-          <%= label(Action, :device_attribute_start_value) %>
-        </div>
-      </div>
-
-      <div class="col-sm-4">
-        <div class="form-group">
-          <%= label(Action, :device_attribute_end_value) %>
-        </div>
+      <div class="actions-container">
+        <% if actions.any? %>
+          <% actions.each_with_index do |action, idx| %>
+            <%= render partial: '/actions/action_form_element', locals: { action: action, prefix_for_subform: prefix_for_subform, idx: idx } %>
+          <% end %>
+        <% end %>
       </div>
 
     </div>
-
   </div>
-
-  <div class="actions-container">
-    <% if actions.any? %>
-      <% actions.each_with_index do |action, idx| %>
-        <%= render partial: '/actions/action_form_element', locals: { action: action, prefix_for_subform: prefix_for_subform, idx: idx } %>
-      <% end %>
-    <% end %>
-  </div>
-
 </div>
