@@ -146,10 +146,14 @@
 
     <%= render partial: 'device_attribute_form', locals: { device_attributes: device.device_attributes } %>
 
-    <hr/>
-
     <div class="actions">
-      <%= device_form.submit %>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= device_form.submit(class: 'btn btn-default') %>
+          </div>
+        </div>
+      </div>
     </div>
 
   <% end %>

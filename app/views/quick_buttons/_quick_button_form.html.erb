@@ -75,14 +75,17 @@
     <%= render partial: '/actions/action_form', locals: { actions: quick_button.actions, prefix_for_subform: prefix_for_subform } %>
   </div>
 
-  <hr>
-
   <div class="actions">
-    <%= quick_button_form.submit %>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="form-group">
+          <%= quick_button_form.submit(class: 'btn btn-default') %>
+        </div>
+      </div>
+    </div>
   </div>
-<% end %>
 
-<hr>
+<% end %>
 
 <div id="quick-button-subforms-templates" class="hidden">
   <div class="quick-button-action-template">

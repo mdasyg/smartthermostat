@@ -6,7 +6,7 @@
 
 <%= render partial: 'device_form', locals: { device: @device } %>
 
-<hr>
-
-<%= link_to 'Show', @device %> |
-<%= link_to 'Back', devices_path %>
+<div class="entity-view-footer-links">
+  <%= link_to 'Show', @device %> |
+  <%= link_to 'Back', devices_path %>
+</div>
