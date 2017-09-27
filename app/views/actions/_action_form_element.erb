@@ -1,7 +1,7 @@
 <% action_index = (action.id) ? action.id : (idx) ? idx : 'ACTION_INDEX' %>
 <% current_form_prefix = prefix_for_subform + '[actions]' %>
 
-<div class="action form-row" data-index="<%= action_index %>">
+<div class="action form-row responsive-table-element-field" data-index="<%= action_index %>">
 
   <%= fields_for current_form_prefix, action, index: action_index do |action_form| %>
 
@@ -22,14 +22,14 @@
 
     <div class="row">
 
-      <div class="col-md-4">
-        <div class="form-group">
+      <div data-label="<%= Action.human_attribute_name(:title) %>" class="col-md-4">
+        <div class="form-group responsive-table-element">
           <span class="event-action-device-attribute-name-placeholder"><%= (action && action.device_attribute) ? action.device_attribute.name : '' %></span>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="form-group action-device-attribute-start-value-container">
+      <div data-label="<%= Action.human_attribute_name(:device_attribute_start_value) %>" class="col-md-4">
+        <div class="form-group action-device-attribute-start-value-container responsive-table-element">
           <% if (action && action.device_attribute.nil?) || (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
             <div class="action-device-attribute-start-value-bool">
               <%= action_form.select(:device_attribute_start_value, {}, {}, { class: 'form-control action-device-attribute-start-value' }) do %>
@@ -51,7 +51,7 @@
         </div>
       </div>
 
-      <div class="col-md-4">
+      <div data-label="<%= Action.human_attribute_name(:device_attribute_start_value) %>" class="col-md-4">
         <div class="form-group action-device-attribute-end-value-container">
           <% if (action && action.device_attribute.nil?) || (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
             <div class="action-device-attribute-end-value-bool">
