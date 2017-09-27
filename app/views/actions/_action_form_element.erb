@@ -51,7 +51,7 @@
         </div>
       </div>
 
-      <div data-label="<%= Action.human_attribute_name(:device_attribute_start_value) %>" class="col-md-4">
+      <div data-label="<%= Action.human_attribute_name(:device_attribute_end_value) %>" class="col-md-4">
         <div class="form-group action-device-attribute-end-value-container">
           <% if (action && action.device_attribute.nil?) || (action && action.device_attribute && action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) %>
             <div class="action-device-attribute-end-value-bool">
