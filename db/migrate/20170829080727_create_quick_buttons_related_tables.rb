@@ -8,7 +8,7 @@ class CreateQuickButtonsRelatedTables < ActiveRecord::Migration[5.1]
       t.integer :index_on_device, null: false, unsigned: true, limit: 1
       t.string :title, null: false
       t.text :description
-      t.integer :duration
+      t.integer :duration, null: false, unsigned: true
 
       t.timestamps
     end
