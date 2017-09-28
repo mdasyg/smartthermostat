@@ -52,6 +52,11 @@
   box-sizing: border-box;
 }
 
+.btn:active, .btn.active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
 /* Fix select2 css */
 .select2-container--default .select2-selection--single {
   border: 1px solid #ccc;
