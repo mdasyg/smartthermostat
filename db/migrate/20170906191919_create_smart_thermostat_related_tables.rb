@@ -15,16 +15,16 @@ class CreateSmartThermostatRelatedTables < ActiveRecord::Migration[5.1]
       t.bigint :device_uid, null: false, unsigned: true
       t.datetime :sample_datetime, null: false
       t.integer :energy_source_status, null: false, unsigned: true, limit: 1, comment: 'Energy source working or not during the sample'
-      t.integer :outside_temperature
-      t.decimal :inside_temperature, precision: 10, scale: 3
-      t.decimal :set_temperature, precision: 10, scale: 3
+      t.integer :outside_temperature, null: false
+      t.decimal :inside_temperature, null: false, precision: 10, scale: 3
+      t.decimal :set_temperature, null: false, precision: 10, scale: 3
     end
 
     create_table :smart_thermostat_computed_datasets, id: false do |t| # _computed_dataset
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.bigint :device_uid, null: false, unsigned: true
-      t.integer :outside_temperature
-      t.decimal :inside_temperature, precision: 10, scale: 3
+      t.integer :outside_temperature, null: false
+      t.decimal :inside_temperature, null: false, precision: 10, scale: 3
       t.integer :timeline, null: false, unsigned: true
     end
 
