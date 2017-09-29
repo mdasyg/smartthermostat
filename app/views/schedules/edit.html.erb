@@ -6,7 +6,7 @@
 
 <%= render 'schedule_form', schedule: @schedule, schedule_recurrent_unit_list: @schedule_recurrent_unit_list %>
 
-<hr/>
-
-<%= link_to 'Show', @schedule %> |
-<%= link_to 'Back', schedules_path %>
+<div class="entity-view-footer-links">
+  <%= link_to 'Show', @schedule %> |
+  <%= link_to 'Back', schedules_path %>
+</div>
