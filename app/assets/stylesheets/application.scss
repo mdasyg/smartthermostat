@@ -213,5 +213,7 @@ footer {
 }
 
 .entity-view-footer-links {
-  color: #00aaaa;
+  a {
+    color: #00aaaa;
+  }
 }
