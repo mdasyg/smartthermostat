@@ -4,30 +4,30 @@ module Api
 
       include DevicesHelper
 
-      skip_before_action :verify_authenticity_token, :only => [:stats_update, :attributes_status_update, :attributes_list]
+      skip_before_action :verify_authenticity_token, :only => [:infos_update, :attributes_status_update, :attributes_list]
       before_action :set_device # order matters, before every other function related to device
       before_action :check_access_token
       before_action :update_last_contact_time
 
       # POST /devices/1/stats_update
       # POST /devices/1/stats_update.json
-      def stats_update
-        device_uid = @device.uid
-        stats_info = params.except(:controller, :action, :uid, :tk)
+      def infos_update
+        device_uid       = @device.uid
+        device_info_post = params.except(:controller, :action, :uid, :tk)
 
-        stats_info.each do |key, value|
-          device_stat = DeviceStat.where(device_uid: device_uid, stat_name: key).take
-          if (!device_stat.nil?)
-            device_stat.value          = value
-            device_stat.last_update_at = Time.now.to_formatted_s(:db)
-            device_stat.save()
+        device_info_post.each do |key, value|
+          device_info = DeviceInfo.where(device_uid: device_uid, stat_name: key).take
+          if (!device_info.nil?)
+            device_info.value          = value
+            device_info.last_update_at = Time.now.to_formatted_s(:db)
+            device_info.save()
           else
-            device_stat                = DeviceStat.new
-            device_stat.device_uid     = device_uid
-            device_stat.stat_name      = key
-            device_stat.value          = value
-            device_stat.last_update_at = Time.now.to_formatted_s(:db)
-            device_stat.save()
+            device_info                = DeviceInfo.new
+            device_info.device_uid     = device_uid
+            device_info.stat_name      = key
+            device_info.value          = value
+            device_info.last_update_at = Time.now.to_formatted_s(:db)
+            device_info.save()
           end
         end
 
@@ -129,7 +129,7 @@ module Api
       end
 
       private def update_last_contact_time
-        @device.last_contact_at = Time.now.to_formatted_s(:db)
+        @device.last_contact_at                       = Time.now.to_formatted_s(:db)
         @device.long_offline_time_notification_status = Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
         if !@device.save
           render plain: ActiveSupport::JSON.encode({ msg: 'Internal server err', res: :err }) and return

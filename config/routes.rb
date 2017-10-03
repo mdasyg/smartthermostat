@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   # api routes
   namespace(:api) do
     namespace(:v1) do
-      post '/devices/:uid/stats_update', to: 'devices#stats_update'
+      post '/devices/:uid/infos_update', to: 'devices#infos_update'
       post '/devices/:uid/attributes_status_update', to: 'devices#attributes_status_update'
       get '/devices/:uid/get_info', to: 'devices#get_info'
     end
