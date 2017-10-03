@@ -80,7 +80,7 @@ void setup() {
   // Init PubSubClient
   mqttConnectToBrokerCallback(ethClientForMqtt, mqttClient);
   // Send device info to application server
-  readUriFromFlash(deviceStatsUpdateUri, flashReadBuffer);
+  readUriFromFlash(deviceInfosUpdateUri, flashReadBuffer);
   sendDeviceStatsUpdateToApplicationServer(ethClient, flashReadBuffer);
   // initialize device attributes
   stateOfAttributes[STATE_ATTRIBUTE_INDEX].setValue = 0;
