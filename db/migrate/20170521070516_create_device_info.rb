@@ -1,7 +1,7 @@
-class CreateDeviceStats < ActiveRecord::Migration[5.0]
+class CreateDeviceInfos < ActiveRecord::Migration[5.0]
   def change
 
-    create_table :device_stats, id: false do |t|
+    create_table :device_infos, id: false do |t|
       t.integer :id, null: false, primary_key: true, unsigned: true, auto_increment: true
       t.bigint  :device_uid, null: false, unsigned: true
       t.string :stat_name, null: false
@@ -12,9 +12,9 @@ class CreateDeviceStats < ActiveRecord::Migration[5.0]
       t.timestamps
     end
 
-    # add_index( :device_stats, [:device_uid, :stat_id], unique: true )
+    # add_index( :device_infos, [:device_uid, :stat_id], unique: true )
 
-    add_foreign_key( :device_stats, :devices, column: 'device_uid', primary_key: 'uid' )
+    add_foreign_key( :device_infos, :devices, column: 'device_uid', primary_key: 'uid' )
 
   end
 end

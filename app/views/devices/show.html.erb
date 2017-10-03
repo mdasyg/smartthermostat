@@ -219,7 +219,7 @@
 </div>
 
 <!-- INFO FROM DEVICE -->
-<% if @device.device_stats.any? %>
+<% if @device.device_infos.any? %>
   <div class="panel panel-default">
 
     <div class="panel-heading">
@@ -227,7 +227,7 @@
     </div>
 
     <div class="panel-body">
-      <% @device.device_stats.each do |stat| %>
+      <% @device.device_infos.each do |stat| %>
         <div class="row">
 
           <div class="col-xs-2">
