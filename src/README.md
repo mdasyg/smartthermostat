@@ -2,7 +2,6 @@
 
 This is a prototype for a smart thermostat, which developed for the purpose of my thesis. It is developed in the Arduino platform.
 
-
 # Requirements (libraries)
 
 1. PubSubClient by Nick O'Leary ([GitHub](https://github.com/knolleary/pubsubclient))

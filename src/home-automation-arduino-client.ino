@@ -2,11 +2,11 @@
 #include <dht.h>
 #include <SPI.h>
 #include <Ethernet.h>
-#include <PubSubClient.h>
 #include <EthernetUdp.h>
+#include <PubSubClient.h>
 #include <TimeLib.h>
 #include <avr/wdt.h>
-#include <MemoryFree.h>
+// #include <MemoryFree.h>
 
 #include "DataStructures.h"
 #include "DeviceSecrets.h"
@@ -76,7 +76,7 @@ void setup() {
   // Init UDP
   udpClient.begin(localUdpPort);
   // Init NTP system
-  setSyncProvider(getNtpTime);
+  setSyncProvider(getNtpTime); //timeLib.h
   // Init PubSubClient
   mqttConnectToBrokerCallback(ethClientForMqtt, mqttClient);
   // Send device info to application server
@@ -151,6 +151,8 @@ void loop() {
   // read server response
   httpResponseReader(ethClient);
 
+
+  /// ????
   // if the server's disconnected, stop the client:
   if (isEthClientConnectedToServer && !ethClient.connected()) {
     ethClient.stop();
@@ -170,6 +172,8 @@ void loop() {
   Ethernet.maintain();
 
   mqttClient.loop();
+
+  wdt_reset();
 
   // ##### HEART BEAT DEVICE STATUSES ##########################################
   // loop_counter++;
@@ -230,7 +234,5 @@ void loop() {
   // lastHeartbeatTimestamp = now();
   // }
   // ##### HEART BEAT DEVICE STATUSES ##########################################
-
-  wdt_reset();
 
 }
