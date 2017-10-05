@@ -20,6 +20,8 @@
 @import 'devise';
 @import 'devices';
 @import 'schedules';
+@import 'quick_buttons';
+@import 'home';
 
 /* hot fix for datepicker not displayed */
 .datepicker div.datepicker-days {
@@ -214,6 +216,6 @@ footer {
 
 .entity-view-footer-links {
   a {
-    color: #00aaaa;
+    color: $gray-light;
   }
 }

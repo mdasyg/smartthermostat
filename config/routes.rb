@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root to: 'devices#index'
+  root to: 'home#index'
 
   get '/devices/search', to: 'devices#search' # must be placed before 'devices' resources
 

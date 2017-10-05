@@ -26,7 +26,12 @@
   </div>
   <div class="panel-body">
     <div>
-      <span id="device-status-indicator-text">
+      <% if device_online?(@device.last_contact_at) %>
+        <% device_status_class = 'online' %>
+      <% else %>
+        <% device_status_class = 'offline' %>
+      <% end %>
+      <span id="device-status-indicator-text" class="<%= device_status_class %>">
         <%= get_device_online_status(@device.last_contact_at) %>
       </span>
     </div>

@@ -1,10 +1,18 @@
 var $deviceForm = null;
 
 function updateDevicePage(data) {
+    // device status change
     $('#device-status-indicator-text').text(data.last_contact_text);
+    if (data.device_status) {
+        $('#device-status-indicator-text').removeClass('offline').addClass('online');
+    } else {
+        $('#device-status-indicator-text').removeClass('online').addClass('offline');
+    }
+    // update device attribute elements
     var $deviceAttributeElement = null;
     data.device_attributes.forEach(function (deviceAttributeData) {
         $deviceAttributeElement = $('#device-attributes-container .device-attribute[data-id="' + deviceAttributeData.id + '"]');
+
         $deviceAttributeElement.find('.device-attribute-name').text((deviceAttributeData.name) ? deviceAttributeData.name : '-');
         $deviceAttributeElement.find('.device-attribute-min-value').text((deviceAttributeData.min_value) ? deviceAttributeData.min_value : '-');
         $deviceAttributeElement.find('.device-attribute-max-value').text((deviceAttributeData.max_value) ? deviceAttributeData.max_value : '-');
