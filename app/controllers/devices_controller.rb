@@ -8,7 +8,7 @@ class DevicesController < ApplicationController
   # GET /devices
   # GET /devices.json
   def index
-    @devices = Device.select('uid, name, location').where(user_id: current_user.id).find_each
+    @devices = Device.select('uid, name, location, last_contact_at').where(user_id: current_user.id).find_each
   end
 
   # GET /devices/1

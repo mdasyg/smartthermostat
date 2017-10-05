@@ -4,12 +4,10 @@
 
 <% if user_signed_in? %>
 
-  Eisai mesa
-  <br>
-  <%= current_user %>
-  <br>
-  <%= current_user.id %>
-  <br>
-  <%= current_user.devices.inspect %>
+  <% if @offline_devices_count > 0 %>
+    There are <%= @offline_devices_count %> offline devices out of <%= @total_devices_count %>
+  <% else %>
+    All <%= @total_devices_count %> devices are online
+  <% end %>
 
 <% end %>
