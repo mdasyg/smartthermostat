@@ -1,0 +1,8 @@
+#device-status-indicator-text {
+  &.online {
+    color: lightgreen;
+  }
+  &.offline {
+    color: red;
+  }
+}

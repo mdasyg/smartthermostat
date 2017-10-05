@@ -1,0 +1,15 @@
+<h1>Welcome to Smart Devices Control System</h1>
+<p>Manage your smart devices</p>
+<p>UOWM - ICTE</p>
+
+<% if user_signed_in? %>
+
+  Eisai mesa
+  <br>
+  <%= current_user %>
+  <br>
+  <%= current_user.id %>
+  <br>
+  <%= current_user.devices.inspect %>
+
+<% end %>
