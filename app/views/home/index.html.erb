@@ -1,13 +1,10 @@
 <h1>Welcome to Smart Devices Control System</h1>
-<p>Manage your smart devices</p>
-<p>UOWM - ICTE</p>
+<h2>Manage your smart devices</h2>
 
 <% if user_signed_in? %>
-
   <% if @offline_devices_count > 0 %>
     There are <%= @offline_devices_count %> offline devices out of <%= @total_devices_count %>
   <% else %>
     All <%= @total_devices_count %> devices are online
   <% end %>
-
 <% end %>
