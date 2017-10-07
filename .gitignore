@@ -5,6 +5,8 @@
 /public/assets
 /db/*.sqlite3
 /db/*.sqlite3-journal
+
+# Bundler
 /.bundle/
 /vendor/bundle/
 
