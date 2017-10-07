@@ -26,7 +26,19 @@
 ## Database
 
 1. Create a database on MySQL
+
+```mysql
+CREATE DATABASE home_auto_prod;
+```
+
 2. Setup a user and give him access to the previously created db
+
+```mysql
+CREATE USER 'home_auto_user'@'localhost' IDENTIFIED BY 'mypass'; # Change 'mypass' accordingly
+GRANT ALL PRIVILEGES ON home_auto_prod TO 'home_auto_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
 3. Be careful to set this information on `secrets.yml`
 4. Run `rails db:migrate`
 
