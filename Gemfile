@@ -8,6 +8,7 @@ gem 'mysql2', '~> 0.4.9'
 gem 'puma', '~> 3.10.0' # Use Puma as the app server
 gem 'sass-rails', '~> 5.0.6' # Use SCSS for stylesheets
 gem 'uglifier', '~> 3.2.0' # Use Uglifier as compressor for JavaScript assets
+# gem 'therubyracer' # javascript runtime
 gem 'coffee-rails', '~> 4.2.2' # Use CoffeeScript for .coffee assets and views
 gem 'turbolinks', '~> 5.0.1' # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'jbuilder', '~> 2.7.0' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder

@@ -1,23 +1,23 @@
 # Device Manager
 
-'Device Manager' is project it's creation started for the purposes of my thesis, with the title 'Design and implementation of the infrastructure of an intelligent ecological house'.
+'Device Manager' is a project it's creation started for the purposes of my thesis, with the title 'Design and implementation of the infrastructure of an intelligent ecological house'
 
 # Requirements
 
 1. Ruby v2.3.1 or later
 2. RubyGems manager
-3. MySQL database server
-4. A Web server with phusion passenger module installed and enabled(e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))
-5. Latest NodeJs
-6. Mosquitto Broker
-7. Bundler
-8. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
+3. Latest NodeJs
+4. MySQL database server
+5. Mosquitto Broker
+6. Bundler
+7. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
+8. A Web server with **phusion passenger** module installed and enabled. (e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))
 
 # Installation
 
 ## Initial setup
 
-1. Install the project's required software
+1. Install the project's required software dependencies
 2. Download the project and go to project's root directory
 3. Copy `secrets.yml.sample` to `secrets.yml` and change the appropriate values
 4. Run `bundle install` maybe you have to add `--path vendor/bundle` in order for gems to install locally
@@ -74,9 +74,15 @@ FLUSH PRIVILEGES;
 + `home-automation-server/public` as document root
 + the environment to run on with `RailsEnv ...` directive
 
-# Notes
+# Deploy
 
-+ In production machines run `RAILS_ENV=production rake assets:precompile` in order to precompile assets and work properly. After that web server needs restart
+You have to run some commands in order to deploy/run the app in production mode
+
+1. `RAILS_ENV=production rails db:migrate`
+2. `RAILS_ENV=production bundle exec rake assets:precompile`
+3. set web server in production mode and restart
+
+# Notes
 
 + When using modules (e.g x-editable, bootstrap) because of assets some url/links doesn't work, so you have to override them (see application.scss for example)
 
