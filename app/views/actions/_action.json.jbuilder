@@ -1,0 +1,6 @@
+json.id action.id
+json.device_attribute_primitive_type_c_id action.device_attribute.primitive_type_c_id
+json.device_attribute_id action.device_attribute_id
+json.device_attribute_name action.device_attribute.name
+json.device_attribute_start_value action.device_attribute_start_value
+json.device_attribute_end_value action.device_attribute_end_value

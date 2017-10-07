@@ -1,0 +1,67 @@
+<% provide(:title, 'Quick Button Overview') %>
+
+<div class="well">
+  <h1>Overview for the Quick Button:</h1>
+  <h1>
+    <small><%= @quick_button.title %> @ <%= @quick_button.device.name %></small>
+  </h1>
+</div>
+
+<!-- DESCRIPTION -->
+<% if !@quick_button.description.empty? %>
+  <div class=" panel panel-default">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">Status</h3>
+    </div>
+
+    <div class="panel-body">
+
+      <div>
+        <strong>Description:</strong>
+        <%= @quick_button.description %>
+      </div>
+
+    </div>
+
+  </div>
+<% end %>
+
+<!-- QUICK BUTTON'S SETTINGS-->
+<div class=" panel panel-default">
+
+  <div class="panel-heading">
+    <h3 class="panel-title">Settings</h3>
+  </div>
+
+  <div class="panel-body">
+
+    <div class="row">
+
+      <div class="col-md-3">
+        <strong>Index on Device:</strong>
+        <%= @quick_button.index_on_device %>
+      </div>
+
+      <div class="col-md-3">
+        <strong>Duration:</strong>
+        <%= @quick_button.duration %>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <% @quick_button.actions.each do |asdf| %>
+      <%= asdf.inspect %>
+      <br>
+    <% end %>
+
+  </div>
+
+</div>
+
+<div class="entity-view-footer-links">
+  <%= link_to('Edit', edit_quick_button_path(@quick_button)) %> |
+  <%= link_to('Back', quick_buttons_path) %>
+</div>

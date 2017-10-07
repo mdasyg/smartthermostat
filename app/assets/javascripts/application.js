@@ -10,8 +10,67 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
-//= require bootstrap-sprockets
-//= require jquery_ujs
+//= require highcharts
+//= require jquery/dist/jquery
+//= require jquery-ujs/src/rails
+//= require select2/dist/js/select2
 //= require turbolinks
+//= require moment/min/moment.min
+//= require moment-timezone-all/builds/moment-timezone-with-data
+//= require bootstrap/dist/js/bootstrap
+//= require x-editable/dist/bootstrap3-editable/js/bootstrap-editable
+//= require eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker
+//= require fullcalendar/dist/fullcalendar
 //= require_tree .
+
+var deviceDetailShowViewUpdateIntervalInSeconds = null;
+var deviceAttributeDirectionConstants = null;
+var deviceAttributePrimitiveTypesConstants = null;
+var deviceAttributeBoolValuesData = null;
+
+function replaceUrlParams(url, data) {
+    if (!url || !data) {
+        return false;
+    }
+
+    if (data.deviceUid) {
+        url = url.replace('DEVICE_ID', data.deviceUid);
+    }
+    if (data.scheduleId) {
+        url = url.replace('SCHEDULE_ID', data.scheduleId);
+    }
+
+    return url;
+}
+
+function displayErrors($formToAttachErrors, errorMessages) {
+    $formToAttachErrors.find('#errors-explanation').remove();
+
+    var $errorsDomBlock = $('<div/>').attr('id', 'errors-explanation');
+    $errorsDomBlock.append($('<h2/>').text('Erorrs'));
+    $errorsDomBlock.append('<ul/>');
+
+    $(errorMessages).each(function (index, errorMsg) {
+        $errorsDomBlock.find('ul').append($('<li/>').text(errorMsg));
+    });
+
+    $formToAttachErrors.prepend($errorsDomBlock);
+}
+
+$(document).on("turbolinks:load", function () { // we need this because of turbolinks
+    deviceDetailShowViewUpdateIntervalInSeconds = $('meta[name="device-detail-show-view-update-interval-in-seconds"]').attr('content');
+    deviceAttributeDirectionConstants = $('#device-attribute-direction-constants').data('constants');
+    deviceAttributePrimitiveTypesConstants = $('#device-attribute-primitive-types-constants').data('constants');
+    deviceAttributeBoolValuesData = $('#device-attribute-bool-values-data').data('constants');
+
+    $(document.body).on('click', '.action-button', function (event) {
+        event.stopPropagation();
+        var $thisClick = $(this);
+        // var thisRowId = ($thisClick.closest('.grid-row').data('id')) ? $thisClick.closest('.grid-row').data('id') : null;
+        if ($thisClick.hasClass('active')) {
+            if ($thisClick.hasClass('remove-form-row')) {
+                $thisClick.closest('.form-row').empty().remove();
+            }
+        }
+    });
+});

@@ -1,0 +1,10 @@
+<h1>Welcome to Smart Devices Control System</h1>
+<h2>Manage your smart devices from one place</h2>
+
+<% if user_signed_in? %>
+  <% if @offline_devices_count > 0 %>
+    There are <%= @offline_devices_count %> offline devices out of <%= @total_devices_count %>
+  <% else %>
+    All <%= @total_devices_count %> devices are online
+  <% end %>
+<% end %>

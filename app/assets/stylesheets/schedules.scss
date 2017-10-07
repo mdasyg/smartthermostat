@@ -1,0 +1,12 @@
+.schedule-event {
+  padding: 10px 10px 0 10px;
+  &:not(:last-child) {
+    border-bottom: solid 1px;
+  }
+  &.even {
+    background-color: $custom-orange-medium;
+  }
+  &.odd {
+    background-color: $custom-green-light;
+  }
+}

@@ -1,13 +1,12 @@
-<!-- This provides the title for the page-->
-<% provide(:title, "Device Edit") %>
-<!-- Dont remove the previous -->
+<% provide(:title, 'Device Edit') %>
 
-<div class="well">
+<div class="page-header-title">
   <h1>Editing Device</h1>
 </div>
-<%= render partial: 'device', object: @device %>
 
-<hr>
+<%= render partial: 'device_form', locals: { device: @device } %>
 
-<%= link_to 'Show', @device %> |
-<%= link_to 'Back', devices_path %>
+<div class="entity-view-footer-links">
+  <%= link_to 'Show', @device %> |
+  <%= link_to 'Back', devices_path %>
+</div>

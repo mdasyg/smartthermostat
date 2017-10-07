@@ -1,0 +1,64 @@
+<% provide(:title, 'Quick Buttons List') %>
+
+<div class="page-header-title">
+  <h1>Quick Buttons List</h1>
+</div>
+
+<div class="responsive-table-container">
+
+  <div class="responsive-table">
+
+    <div class="responsive-table-header">
+      <div class="row">
+        <div class="col-md-2"><b>Title</b></div>
+        <div class="col-md-2"><b>Description</b></div>
+        <div class="col-md-2"><b>Duration</b></div>
+        <div class="col-md-2"><b>Index</b></div>
+        <div class="col-md-2"><b>Device Name</b></div>
+        <div class="col-md-2"><b>Actions</b></div>
+      </div>
+    </div>
+
+    <hr/>
+
+    <% @quick_buttons.each do |quick_button| %>
+      <div class="row">
+        <div data-label="<%= QuickButton.human_attribute_name(:title) %>" class="col-md-2">
+          <div class="responsive-table-element"><%= quick_button.title %></div>
+        </div>
+        <div data-label="<%= QuickButton.human_attribute_name(:description) %>" class="col-md-2">
+          <div class="responsive-table-element"><%= quick_button.description %></div>
+        </div>
+        <div data-label="<%= QuickButton.human_attribute_name(:duration) %>" class="col-md-2">
+          <div class="responsive-table-element"><%= quick_button.duration %></div>
+        </div>
+        <div data-label="<%= QuickButton.human_attribute_name(:index_on_device) %>" class="col-md-2">
+          <div class="responsive-table-element"><%= quick_button.index_on_device %></div>
+        </div>
+        <div data-label="<%= Device.human_attribute_name(:name) %>" class="col-md-2">
+          <div class="responsive-table-element"><%= quick_button.device.name %></div>
+        </div>
+        <div data-label="Actions" class="col-md-2">
+          <div class="responsive-table-element">
+            <%= link_to(quick_button) do %>
+              <span class="glyphicon glyphicon-zoom-in"></span>
+            <% end %> |
+            <%= link_to edit_quick_button_path(quick_button) do %>
+              <span class="glyphicon glyphicon-pencil"></span>
+            <% end %>  |
+            <%= link_to quick_button, method: :delete, data: { confirm: 'Are you sure?' } do %>
+              <span class="glyphicon glyphicon-remove"></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <hr>
+    <% end %>
+
+  </div>
+
+</div>
+
+<div class="entity-view-footer-links">
+  <%= link_to('New Quick Button', new_quick_button_path) %>
+</div>

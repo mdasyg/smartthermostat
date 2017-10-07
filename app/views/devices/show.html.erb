@@ -1,79 +1,344 @@
-<!-- This provides the title for the page-->
-<% provide(:title, "Device Overview") %>
-<!-- Dont remove the previous -->
+<% provide(:title, 'Device Overview') %>
 
-<div class="well">
-  <h1>Overview</h1>
-  <h1><small><%= @device.name %> @  <%= @device.location %></small></h1>
+<div id="get-device-status-info" data-url="<%= device_url(@device.uid) %>"></div>
+<div id="get-smart-thermostat-analyzed-data" data-url="<%= device_url(@device.uid) + '/get_smart_thermostat_analyzed_data' %>"></div>
+
+<div class="page-header-title">
+
+  <h1>Overview for the device:</h1>
+
+  <h1>
+    <small><%= @device.name %> @ <%= @device.location %></small>
+  </h1>
+
+  <% if !@device.description.empty? %>
+    <h2>
+      <%= @device.description %>
+    </h2>
+  <% end %>
+
 </div>
 
 <!-- STATUS -->
-<div class="panel panel-default">
+<div class=" panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Status</h3>
   </div>
   <div class="panel-body">
     <div>
-      <strong>Last contact at:</strong>
-      <%= @device.last_contact_at %>
+      <% if device_online?(@device.last_contact_at) %>
+        <% device_status_class = 'online' %>
+      <% else %>
+        <% device_status_class = 'offline' %>
+      <% end %>
+      <span id="device-status-indicator-text" class="<%= device_status_class %>">
+        <%= get_device_online_status(@device.last_contact_at) %>
+      </span>
     </div>
   </div>
 </div>
 
-<!-- PROPERTIES -->
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Properties</h3>
-  </div>
-  <div class="panel-body">
+<!-- DEVICE ATTRIBUTES -->
+<% if @device.device_attributes.any? %>
+  <div class="panel panel-default responsive-table-container">
+    <div class="panel-heading">
+      <h3 class="panel-title">Attributes settings & status</h3>
+      Content of this section auto-updates
+      every <%= Rails.application.secrets.configs[:device_detail_show_view_update_interval_in_seconds] %>
+      seconds
+    </div>
 
-    <% @device.device_properties.each do |property| %>
+    <div class="panel-body responsive-table">
 
+      <div id="device-attributes-header" class="responsive-table-header">
         <div class="row">
-
-          <div class="col-xs-4">
-            <%= property.name %>
+          <div class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= label DeviceAttribute, :name, DeviceAttribute.human_attribute_name(:name) %>
+            </div>
           </div>
 
-          <div class="col-xs-4">
-            <%= property.value %>
+          <div class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= label DeviceAttribute, :primitive_type_c_id, DeviceAttribute.human_attribute_name(:primitive_type_c_id) %>
+            </div>
           </div>
 
-          <div class="col-xs-4">
-            <%= property.auto %>
+          <div class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= label DeviceAttribute, :min_value, DeviceAttribute.human_attribute_name(:min_value) %>
+            </div>
           </div>
 
+          <div class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= label DeviceAttribute, :max_value, DeviceAttribute.human_attribute_name(:max_value) %>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= label DeviceAttribute, :set_value, DeviceAttribute.human_attribute_name(:set_value) %>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= label DeviceAttribute, :current_value, DeviceAttribute.human_attribute_name(:current_value) %>
+            </div>
+          </div>
         </div>
+      </div>
 
-    <% end %>
+      <div id="device-attributes-container">
+        <% @device.device_attributes.each do |device_attribute| %>
+          <div class="device-attribute" data-id="<%= device_attribute.id %>">
+            <div class="row">
 
+              <div data-label="<%= DeviceAttribute.human_attribute_name(:name) %>" class="col-md-2">
+                <div class="form-group responsive-table-element">
+                  <span class="device-attribute-name"><%= device_attribute.name %></span>
+                </div>
+              </div>
+
+              <div data-label="<%= DeviceAttribute.human_attribute_name(:primitive_type_c_id) %>" class="col-md-2">
+                <div class="form-group responsive-table-element">
+                  <% DeviceAttribute::PRIMITIVE_TYPES.each do |key, value| %>
+                    <% if value[:ID] == device_attribute.primitive_type_c_id %>
+                      <span class="device-attribute-primitve-type-text"><%= value[:LABEL] %></span>
+                      <% break %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+
+              <div data-label="<%= DeviceAttribute.human_attribute_name(:min_value) %>" class="col-md-2">
+                <div class="form-group responsive-table-element">
+                  <span class="device-attribute-min-value">
+                    <%= get_min_value_text(device_attribute.primitive_type_c_id, device_attribute.min_value) %>
+                  </span>
+                </div>
+              </div>
+
+              <div data-label="<%= DeviceAttribute.human_attribute_name(:max_value) %>" class="col-md-2">
+                <div class="form-group responsive-table-element">
+                  <span class="device-attribute-max-value">
+                    <%= get_max_value_text(device_attribute.primitive_type_c_id, device_attribute.max_value) %>
+                  </span>
+                </div>
+              </div>
+
+              <div data-label="<%= DeviceAttribute.human_attribute_name(:set_value) %>" class="col-md-2">
+                <div class="form-group responsive-table-element">
+                  <% if (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_AND_FEEDBACK][:ID]) || (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:SIGNALING_ONLY][:ID]) %>
+                    <% params = ActiveSupport::JSON.encode({ device_uid: device_attribute.device_uid.to_s }) %>
+                    <% if device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID] %>
+                      <% field_type = 'select' %>
+                      <% data_source = ActiveSupport::JSON.encode(
+                          [
+                              { value: '', text: '-' },
+                              { value: DeviceAttribute::BOOL_VALUES[:MIN][:ID], text: DeviceAttribute::BOOL_VALUES[:MIN][:LABEL] },
+                              { value: DeviceAttribute::BOOL_VALUES[:MAX][:ID], text: DeviceAttribute::BOOL_VALUES[:MAX][:LABEL] },
+                          ]
+                      ) %>
+                      <% data_value = (device_attribute.set_value.nil?) ? nil : device_attribute.set_value.to_i %>
+                    <% else %>
+                      <% field_type = 'text' %>
+                      <% data_source = nil %>
+                      <% data_value = device_attribute.set_value %>
+                    <% end %>
+                    <a href="#" class="device-attribute-set-value editable-device-attribute-set-value" data-type="<%= field_type %>" data-source="<%= data_source %>" data-params="<%= params %>" data-pk="<%= device_attribute.id %>" data-value="<%= data_value %>" data-name="set_value" data-url="<%= url_for(action: 'update_device_attribute_value', controller: '/devices') %>">
+                      <%= compute_device_attribute_set_or_current_value(device_attribute.primitive_type_c_id, device_attribute.set_value, true) %>
+                    </a>
+                    <span><%= device_attribute.unit %></span>
+                  <% else %>
+                    -
+                  <% end %>
+                </div>
+              </div>
+
+              <div data-label="<%= DeviceAttribute.human_attribute_name(:current_value) %>" class="col-md-2">
+                <div class="form-group responsive-table-element">
+                  <span class="device-attribute-current-value">
+                    <%= compute_device_attribute_set_or_current_value(device_attribute.primitive_type_c_id, device_attribute.current_value, true) %>
+                  </span>
+                  <span><%= device_attribute.unit %></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+    </div>
   </div>
+<% end %>
+
+<!-- GRAPHS -->
+<div class="panel panel-default">
+
+  <div class="panel-heading">
+    <h3 class="panel-title">Graphs</h3>
+  </div>
+
+  <div class="panel-body">
+    <div id="smart-thermostat-analyzed-data-graph-container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+  </div>
+
 </div>
 
-<!-- INFO -->
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Info</h3>
-  </div>
-  <div class="panel-body">
+<!-- DEVICE TYPE SETUP -->
+<% if @device.type_c_id == Device::TYPES[:SMART_THERMOSTAT][:ID] %>
+  <div class="panel panel-default">
 
-    <div>
-      <strong>Description:</strong>
-      <%= @device.description %>
+    <div class="panel-heading">
+      <h3 class="panel-title">Smart Thermostat device type selected</h3>
     </div>
 
+    <div class="panel-body">
+      <span>Go to edit device mode to setup smart thermostat associations with device attributes</span>
+    </div>
+
+  </div>
+<% end %>
+
+<!-- SYSTEM INFO FOR DEVICE -->
+<div class="panel panel-default">
+
+  <div class="panel-heading">
+    <h3 class="panel-title">System info for device</h3>
+  </div>
+
+  <div class="panel-body">
     <div>
-      <strong>Serial No:</strong>
+      <strong>UID:</strong>
       <%= @device.uid %>
     </div>
-
     <div>
       <strong>Access token:</strong>
       <%= @device.access_token %>
     </div>
-
   </div>
+
 </div>
 
-<%= link_to 'Edit', edit_device_path(@device) %> |
-<%= link_to 'Back', devices_path %>
+<!-- INFO FROM DEVICE -->
+<% if @device.device_infos.any? %>
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">Information about device</h3>
+    </div>
+
+    <div class="panel-body">
+      <% @device.device_infos.each do |stat| %>
+        <div class="row">
+
+          <div class="col-xs-2">
+            <%= (stat.label) ? stat.label : stat.stat_name %>
+          </div>
+
+          <div class="col-xs-5">
+            <%= stat.value %>
+          </div>
+
+          <div class="col-xs-5">
+            <%= stat.last_update_at.strftime('%d/%m/%Y %H:%M') %>
+          </div>
+
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+<% end %>
+
+<!--DEVICE'S SCHEDULES-->
+<% if @device.schedule_events.any? %>
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">Schedules</h3>
+    </div>
+
+    <div class="panel-body">
+      <% @device.schedule_events.each do |schedule_event| %>
+        <div class="row">
+
+          <div class="col-md-2">
+            <%= schedule_event.schedule.title %>
+          </div>
+
+          <div class="col-md-2">
+            <%= schedule_event.schedule.start_datetime.strftime('%d/%m/%Y %H:%M') %>
+          </div>
+
+          <div class="col-md-2">
+            <%= schedule_event.schedule.end_datetime.strftime('%d/%m/%Y %H:%M') %>
+          </div>
+
+          <% if schedule_event.schedule.is_recurrent %>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+              Recurring event
+            </div>
+            <div class="col-md-2">
+            </div>
+          <% else %>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+              Single Time event
+            </div>
+            <div class="col-md-2">
+            </div>
+          <% end %>
+
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+<% end %>
+
+<!--DEVICE'S QUICK BUTTONS-->
+<% if @device.quick_buttons.any? %>
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">Quick buttons</h3>
+    </div>
+
+    <div class="panel-body">
+      <% @device.quick_buttons.each do |quick_button| %>
+        <div class="row">
+
+          <div class="col-md-3">
+            <%= quick_button.title %>
+          </div>
+
+          <div class="col-md-3">
+            <%= quick_button.description %>
+          </div>
+
+          <div class="col-md-3">
+            <%= quick_button.duration %>
+          </div>
+
+          <div class="col-md-3">
+            <%= quick_button.index_on_device %>
+          </div>
+
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+<% end %>
+
+<div class="entity-view-footer-links">
+  <%= link_to 'Edit', edit_device_path(@device) %> |
+  <%= link_to 'Back', devices_path %>
+</div>

@@ -1,0 +1,209 @@
+<div id="get-device-attributes-list-url" class="hidden" data-url="<%= device_url('DEVICE_ID') + '/get_device_attributes_list' %>"></div>
+<div id="get-schedule-overlaps-url" class="hidden" data-url="<%= schedule_url('SCHEDULE_ID') + '/get_overlapping_schedules' %>"></div>
+<div id="update-schedule-overlaps-priorities-url" class="hidden" data-url="<%= schedules_update_overlapping_schedules_priorities_path %>"></div>
+<div id="devices-search-url" class="hidden" data-url="<%= devices_search_url %>"></div>
+
+<%
+  form_options = {
+      id:                'schedule-form',
+      'data-create-url': schedules_url,
+      'data-update-url': schedule_url('SCHEDULE_ID'),
+      'data-delete-url': schedule_url('SCHEDULE_ID'),
+  }
+%>
+
+<div id="schedule-form-container">
+
+  <%= form_for(schedule, html: form_options) do |schedule_form| %>
+
+    <% if schedule.errors.any? %>
+      <div id="errors-explanation">
+        <h2><%= pluralize(schedule.errors.count, 'error') %> prohibited this
+          schedule from being saved:</h2>
+        <ul>
+          <% schedule.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= schedule_form.hidden_field :id %>
+    <%= schedule_form.hidden_field :original_schedule %>
+
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="form-group">
+          <%= schedule_form.label :title %>
+          <%= schedule_form.text_field :title, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <%= schedule_form.label :description %>
+          <%= schedule_form.text_field :description, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <%= schedule_form.label :priority %>
+          <%= schedule_form.text_field :priority, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <%= schedule_form.label :start_datetime %>
+          <div class="input-group">
+            <%= schedule_form.text_field(:start_datetime, { class: 'form-control', 'aria-describedby': 'schedule-start-datetime-calendar-addon' }) %>
+            <span class="input-group-addon" id="schedule-start-datetime-calendar-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <%= schedule_form.label :end_datetime %>
+          <div class="input-group">
+            <%= schedule_form.text_field(:end_datetime, { class: 'form-control', 'aria-describedby': 'schedule-end-datetime-calendar-addon' }) %>
+            <span class="input-group-addon" id="schedule-end-datetime-calendar-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <%= schedule_form.check_box :is_recurrent %>
+        <%= schedule_form.label :is_recurrent %>
+      </div>
+    </div>
+
+    <div id="recurrent-entries" class="<%= (schedule.is_recurrent == 1) ? '' : 'hidden' %>">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <%= schedule_form.label :recurrence_frequency %>
+            <%= schedule_form.text_field :recurrence_frequency, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <%= schedule_form.label :recurrence_unit %>
+            <%= schedule_form.select(:recurrence_unit, {}, { include_blank: '- Select period -' }, { class: 'form-control' }) do %>
+              <% options_for_select(schedule_recurrent_unit_list, schedule.recurrence_frequency) %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div id="overlapping-schedules-container" class="hidden">
+      <h3>Overlapping Schedules</h3>
+      <div class="overlapping-schedules-header">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <%= label_tag 'Name' %>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <%= label_tag 'Start Datetime' %>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <%= label_tag 'End Datetime' %>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <%= label_tag 'Priority' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="overlapping-schedules-list">
+      </div>
+
+      <button type="button" class="action-button active update-overlapping-schedules-priorities btn">Update
+        Priorities
+      </button>
+
+      <hr>
+
+    </div>
+
+    <div id="add-new-event-to-schedule-container">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <%= select(ScheduleEvent, :device_uid, [], {}, { id: 'schedule-event-device-selector', name: nil, class: 'form-control' }) %>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <button type="button" class="action-button active add-new-event-to-schedule form-control">
+              <span class="glyphicon glyphicon-plus"></span>
+              Add new schedule event
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="schedule-events-container">
+      <%= render partial: '/schedules/schedule_event_form', collection: schedule.schedule_events, as: :schedule_event %>
+    </div>
+
+  <% end %>
+
+</div>
+
+<div id="schedule-subforms-templates" class="hidden">
+  <div class="shcedule-event-template">
+    <%= render partial: '/schedules/schedule_event_form', locals: { schedule_event: ScheduleEvent.new } %>
+  </div>
+  <div class="schedule-event-action-template">
+    <%= render partial: '/actions/action_form_element', locals: { action: Action.new, prefix_for_subform: 'REPLACE_WITH_EVENT_FORM_PREFIX', idx: nil } %>
+  </div>
+  <div class="overlap-schedule-template">
+    <div class="overlap-schedule">
+      <div class="row">
+
+        <input class="schedule-id" type="hidden">
+
+        <div class="col-sm-3">
+          <div class="form-group">
+            <span class="schedule-title"></span>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <span class="schedule-start-datetime"></span>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <span class="schedule-end-datetime"></span>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <input class="form-control schedule-priority" type="text">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

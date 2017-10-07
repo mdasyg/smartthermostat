@@ -1,0 +1,165 @@
+<div id="devices-search-url" class="hidden" data-url="<%= devices_search_url %>"></div>
+<div id="get-device-attributes-list-url" class="hidden" data-url="<%= device_url('DEVICE_ID') + '/get_device_attributes_list' %>"></div>
+
+<div id="device-form-container">
+
+  <%= form_for(device, html: { id: 'device-form' }) do |device_form| %>
+
+    <% if device.errors.any? %>
+      <div id="errors-explanation">
+        <h2><%= pluralize(device.errors.count, 'error') %> prohibited this
+          device from being saved:</h2>
+        <ul>
+          <% device.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Basic Info</h4>
+        <hr/>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="col-md-3">
+        <div class="form-group">
+          <%= device_form.label :name %>
+          <%= device_form.text_field :name, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= device_form.label :location %>
+          <%= device_form.text_field :location, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="form-group">
+          <%= device_form.label :type_c_id %>
+          <%= device_form.select(:type_c_id, {}, { include_blank: '- Select type -' }, { class: 'form-control' }) do %>
+            <% options_for_select(@types, device.type_c_id) %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-group">
+          <%= device_form.label :number_of_schedules %>
+          <%= device_form.text_field :number_of_schedules, class: 'form-control' %>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <%= device_form.label :description %>
+          <%= device_form.text_area :description, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+
+    <% if device.type_c_id == Device::TYPES[:SMART_THERMOSTAT][:ID] %>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Smart thermostat with device attributes associations</h4>
+          <hr/>
+        </div>
+      </div>
+
+      <% SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES.each do |key, smart_thermostat_type| %>
+
+        <% smart_thermostat_device_attribute = SmartThermostat.find_by(smart_device_attribute_type_c_id: smart_thermostat_type[:ID]) %>
+
+        <% if smart_thermostat_device_attribute.nil? %>
+          <% source_device_select_data = [[device.name, device.uid]] %>
+          <% source_device_attributes_select_data = device.device_attributes.collect {|da| [da.name, da.id]} %>
+          <% source_device_attributes_selected = nil %>
+        <% else %>
+          <% source_device_select_data = [[smart_thermostat_device_attribute.source_device.name, smart_thermostat_device_attribute.source_device_uid]] %>
+          <% source_device_attributes_select_data = Device.find(smart_thermostat_device_attribute.source_device_uid).device_attributes.collect {|da| [da.name, da.id]} %>
+          <% source_device_attributes_selected = smart_thermostat_device_attribute.source_device_attribute_id %>
+        <% end %>
+
+        <%= fields_for('smart_thermostat[device_attributes]', SmartThermostat.new, index: smart_thermostat_type[:ID]) do |smart_thermostat_device_attribute_form| %>
+
+          <div class="row">
+
+            <%= smart_thermostat_device_attribute_form.hidden_field(:smart_device_attribute_type_c_id, value: smart_thermostat_type[:ID]) %>
+            <%= smart_thermostat_device_attribute_form.hidden_field(:smart_device_uid, value: device.uid) %>
+
+            <div class="col-md-3 col-xs-4">
+              <div class="form-group">
+                <%= smart_thermostat_device_attribute_form.label :smart_device_attribute_type_c_id, smart_thermostat_type[:LABEL] %>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-xs-4">
+
+              <div class="form-group smart-thermostat-device-attributes-source-selector-container <%= (smart_thermostat_type[:ID] == SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES[:OUTSIDE_TEMPERATURE][:ID]) ? 'outside' : 'hidden' %>">
+                <%= smart_thermostat_device_attribute_form.select(:source_device_uid, source_device_select_data, {}, { class: 'form-control smart-thermostat-device-attributes-source-selector ' + ((smart_thermostat_type[:ID] == SmartThermostat::SMART_DEVICE_ATTRIBUTE_TYPES[:OUTSIDE_TEMPERATURE][:ID]) ? 'outside' : '') }) %>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-xs-4">
+              <div class="form-group">
+                <%= smart_thermostat_device_attribute_form.select(:source_device_attribute_id, {}, {}, { class: 'form-control smart-thermostat-device-attribute-selector' }) do %>
+                  <%= options_for_select(source_device_attributes_select_data, source_device_attributes_selected) %>
+                <% end %>
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+
+      <% end %>
+
+    <% end %>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Device Attributes</h4>
+        <hr/>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <button type="button" class="action-button active add-new-device-attribute form-control">
+            <span>Add Device Attribute</span>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+
+    <%= render partial: 'device_attribute_form', locals: { device_attributes: device.device_attributes } %>
+
+    <div class="actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= device_form.submit(class: 'btn btn-default') %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <% end %>
+
+</div>
+
+<div id="device-attribute-template" class="hidden">
+  <%= render partial: 'device_attribute_form_element', locals: { device_attribute: DeviceAttribute.new } %>
+</div>

@@ -1,0 +1,47 @@
+<% schedule_event_index = (defined? schedule_event_counter) ? schedule_event_counter : 'SCHEDULE_EVENT_INDEX' %>
+<% current_form_prefix = 'schedule_events' %>
+<% prefix_for_subform = current_form_prefix + "[#{schedule_event_index}]" %>
+
+<div class="schedule-event form-row <%= ((schedule_event_index % 2) == 1) ? 'odd' : 'even' %>" data-index="<%= schedule_event_index %>" data-device-uid="<%= schedule_event.device_uid %>">
+
+  <div class="schedule-event-form-prefix-for-subform hidden" data-prefix="<%= prefix_for_subform %>"></div>
+
+  <%= fields_for current_form_prefix, schedule_event, index: schedule_event_index do |schedule_event_form| %>
+
+    <% if schedule_event.errors.any? %>
+      <div id="errors-explanation">
+        <h2><%= pluralize(schedule_event.errors.count, 'error') %> prohibited
+          this schedule from being saved:</h2>
+        <ul>
+          <% schedule_event.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= schedule_event_form.hidden_field(:id, { class: 'schedule-event-id' }) %>
+    <%= schedule_event_form.hidden_field(:device_uid, { class: 'schedule-event-device-uid' }) %>
+
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="form-group">
+          <span class="schedule-event-device-name-placeholder"><%= (schedule_event && schedule_event.device) ? schedule_event.device.name : '' %></span>
+        </div>
+      </div>
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4">
+        <div class="form-group">
+          <button type="button" class="action-button active remove-form-row form-control">
+            <span class="glyphicon glyphicon-remove"></span>
+            Remove event
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <%= render partial: '/actions/action_form', locals: { actions: schedule_event.actions, prefix_for_subform: prefix_for_subform } %>
+
+  <% end %>
+
+</div>

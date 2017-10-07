@@ -5,10 +5,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable,
          :confirmable, :lockable, :timeoutable
 
-	has_many :devices, inverse_of: :user
-
-#	def id
-#		return 4
-#	end
+  has_many :devices, inverse_of: :user
+  has_many :schedules, inverse_of: :user
+  has_many :quick_buttons, inverse_of: :user
 
 end

@@ -1,0 +1,73 @@
+<div class="responsive-table-container">
+
+  <div class="responsive-table">
+
+    <div class="device-attributes-header responsive-table-header">
+
+      <div class="row">
+
+        <div class="col-sm-2">
+          <div class="form-group">
+            <%= label DeviceAttribute, :name %>
+          </div>
+        </div>
+
+        <div class="col-sm-2">
+          <div class="form-group">
+            <%= label DeviceAttribute, :direction_c_id %>
+          </div>
+        </div>
+
+        <div class="col-sm-2">
+          <div class="form-group">
+            <%= label DeviceAttribute, :primitive_type_c_id %>
+          </div>
+        </div>
+
+        <div class="col-sm-1">
+          <div class="form-group">
+            <%= label DeviceAttribute, :index_on_device %>
+          </div>
+        </div>
+
+        <div class="col-sm-1">
+          <div class="form-group">
+            <%= label DeviceAttribute, :min_value %>
+          </div>
+        </div>
+
+        <div class="col-sm-1">
+          <div class="form-group">
+            <%= label DeviceAttribute, :max_value %>
+          </div>
+        </div>
+
+        <div class="col-sm-1">
+          <div class="form-group">
+            <%= label DeviceAttribute, :set_value %>
+          </div>
+        </div>
+
+        <div class="col-sm-1">
+          <div class="form-group">
+            <%= label DeviceAttribute, :unit %>
+          </div>
+        </div>
+
+        <div class="col-sm-1">
+          <div class="form-group">
+            <label>Action</label>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="device-attributes-container">
+      <%= render partial: 'device_attribute_form_element', collection: device_attributes, as: 'device_attribute' %>
+    </div>
+
+  </div>
+
+</div>

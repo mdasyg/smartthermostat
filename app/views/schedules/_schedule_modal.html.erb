@@ -1,0 +1,29 @@
+<div class="modal fade" id="schedule-modal" tabindex="-1" role="dialog" aria-labelledby="schedule-modal-label">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="schedule-modal-label">Schedule Settings</h4>
+      </div>
+
+      <div class="modal-body">
+        <%= render 'schedule_form', schedule: Schedule.new, schedule_recurrent_unit_list: schedule_recurrent_unit_list %>
+      </div>
+
+      <div class="modal-footer">
+        <span class="action-buttons-wrapper">
+          <span class="action-button active delete-schedule btn">
+            <span class="glyphicon glyphicon-trash"></span>
+          </span>
+        </span>
+        <button type="button" class="btn" data-dismiss="modal">Close</button>
+        <button type="button" class="action-button active save-schedule btn">Save
+          changes
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

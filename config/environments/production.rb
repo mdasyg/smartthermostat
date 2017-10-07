@@ -47,7 +47,7 @@ Rails.application.configure do
   config.log_level = :debug
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  config.log_tags = [:request_id]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -78,25 +78,35 @@ Rails.application.configure do
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
+    config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  ##### MY CUSTOM setup connection with gmail
+  ##############################################################################
+  ##### THE FOLLOWINGS ARE CUSTOMIZED CONFIGS BY THE AUTHOR ####################
+  ##############################################################################
+
+  ##### STATIC ASSETS
+  config.serve_static_assets = true # rake assets:precompile # run this command after changing assets
+
+  ##### setup connection with email provider
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-      address:              'smtp.gmail.com',
-      port:                 587,
-      domain:               Rails.application.secrets.mail['domain'],
-      user_name:            Rails.application.secrets.mail['username'],
-      password:             Rails.application.secrets.mail['pass'],
+  config.action_mailer.smtp_settings   = {
+      address:              Rails.application.secrets.mail[:host],
+      port:                 Rails.application.secrets.mail[:port],
+      domain:               Rails.application.secrets.mail[:domain],
+      user_name:            Rails.application.secrets.mail[:username],
+      password:             Rails.application.secrets.mail[:pass],
       authentication:       'plain',
       enable_starttls_auto: true
   }
 
-  ##### THIS IS FOR DEVISE
-  config.action_mailer.default_url_options = { host: '10.168.10.50', port: 3000 }
+  ##### DEVISE mail setup
+  config.action_mailer.default_url_options = {
+      host: Rails.application.secrets.site[:host],
+      port: Rails.application.secrets.site[:port],
+  }
 
 end

@@ -20,4 +20,15 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    attributes:
+      action:
+        device_attribute_id: 'Attribute name'
+      schedule:
+        title: 'Title'
+        is_recurrent: 'Repeat..'
+        recurrence_frequency: 'Frequency'
+        recurrence_unit: 'Repeat'
+      device_attribute:
+        name: 'Attribute'
+        primitive_type_c_id: 'Primitive'

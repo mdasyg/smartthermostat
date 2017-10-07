@@ -11,23 +11,124 @@
  * It is generally better to create a new file per style scope.
  *
  */
-@import "bootstrap-sprockets";
-@import "bootstrap";
+@import 'bootstrap';
+@import 'select2/dist/css/select2';
+@import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker';
+@import 'fullcalendar/dist/fullcalendar';
+@import 'x-editable/dist/bootstrap3-editable/css/bootstrap-editable';
+@import 'color_variables';
+@import 'devise';
+@import 'devices';
+@import 'schedules';
+@import 'quick_buttons';
+@import 'home';
+
+/* hot fix for datepicker not displayed */
+.datepicker div.datepicker-days {
+  display: block;
+}
+
+/* Override Bootstrap 3 font locations */
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: asset-url('bootstrap/fonts/glyphicons-halflings-regular.eot');
+  src: asset-url('bootstrap/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+  asset-url('bootstrap/fonts/glyphicons-halflings-regular.woff') format('woff'),
+  asset-url('bootstrap/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
+  asset-url('bootstrap/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+/* Override x-editable urls */
+.editableform-loading {
+  background: asset-url("x-editable/dist/bootstrap3-editable/img/loading.gif") center center no-repeat;
+}
+
+.editable-clear-x {
+  background: asset-url("x-editable/dist/bootstrap3-editable/img/clear.png") center center no-repeat;
+}
 
 /* mixins, variables, etc. */
-
-$gray-medium-light: #eaeaea;
-
 @mixin box_sizing {
-  -moz-box-sizing:    border-box;
+  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  box-sizing:         border-box;
+  box-sizing: border-box;
+}
+
+.btn:active, .btn.active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+/* Fix select2 css */
+.select2-container--default .select2-selection--single {
+  border: 1px solid #ccc;
+  height: 34px;
+  .select2-selection__rendered {
+    line-height: 32px;
+  }
+  .select2-selection__arrow, .select2-selection__clear {
+    height: 100%;
+  }
+}
+
+/* Responsive tables */
+@media screen and (max-width: 991px) {
+  .responsive-table-container {
+    .responsive-table .responsive-table-element-field.form-row .row {
+      .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6 {
+        display: flex;
+        align-items: center;
+        &:before {
+          width: 30%;
+          text-align: left;
+        }
+        .form-group {
+          flex: 1;
+          margin: 15px;
+        }
+      }
+    }
+    &.panel-default {
+      border: none;
+    }
+    .responsive-table {
+      padding: 0 15px;
+      .responsive-table-header {
+        display: none;
+      }
+      .row {
+        margin-bottom: 10px;
+        display: block;
+        border: 1px solid #ddd;
+        .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6 {
+          display: block;
+          text-align: right;
+          font-size: 13px;
+          border-bottom: 1px dotted #ccc;
+          min-height: 43px;
+          &:before {
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            font-size: 150%;
+          }
+          &:last-child {
+            border-bottom: 0;
+          }
+          .responsive-table-element {
+            font-size: 150%;
+            margin: 15px 0 0;
+          }
+        }
+      }
+    }
+  }
 }
 
 /* universal */
-
 body {
   padding-top: 60px;
+  background-color: #f8f8f8;
 }
 
 section {
@@ -46,11 +147,10 @@ textarea {
 }
 
 .hidden {
-	display: none;
+  display: none;
 }
 
 /* typography */
-
 h1, h2, h3, h4, h5, h6 {
   line-height: 1;
 }
@@ -76,56 +176,50 @@ p {
   line-height: 1.7em;
 }
 
-
-/* header */
-
-#logo {
-  float: left;
-  margin-right: 10px;
-  font-size: 1.7em;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: -1px;
-  padding-top: 9px;
-  font-weight: bold;
-  &:hover {
-    color: white;
-    text-decoration: none;
-  }
-}
-
-/* footer */
-
-footer {
-  margin-top: 45px;
-  padding-top: 5px;
-  border-top: 1px solid $gray-medium-light;
-  color: $gray-light;
-  a {
-    color: $gray;
-    &:hover {
-      color: $gray-darker;
-    }
-  }
-  small {
-    float: left;
-  }
-  ul {
-    float: right;
-    list-style: none;
-    li {
-      float: left;
-      margin-left: 15px;
-    }
-  }
+/* editable */
+span.editable {
+  cursor: pointer;
 }
 
 /* miscellaneous */
-
 .debug_dump {
   clear: both;
   float: left;
   width: 100%;
   margin-top: 45px;
   @include box_sizing;
+}
+
+/* navbar */
+.navbar-default {
+  background-color: #bababa;
+  .navbar-brand {
+    color: #b043d8;
+    &:hover {
+      color: #84459b;
+    }
+  }
+}
+
+/* footer */
+footer {
+  margin-top: 45px;
+  padding-top: 5px;
+  border-top: 1px solid $gray-medium-light;
+  color: $gray-light;
+}
+
+/* general rules */
+.entity-view-header-title {
+  padding: 25px 0 25px 0;
+}
+
+.entity-view-footer-links {
+  a {
+    color: $gray-light;
+  }
+}
+
+hr {
+  border-top: 1px solid rgb(20, 224, 202);
 }
