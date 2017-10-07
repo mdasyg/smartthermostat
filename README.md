@@ -35,7 +35,7 @@ CREATE DATABASE home_auto_prod;
 
 ```mysql
 CREATE USER 'home_auto_user'@'localhost' IDENTIFIED BY 'mypass'; # Change 'mypass' accordingly
-GRANT ALL PRIVILEGES ON home_auto_prod TO 'home_auto_user'@'localhost';
+GRANT ALL PRIVILEGES ON home_auto_prod.* TO 'home_auto_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
