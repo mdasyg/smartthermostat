@@ -106,6 +106,8 @@ end
 
 # Resources
 
++ [Rails Tutorial](https://www.railstutorial.org/)
+
 + [Rails internals](http://andrewberls.com/blog/post/rails-from-request-to-response-part-1--introduction)
 
 + [Rails init](http://guides.rubyonrails.org/initialization.html)
