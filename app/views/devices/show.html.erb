@@ -41,6 +41,7 @@
 <!-- DEVICE ATTRIBUTES -->
 <% if @device.device_attributes.any? %>
   <div class="panel panel-default responsive-table-container">
+
     <div class="panel-heading">
       <h3 class="panel-title">Attributes settings & status</h3>
       Content of this section auto-updates
@@ -52,6 +53,7 @@
 
       <div id="device-attributes-header" class="responsive-table-header">
         <div class="row">
+
           <div class="col-md-2">
             <div class="form-group responsive-table-element">
               <%= label DeviceAttribute, :name, DeviceAttribute.human_attribute_name(:name) %>
@@ -87,6 +89,7 @@
               <%= label DeviceAttribute, :current_value, DeviceAttribute.human_attribute_name(:current_value) %>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -172,6 +175,7 @@
       </div>
 
     </div>
+
   </div>
 <% end %>
 
@@ -232,6 +236,33 @@
     </div>
 
     <div class="panel-body">
+
+      <div id="info-from-device-header">
+
+        <div class="row">
+
+          <div class="col-xs-2">
+            <div class="form-group">
+              <%= label DeviceInfo, :stat_name, DeviceInfo.human_attribute_name(:stat_name) %>
+            </div>
+          </div>
+
+          <div class="col-xs-5">
+            <div class="form-group">
+              <%= label DeviceInfo, :value, DeviceInfo.human_attribute_name(:value) %>
+            </div>
+          </div>
+
+          <div class="col-xs-5">
+            <div class="form-group">
+              <%= label DeviceInfo, :last_update_at, DeviceInfo.human_attribute_name(:last_update_at) %>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
       <% @device.device_infos.each do |stat| %>
         <div class="row">
 
@@ -256,45 +287,95 @@
 
 <!--DEVICE'S SCHEDULES-->
 <% if @device.schedule_events.any? %>
-  <div class="panel panel-default">
+  <div class="panel panel-default responsive-table-container">
 
     <div class="panel-heading">
       <h3 class="panel-title">Schedules</h3>
     </div>
 
-    <div class="panel-body">
-      <% @device.schedule_events.each do |schedule_event| %>
+    <div class="panel-body responsive-table">
+
+      <div id="device-attributes-header" class="responsive-table-header">
         <div class="row">
 
           <div class="col-md-2">
-            <%= schedule_event.schedule.title %>
+            <div class="form-group responsive-table-element">
+              <%= label Schedule, :title, Schedule.human_attribute_name(:title) %>
+            </div>
           </div>
 
           <div class="col-md-2">
-            <%= schedule_event.schedule.start_datetime.strftime('%d/%m/%Y %H:%M') %>
+            <div class="form-group responsive-table-element">
+              <%= label Schedule, :start_datetime, Schedule.human_attribute_name(:start_datetime) %>
+            </div>
           </div>
 
           <div class="col-md-2">
-            <%= schedule_event.schedule.end_datetime.strftime('%d/%m/%Y %H:%M') %>
+            <div class="form-group responsive-table-element">
+              <%= label Schedule, :end_datetime, Schedule.human_attribute_name(:end_datetime) %>
+            </div>
           </div>
 
-          <% if schedule_event.schedule.is_recurrent %>
-            <div class="col-md-2">
+          <div class="col-md-1"></div>
+
+          <div class="col-md-4">
+            <div class="form-group responsive-table-element">
+              <%= label Schedule, :is_recurrent, Schedule.human_attribute_name(:is_recurrent) %>
             </div>
-            <div class="col-md-2">
-              Recurring event
+          </div>
+
+          <div class="col-md-1"></div>
+
+        </div>
+      </div>
+
+      <% @device.schedule_events.each do |schedule_event| %>
+        <div class="row">
+
+          <div data-label="<%= Schedule.human_attribute_name(:title) %>" class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= schedule_event.schedule.title %>
             </div>
-            <div class="col-md-2">
+          </div>
+
+          <div data-label="<%= Schedule.human_attribute_name(:start_datetime) %>" class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= schedule_event.schedule.start_datetime.strftime('%d/%m/%Y %H:%M') %>
             </div>
-          <% else %>
-            <div class="col-md-2">
+          </div>
+
+          <div data-label="<%= Schedule.human_attribute_name(:end_datetime) %>" class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= schedule_event.schedule.end_datetime.strftime('%d/%m/%Y %H:%M') %>
             </div>
-            <div class="col-md-2">
-              Single Time event
+          </div>
+
+          <div class="responsive-table-element-hidden">
+            <div class="col-md-1"></div>
+          </div>
+
+          <div data-label="<%= Schedule.human_attribute_name(:is_recurrent) %>" class="col-md-4">
+            <div class="form-group responsive-table-element">
+
+              <% if schedule_event.schedule.is_recurrent %>
+                Every
+                <% if schedule_event.schedule.recurrence_unit == Schedule::REPEAT_EVERY[:DAY][:ID] %>
+                  <%= schedule_event.schedule.recurrence_frequency %>
+                  <%= Schedule::REPEAT_EVERY[:DAY][:PLURAL] %>
+                <% elsif schedule_event.schedule.recurrence_unit == Schedule::REPEAT_EVERY[:WEEK][:ID] %>
+                  <%= schedule_event.schedule.recurrence_frequency %>
+                  <%= Schedule::REPEAT_EVERY[:WEEK][:PLURAL] %>
+                <% end %>
+              <% else %>
+                One Time
+              <% end %>
+
             </div>
-            <div class="col-md-2">
-            </div>
-          <% end %>
+          </div>
+
+          <div class="responsive-table-element-hidden">
+            <div class="col-md-1"></div>
+          </div>
 
         </div>
       <% end %>
@@ -305,30 +386,57 @@
 
 <!--DEVICE'S QUICK BUTTONS-->
 <% if @device.quick_buttons.any? %>
-  <div class="panel panel-default">
+  <div class="panel panel-default responsive-table-container">
 
     <div class="panel-heading">
       <h3 class="panel-title">Quick buttons</h3>
     </div>
 
-    <div class="panel-body">
+    <div class="panel-body responsive-table">
+
+      <div id="quick-buttons-header" class="responsive-table-header">
+        <div class="row">
+
+          <div class="col-md-5">
+            <div class="form-group responsive-table-element">
+              <%= label QuickButton, :title, QuickButton.human_attribute_name(:title) %>
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="form-group responsive-table-element">
+              <%= label QuickButton, :description, QuickButton.human_attribute_name(:description) %>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <%= label QuickButton, :duration, QuickButton.human_attribute_name(:duration) %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       <% @device.quick_buttons.each do |quick_button| %>
         <div class="row">
 
-          <div class="col-md-3">
-            <%= quick_button.title %>
+          <div data-label="<%= QuickButton.human_attribute_name(:title) %>" class="col-md-5">
+            <div class="form-group responsive-table-element">
+              <span><%= quick_button.title %></span>
+            </div>
           </div>
 
-          <div class="col-md-3">
-            <%= quick_button.description %>
+          <div data-label="<%= QuickButton.human_attribute_name(:description) %>" class="col-md-5">
+            <div class="form-group responsive-table-element">
+              <span><%= quick_button.description %></span>
+            </div>
           </div>
 
-          <div class="col-md-3">
-            <%= quick_button.duration %>
-          </div>
-
-          <div class="col-md-3">
-            <%= quick_button.index_on_device %>
+          <div data-label="<%= QuickButton.human_attribute_name(:duration) %>" class="col-md-2">
+            <div class="form-group responsive-table-element">
+              <span><%= quick_button.duration %></span>
+            </div>
           </div>
 
         </div>

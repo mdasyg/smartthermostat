@@ -74,6 +74,9 @@
 /* Responsive tables */
 @media screen and (max-width: 991px) {
   .responsive-table-container {
+    .responsive-table-element-hidden {
+      display: none;
+    }
     .responsive-table .responsive-table-element-field.form-row .row {
       .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6 {
         display: flex;
