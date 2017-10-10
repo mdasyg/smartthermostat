@@ -169,7 +169,7 @@ module DevicesHelper
         frequency = nil
         if schedule_event.schedule.recurrence_unit == Schedule::REPEAT_EVERY[:DAY][:ID]
           frequency = schedule_event.schedule.recurrence_frequency.day.to_i
-        elsif schedule_events.chedule.recurrence_unit == Schedule::REPEAT_EVERY[:WEEK][:ID]
+        elsif schedule_event.schedule.recurrence_unit == Schedule::REPEAT_EVERY[:WEEK][:ID]
           frequency = schedule_event.schedule.recurrence_frequency.week.to_i
         end
         schedule_data_sorted << { start: schedule_event.schedule.start_datetime.change(day: current_day, month: current_month, year: current_year), end: schedule_event.schedule.end_datetime.change(day: current_day, month: current_month, year: current_year), recurrent: frequency, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
