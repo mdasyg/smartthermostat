@@ -26,7 +26,7 @@ en:
         device_attribute_id: 'Attribute name'
       schedule:
         title: 'Title'
-        is_recurrent: 'Repeat..'
+        is_recurrent: 'Repeat ...'
         recurrence_frequency: 'Frequency'
         recurrence_unit: 'Repeat Unit'
       device:
@@ -35,3 +35,7 @@ en:
       device_attribute:
         name: 'Attribute'
         primitive_type_c_id: 'Primitive'
+      device_info:
+        stat_name: 'Name'
+      quick_button:
+        duration: 'Duration (s)'
