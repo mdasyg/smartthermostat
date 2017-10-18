@@ -26,6 +26,6 @@ group :development do
   gem 'spring-watcher-listen'
 end
 
-group :test do
-  gem 'sqlite3'
-end
+# group :test do
+#   gem 'sqlite3'
+# end
