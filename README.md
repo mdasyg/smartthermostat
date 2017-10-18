@@ -6,12 +6,13 @@
 
 1. Ruby v2.3.1 or later
 2. RubyGems manager
-3. Latest NodeJs
-4. MySQL database server
-5. Mosquitto Broker
-6. Bundler
-7. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
-8. A Web server with **phusion passenger** module installed and enabled. (e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))
+3. Rails v5.1 or later
+4. Latest NodeJs
+5. MySQL database server
+6. Mosquitto Broker
+7. Bundler
+8. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
+9. A Web server with **phusion passenger** module installed and enabled. (e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))
 
 # Installation
 
@@ -19,7 +20,7 @@
 
 1. Install the project's required software dependencies
 2. Download the project and go to project's root directory
-3. Copy `secrets.yml.sample` to `secrets.yml` and change the appropriate values
+3. Copy `config/secrets.yml.sample` to `config/secrets.yml` and change the appropriate values
 4. Run `bundle install` maybe you have to add `--path vendor/bundle` in order for gems to install locally
 5. Run `yarn install`
 
@@ -29,6 +30,12 @@
 
 ```mysql
 CREATE DATABASE home_auto_prod;
+```
+
+in case of error update altering the password run
+
+```mysql
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass';
 ```
 
 2. Setup a user and give him access to the previously created db
