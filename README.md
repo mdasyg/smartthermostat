@@ -91,9 +91,9 @@ In order to serve a rails app through apache or nginx you have to follow the dir
 ## Rails app configuration for production mode
 
 1. Dont forget to update the production section settings into `config/secrets.yml`
-1. `RAILS_ENV=production rails db:migrate`
-2. `RAILS_ENV=production bundle exec rake assets:precompile`
-3. After that web server has to be restarted
+1. After that run `RAILS_ENV=production rails db:migrate`
+2. and this `RAILS_ENV=production bundle exec rake assets:precompile`
+3. Now web server has to be restarted
 
 # Notes
 
