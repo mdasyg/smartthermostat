@@ -74,6 +74,9 @@
 /* Responsive tables */
 @media screen and (max-width: 991px) {
   .responsive-table-container {
+    .responsive-table-element-hidden {
+      display: none;
+    }
     .responsive-table .responsive-table-element-field.form-row .row {
       .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6 {
         display: flex;
@@ -207,6 +210,7 @@ footer {
   padding-top: 5px;
   border-top: 1px solid $gray-medium-light;
   color: $gray-light;
+  text-align: center;
 }
 
 /* general rules */
@@ -221,5 +225,5 @@ footer {
 }
 
 hr {
-  border-top: 1px solid rgb(20, 224, 202);
+  border-top: 1px solid #be7cd5;
 }

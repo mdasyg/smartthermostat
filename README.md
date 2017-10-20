@@ -1,25 +1,28 @@
 # Device Manager
 
-'Device Manager' is project it's creation started for the purposes of my thesis, with the title 'Design and implementation of the infrastructure of an intelligent ecological house'.
+'Device Manager' is a project it's creation started for the purposes of my thesis, with the title 'Design and implementation of the infrastructure of an intelligent ecological house'
 
 # Requirements
 
 1. Ruby v2.3.1 or later
 2. RubyGems manager
-3. MySQL database server
-4. A Web server with phusion passenger module installed and enabled(e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))
-5. Latest NodeJs
+3. Rails v5.1 or later
+4. Latest NodeJs
+5. MySQL database server
 6. Mosquitto Broker
 7. Bundler
 8. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
+9. A Web server with **phusion passenger** module installed and enabled. (e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))
 
-# Installation
+# Installation 
+
+Walk-Through for setting up a development environment, after that will follow the directions on how to deploy for production
 
 ## Initial setup
 
-1. Install the project's required software
+1. Install the project's required software dependencies
 2. Download the project and go to project's root directory
-3. Copy `secrets.yml.sample` to `secrets.yml` and change the appropriate values
+3. Copy `config/secrets.yml.sample` to `config/secrets.yml` and change the appropriate values
 4. Run `bundle install` maybe you have to add `--path vendor/bundle` in order for gems to install locally
 5. Run `yarn install`
 
@@ -29,6 +32,12 @@
 
 ```mysql
 CREATE DATABASE home_auto_prod;
+```
+
+in case of error "update altering the password" run:
+
+```mysql
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass';
 ```
 
 2. Setup a user and give him access to the previously created db
@@ -63,20 +72,30 @@ FLUSH PRIVILEGES;
 
 + To get more info about the tasks, look at the `lib/tasks`
 
-## web-console white-list ips
+## Web-console white-list ips
 
 1. Set your developments' machines ips in the web-console configuration on the secrets as an array of strings. `e.g ['192.168.1.2', '192.168.1.3']`
 
-# Web server setup
+# Deploy in production mode
 
-1. In order to serve a rails app through apache or nginx you must set:
+## Web-Server initialization
 
-+ `home-automation-server/public` as document root
-+ the environment to run on with `RailsEnv ...` directive
+In order to serve a rails app through apache or nginx you have to follow the directions below.
+
+1. First find out the path that files must exists on your system in order for web server to have access to them
+
+2. For a rails app, as document root must be set the directory `public` which is inside the app's root folder, e.g: `home-automation-server/public`
+
+3. Also the desired environment that the rails app have to run on must be set. For examlpe to run on production mode in apache web server the directive `RailsEnv production` must be set
+
+## Rails app configuration for production mode
+
+1. Dont forget to update the production section settings into `config/secrets.yml`
+1. After that run `RAILS_ENV=production rails db:migrate`
+2. and this `RAILS_ENV=production bundle exec rake assets:precompile`
+3. Now web server has to be restarted
 
 # Notes
-
-+ In production machines run `RAILS_ENV=production rake assets:precompile` in order to precompile assets and work properly. After that web server needs restart
 
 + When using modules (e.g x-editable, bootstrap) because of assets some url/links doesn't work, so you have to override them (see application.scss for example)
 

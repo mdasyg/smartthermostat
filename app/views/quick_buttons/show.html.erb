@@ -1,31 +1,20 @@
 <% provide(:title, 'Quick Button Overview') %>
 
-<div class="well">
-  <h1>Overview for the Quick Button:</h1>
+<div class="page-header-title">
+
+  <h1>Detailed view for the Quick Button</h1>
+
   <h1>
     <small><%= @quick_button.title %> @ <%= @quick_button.device.name %></small>
   </h1>
+
+  <% if !@quick_button.description.empty? %>
+    <h2>
+      <%= @quick_button.description %>
+    </h2>
+  <% end %>
+
 </div>
-
-<!-- DESCRIPTION -->
-<% if !@quick_button.description.empty? %>
-  <div class=" panel panel-default">
-
-    <div class="panel-heading">
-      <h3 class="panel-title">Status</h3>
-    </div>
-
-    <div class="panel-body">
-
-      <div>
-        <strong>Description:</strong>
-        <%= @quick_button.description %>
-      </div>
-
-    </div>
-
-  </div>
-<% end %>
 
 <!-- QUICK BUTTON'S SETTINGS-->
 <div class=" panel panel-default">
@@ -52,9 +41,47 @@
 
     <hr>
 
-    <% @quick_button.actions.each do |asdf| %>
-      <%= asdf.inspect %>
-      <br>
+    <div class="quick-button-actions-list-header">
+      <div class="row">
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <%= label DeviceAttribute, :name, DeviceAttribute.human_attribute_name(:name) %>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <%= label QuickButton, :device_attribute_start_value, QuickButton.human_attribute_name(:device_attribute_start_value) %>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <%= label QuickButton, :device_attribute_end_value, QuickButton.human_attribute_name(:device_attribute_end_value) %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <% @quick_button.actions.each do |action| %>
+      <div class="row">
+
+        <div class="col-md-3">
+          <%= action.device_attribute.name %>
+        </div>
+
+        <div class="col-md-3">
+          <%= action.device_attribute_start_value %>
+        </div>
+
+        <div class="col-md-3">
+          <%= action.device_attribute_end_value %>
+        </div>
+
+      </div>
     <% end %>
 
   </div>
