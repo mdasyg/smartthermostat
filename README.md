@@ -14,7 +14,9 @@
 8. Yarn dependency manager for front-end dependencies ([installation instructions](https://yarnpkg.com/en/docs/install))
 9. A Web server with **phusion passenger** module installed and enabled. (e.g install passenger gem) ([installation instructions](https://www.phusionpassenger.com/library/install/standalone/install/oss/))
 
-# Installation
+# Installation 
+
+Walk-Through for setting up a development environment, after that will follow the directions on how to deploy for production
 
 ## Initial setup
 
@@ -32,7 +34,7 @@
 CREATE DATABASE home_auto_prod;
 ```
 
-in case of error update altering the password run
+in case of error "update altering the password" run:
 
 ```mysql
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass';
@@ -70,24 +72,28 @@ FLUSH PRIVILEGES;
 
 + To get more info about the tasks, look at the `lib/tasks`
 
-## web-console white-list ips
+## Web-console white-list ips
 
 1. Set your developments' machines ips in the web-console configuration on the secrets as an array of strings. `e.g ['192.168.1.2', '192.168.1.3']`
 
-# Web server setup
+# Deploy in production mode
 
-1. In order to serve a rails app through apache or nginx you must set:
+## Web-Server initialization
 
-+ `home-automation-server/public` as document root
-+ the environment to run on with `RailsEnv ...` directive
+In order to serve a rails app through apache or nginx you have to follow the directions below.
 
-# Deploy
+1. First find out the path that files must exists on your system in order for web server to have access to them
 
-You have to run some commands in order to deploy/run the app in production mode
+2. For a rails app, as document root must be set the directory `public` which is inside the app's root folder, e.g: `home-automation-server/public`
 
+3. Also the desired environment that the rails app have to run on must be set. For examlpe to run on production mode in apache web server the directive `RailsEnv production` must be set
+
+## Rails app configuration for production mode
+
+1. Dont forget to update the production section settings into `config/secrets.yml`
 1. `RAILS_ENV=production rails db:migrate`
 2. `RAILS_ENV=production bundle exec rake assets:precompile`
-3. set web server in production mode and restart
+3. After that web server has to be restarted
 
 # Notes
 
