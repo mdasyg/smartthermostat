@@ -41,7 +41,13 @@
             <% device.device_attributes.each do |dev_attr| %>
               <% if dev_attr.current_value %>
                 <%= dev_attr.name %>:
-                <%= dev_attr.current_value %> <%= dev_attr.unit %>
+                <% if dev_attr.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID] %>
+                  <% DeviceAttribute::BOOL_VALUES.each do |key, hash| %>
+                    <%= hash[:LABEL] if hash[:ID] == dev_attr.current_value.to_i %>
+                  <% end %>
+                <% else %>
+                  <%= dev_attr.current_value %> <%= dev_attr.unit %>
+                <% end %>
                 <br>
               <% end %>
             <% end %>
