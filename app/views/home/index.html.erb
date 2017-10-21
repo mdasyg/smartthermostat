@@ -3,7 +3,7 @@
 
 <% if user_signed_in? %>
   <% if @offline_devices_count > 0 %>
-    There are <%= @offline_devices_count %> offline devices out of <%= @total_devices_count %>
+    <div class="text-center">There are <%= @offline_devices_count %> offline devices out of <%= @total_devices_count %></div>
   <% else %>
     All <%= @total_devices_count %> devices are online
   <% end %>
