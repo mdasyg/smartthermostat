@@ -48,9 +48,6 @@ void setup() {
 
   Serial.println(F("Loading..."));
 
-  ethClient.setTimeout(2000);
-  ethClientForMqtt.setTimeout(2000);
-
   // boiler pin init
   pinMode(boilerRelayPin, OUTPUT);
   digitalWrite(boilerRelayPin, LOW);
@@ -63,9 +60,6 @@ void setup() {
   pinMode(quickButtonsPin[QUICK_BUTTON_1_INDEX], INPUT_PULLUP);
   pinMode(quickButtonsPin[QUICK_BUTTON_2_INDEX], INPUT_PULLUP);
   pinMode(quickButtonsPin[QUICK_BUTTON_3_INDEX], INPUT_PULLUP);
-
-  // initialize led status to 'some on' to indicate device loading status
-  shiftOut(dataPin, clockPin, MSBFIRST, 0b10101000);
 
   // init timestamp counters
   lastAttrUpdateTimestamp = millis();
@@ -93,7 +87,7 @@ void setup() {
   wdt_enable(WDT_TIMEOUT_TIME);
   wdt_reset(); // seems to need that, because restart happened before reaching the end of the first loop.
 
-  // initialize led status to 'all of' to indicate device init complete
+  // initialize led status to 'all of'
   shiftOut(dataPin, clockPin, MSBFIRST, 0b00000000);
 
   Serial.print(F("S/N: "));
@@ -151,8 +145,6 @@ void loop() {
   // read server response
   httpResponseReader(ethClient);
 
-
-  /// ????
   // if the server's disconnected, stop the client:
   if (isEthClientConnectedToServer && !ethClient.connected()) {
     ethClient.stop();
@@ -175,29 +167,29 @@ void loop() {
 
   wdt_reset();
 
-  // ##### HEART BEAT DEVICE STATUSES ##########################################
+  // // ##### HEART BEAT DEVICE STATUSES ##########################################
   // loop_counter++;
   // byte i,j;
   // if (now() - lastHeartbeatTimestamp >= 5) {
-  // Serial.println(now());
+  //   Serial.println(now());
   //   Serial.print(F("Loop count: ")); Serial.println(loop_counter);
-  // Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
+  //   Serial.print(F("Free RAM(bytes): ")); Serial.println(freeMemory());
   //
-  // // Quick Buttons
-  // for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
-  //   Serial.print("qb: "); Serial.print(i);
-  //   Serial.print(", dur: "); Serial.print(quickButtons[i].durationMilliSeconds);
-  //   Serial.print(", init?: "); Serial.print(quickButtons[i].isInitialized);
-  //   Serial.print(", active?: "); Serial.print(quickButtons[i].isActive);
+  //   // Quick Buttons
+  //   for(i=0; i<NUMBER_OF_QUICK_BUTTONS; i++) {
+  //     Serial.print("qb: "); Serial.print(i);
+  //     Serial.print(", dur: "); Serial.print(quickButtons[i].durationMilliSeconds);
+  //     Serial.print(", init?: "); Serial.print(quickButtons[i].isInitialized);
+  //     Serial.print(", active?: "); Serial.print(quickButtons[i].isActive);
+  //     Serial.println();
+  //     for(j=0; j<NUMBER_OF_ATTRIBUTES; j++) {
+  //       Serial.print("qb_a: "); Serial.print(j);
+  //       Serial.print(", start: "); Serial.print(quickButtons[i].actions[j].startSetValue);
+  //       Serial.print(", end: "); Serial.print(quickButtons[i].actions[j].endSetValue);
+  //       Serial.println();
+  //     }
+  //   }
   //   Serial.println();
-  // for(j=0; j<NUMBER_OF_ATTRIBUTES; j++) {
-  //   Serial.print("qb_a: "); Serial.print(j);
-  //   Serial.print(", start: "); Serial.print(quickButtons[i].actions[j].startSetValue);
-  //   Serial.print(", end: "); Serial.print(quickButtons[i].actions[j].endSetValue);
-  //   Serial.println();
-  // }
-  // }
-  // Serial.println();
   //
   //   // Schedules
   //   for(i=0; i<MAX_NUMBER_OF_SCHEDULES; i++) {
@@ -217,22 +209,21 @@ void loop() {
   //   }
   //   Serial.println();
   //
-  //
-  // Device attributes
-  // for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
-  //   Serial.print(F("ID: "));
-  //   Serial.print(stateOfAttributes[i].id);
-  //   // Serial.print(F(", Cur: "));
-  //   // Serial.print(stateOfAttributes[i].currentValue);
-  //   Serial.print(F(", Set: "));
-  //   Serial.print(stateOfAttributes[i].setValue);
+  //   // Device attributes
+  //   for(i=0; i<NUMBER_OF_ATTRIBUTES; i++) {
+  //     Serial.print(F("ID: "));
+  //     Serial.print(stateOfAttributes[i].id);
+  //     Serial.print(F(", Cur: "));
+  //     Serial.print(stateOfAttributes[i].currentValue);
+  //     Serial.print(F(", Set: "));
+  //     Serial.print(stateOfAttributes[i].setValue);
+  //     Serial.println();
+  //   }
   //   Serial.println();
-  // }
-  // Serial.println();
-  //
+  // 
   //   loop_counter = 0;
-  // lastHeartbeatTimestamp = now();
+  //   lastHeartbeatTimestamp = now();
   // }
-  // ##### HEART BEAT DEVICE STATUSES ##########################################
+  // // ##### HEART BEAT DEVICE STATUSES ##########################################
 
 }

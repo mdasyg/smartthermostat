@@ -10,6 +10,10 @@ This is a prototype for a smart thermostat, which developed for the purpose of m
 4. DHTLib by Rob Tillaart ([GitHub](https://github.com/RobTillaart/Arduino/tree/master/libraries/DHTlib))
 5. MemoryFree by maniacbug ([GitHub](https://github.com/maniacbug/MemoryFree))
 
+# Files preparation
+
+1. You must rename or copy the DeviceSecrets.h.example to DeviceSecrets.h and add the appropriate information
+
 # Installation
 
 ## Arduino IDE
@@ -23,10 +27,6 @@ This is a prototype for a smart thermostat, which developed for the purpose of m
 2. Install PlatformIO package, follow instructions [here](http://platformio.org/get-started/ide?install=atom)
 3. After that you can compile and upload the project to the arduino. The dependencies will be downloaded automatically
 
-# Files preparation
-
-1. You must rename or copy the DeviceSecrets.h.example to DeviceSecrets.h and add the appropriate information
-
 # Notes
 
-+ Be carefull when error pages return to the arduino, it restarts
++ Be careful when error pages return to the arduino, it restarts

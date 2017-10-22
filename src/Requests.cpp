@@ -181,24 +181,7 @@ void sendDeviceAtributesStatusUpdateToApplicationServer(EthernetClient &ethClien
 int httpResponseReader(EthernetClient &ethClient) {
   if (ethClient.available()) {
 
-    // while(ethClient.available()) {
-    //   char c = ethClient.read();
-    //   Serial.print(c);
-    // }
-    // Serial.println();
-
     bool ok;
-
-    // // first read Content-length
-    // char contentLengthHeaders[] = "Content-Length: ";
-    // ok = ethClient.find(contentLengthHeaders);
-    // char size[6];
-    // ethClient.readBytesUntil('\r', size, 6);
-    // unsigned int sizeInt = (int) strtol(size, (char **)NULL, 10);
-    // Serial.println(sizeInt);
-    // if (sizeInt > FLASH_READ_BUFFER_MAX_SIZE) {
-    //   return -1;
-    // }
 
     // HTTP headers end with an empty line
     char endOfHeaders[] = "\r\n\r\n";

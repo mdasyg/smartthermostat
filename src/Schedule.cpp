@@ -43,10 +43,6 @@ void checkScheduleStatus(EthernetClient &ethClient, schedule schedules[], device
           ledStatusShiftRegisterHandler(scheduleStateLedIndex, HIGH);
           schedules[i].isActive = true;
           activeSchedule = i;
-          // request new schedule data
-          
-          // readUriFromFlash(deviceDataRequestUri, flashReadBuffer);
-          // sendHttpGetRequest(ethClient, flashReadBuffer, "t=sc");
         }
       }
 
