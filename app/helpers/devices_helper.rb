@@ -48,6 +48,8 @@ module DevicesHelper
     current_time = Time.now
     day_end      = current_time.end_of_day
 
+    puts 'Current'
+
     puts current_time
     puts day_end
 
@@ -123,7 +125,6 @@ module DevicesHelper
     puts "LEFT OVERS"
     puts left_over_events.inspect
 
-
     schedule_data_sorted = schedule_data_to_sort.sort do |sc1, sc2|
       sc1[:priority] <=> sc2[:priority]
     end
@@ -172,7 +173,11 @@ module DevicesHelper
         elsif schedule_event.schedule.recurrence_unit == Schedule::REPEAT_EVERY[:WEEK][:ID]
           frequency = schedule_event.schedule.recurrence_frequency.week.to_i
         end
-        schedule_data_sorted << { start: schedule_event.schedule.start_datetime.change(day: current_day, month: current_month, year: current_year), end: schedule_event.schedule.end_datetime.change(day: current_day, month: current_month, year: current_year), recurrent: frequency, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+
+        if (((current_time.at_beginning_of_day.to_formatted_s(:db).to_time - schedule_event.schedule.start_datetime.at_beginning_of_day.to_formatted_s(:db).to_time) % frequency) == 0)
+          schedule_data_sorted << { start: schedule_event.schedule.start_datetime.change(day: current_day, month: current_month, year: current_year), end: schedule_event.schedule.end_datetime.change(day: current_day, month: current_month, year: current_year), recurrent: frequency, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+        end
+        
       end
 
     end
