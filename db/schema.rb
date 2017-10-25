@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.index ["device_uid"], name: "fk_rails_69a3134aba"
   end
 
-  create_table "device_stats", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "device_infos", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
     t.string "stat_name", null: false
     t.string "value"
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.datetime "last_update_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["device_uid"], name: "fk_rails_e93e183788"
+    t.index ["device_uid"], name: "fk_rails_9bf60c9b31"
   end
 
   create_table "devices", primary_key: "uid", id: :bigint, unsigned: true, default: nil, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.integer "index_on_device", limit: 1, null: false, unsigned: true
     t.string "title", null: false
     t.text "description"
-    t.integer "duration"
+    t.integer "duration", null: false, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["device_uid"], name: "fk_rails_5f1190818b"
@@ -104,8 +104,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.datetime "end_datetime", null: false
     t.integer "priority", limit: 1, unsigned: true
     t.boolean "is_recurrent", null: false, unsigned: true
-    t.integer "recurrence_frequency", limit: 1, unsigned: true
-    t.integer "recurrence_unit", comment: "Measured in what the \"recurrence_frequency\" says", unsigned: true
+    t.integer "recurrence_frequency", limit: 1, comment: "Measured in what the \"recurrence_unit\" says", unsigned: true
+    t.integer "recurrence_unit", limit: 1, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "fk_rails_3c900465fa"
@@ -113,8 +113,8 @@ ActiveRecord::Schema.define(version: 20170906191919) do
 
   create_table "smart_thermostat_computed_datasets", id: :integer, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "device_uid", null: false, unsigned: true
-    t.integer "outside_temperature"
-    t.decimal "inside_temperature", precision: 10, scale: 3
+    t.integer "outside_temperature", null: false
+    t.decimal "inside_temperature", precision: 10, scale: 3, null: false
     t.integer "timeline", null: false, unsigned: true
     t.index ["device_uid", "outside_temperature", "inside_temperature"], name: "device_uid_and_outside_temp_and_inside_temperature_unique_idx", unique: true
   end
@@ -123,9 +123,9 @@ ActiveRecord::Schema.define(version: 20170906191919) do
     t.bigint "device_uid", null: false, unsigned: true
     t.datetime "sample_datetime", null: false
     t.integer "energy_source_status", limit: 1, null: false, comment: "Energy source working or not during the sample", unsigned: true
-    t.integer "outside_temperature"
-    t.decimal "inside_temperature", precision: 10, scale: 3
-    t.decimal "set_temperature", precision: 10, scale: 3
+    t.integer "outside_temperature", null: false
+    t.decimal "inside_temperature", precision: 10, scale: 3, null: false
+    t.decimal "set_temperature", precision: 10, scale: 3, null: false
     t.index ["device_uid", "sample_datetime"], name: "device_uid_and_sample_datetime_unique_idx", unique: true
   end
 
@@ -167,7 +167,7 @@ ActiveRecord::Schema.define(version: 20170906191919) do
 
   add_foreign_key "actions", "device_attributes"
   add_foreign_key "device_attributes", "devices", column: "device_uid", primary_key: "uid"
-  add_foreign_key "device_stats", "devices", column: "device_uid", primary_key: "uid"
+  add_foreign_key "device_infos", "devices", column: "device_uid", primary_key: "uid"
   add_foreign_key "devices", "users"
   add_foreign_key "quick_button_actions", "actions"
   add_foreign_key "quick_button_actions", "quick_buttons"
