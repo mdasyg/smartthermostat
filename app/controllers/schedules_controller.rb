@@ -64,22 +64,14 @@ class SchedulesController < ApplicationController
         return 'Recurrence unit not exists.'
       end
 
-      puts "Freq: #{frequency}"
-
       while start_time_loop <= end_time do
-        puts "Time to check: #{start_time_loop} against: #{schedule.start_datetime}"
-
         diff = start_time_loop - schedule.start_datetime
-        puts "Diff: #{diff}"
 
         if (diff == 0)
-          puts "BINGO"
           schedule.original_schedule = 1 # TRUE
           @recurrent_schedules_array << schedule
         elsif (diff != 0)
           if (diff % frequency) == 0
-            puts "BINGO"
-            puts "Time executing: #{(diff / frequency).to_i}"
             new_schedule                   = schedule.dup
             new_schedule.id                = schedule.id
             new_schedule.original_schedule = 0 # FALSE
@@ -88,13 +80,10 @@ class SchedulesController < ApplicationController
             @recurrent_schedules_array << new_schedule
           end
         end
-        puts ''
 
         start_time_loop = start_time_loop.advance(days: 1)
       end
     end
-
-    puts @recurrent_schedules_array.inspect
 
   end
 

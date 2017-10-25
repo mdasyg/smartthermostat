@@ -34,7 +34,8 @@ en:
         number_of_schedules: 'No. of shcedules'
       device_attribute:
         name: 'Attribute'
-        primitive_type_c_id: 'Primitive'
+        primitive_type_c_id: 'Primitive Type'
+        direction_c_id: 'Direction Type'
       device_info:
         stat_name: 'Name'
       quick_button:

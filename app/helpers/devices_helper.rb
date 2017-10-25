@@ -1,11 +1,10 @@
 module DevicesHelper
 
-  private def asdf(schedule_event)
-    # Check if data from smart thermostat for this schedule temps exists
+  # Check if data from smart thermostat for this schedule temperatures exists
+  private def compute_schedule_start_time_offset(schedule_event)
     # First check if device is smart thermostat
     start_time_offset = 0
     if schedule_event.device.type_c_id == Device::TYPES[:SMART_THERMOSTAT][:ID]
-      puts 'SMART THERMOSTAT DEVICE'
       smart_thermostat_attributes_associations = SmartThermostat.where(smart_device_uid: schedule_event.device_uid)
       if smart_thermostat_attributes_associations.any?
         # Get current outside temp
@@ -48,9 +47,6 @@ module DevicesHelper
     current_time = Time.now
     day_end      = current_time.end_of_day
 
-    puts current_time
-    puts day_end
-
     # acquire one time events for this day
     query_string = '(schedules.start_datetime BETWEEN :current_time AND :day_end)'
     query_string += ' OR '
@@ -64,42 +60,22 @@ module DevicesHelper
 
     device_schedule_events_from_single_time_schedules = device.schedule_events.joins(:schedule).where(schedules: { is_recurrent: false }).where(query_string, query_params).order('schedules.start_datetime, schedules.priority')
 
-    puts device_schedule_events_from_single_time_schedules.to_sql
-
-    puts "POU EISAI?"
-    pp device_schedule_events_from_single_time_schedules
-
     schedule_data_to_sort       = []
     left_over_events            = []
     next_schedule_event_checked = false
     device_schedule_events_from_single_time_schedules.each do |schedule_event| # Use each. otherwise order is not working.
-
-      puts "CHecking Schedule Event"
-      pp schedule_event
-
-      puts schedule_event.schedule.start_datetime.to_formatted_s(:db)
-      puts schedule_event.schedule.end_datetime.to_formatted_s(:db)
-
-      puts current_time.to_formatted_s(:db) >= schedule_event.schedule.start_datetime.to_formatted_s(:db)
-      puts current_time.to_formatted_s(:db) < schedule_event.schedule.end_datetime.to_formatted_s(:db)
 
       if current_time.to_formatted_s(:db) >= schedule_event.schedule.start_datetime.to_formatted_s(:db) && current_time.to_formatted_s(:db) < schedule_event.schedule.end_datetime.to_formatted_s(:db)
         schedule_data_to_sort << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
       else
         if !next_schedule_event_checked
 
-          start_time_offset = asdf(schedule_event)
-
-          puts "OFFSET START TIME #{start_time_offset} secs"
+          start_time_offset = compute_schedule_start_time_offset(schedule_event)
 
           # Subtract the offset from current schedule start time
-          puts schedule_event.schedule.start_datetime
           schedule_event.schedule.start_datetime = schedule_event.schedule.start_datetime.advance(seconds: -start_time_offset)
-          puts schedule_event.schedule.start_datetime
 
           schedule_data_to_sort.each do |schedule_data|
-            puts schedule_event.schedule.start_datetime
-            puts schedule_data[:end]
             if schedule_event.schedule.start_datetime < schedule_data[:end]
               schedule_data_to_sort << { start: schedule_event.schedule.start_datetime, end: schedule_event.schedule.end_datetime, recurrent: 0, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
               next_schedule_event_checked = true
@@ -115,26 +91,12 @@ module DevicesHelper
       end
     end
 
-    puts "TO SORT"
-    schedule_data_to_sort.each do |sc|
-      puts sc.inspect
-    end
-
-    puts "LEFT OVERS"
-    puts left_over_events.inspect
-
-
     schedule_data_sorted = schedule_data_to_sort.sort do |sc1, sc2|
       sc1[:priority] <=> sc2[:priority]
     end
 
     left_over_events.each do |left_over_sc|
       schedule_data_sorted << left_over_sc
-    end
-
-    puts "SORTED?"
-    schedule_data_sorted.each do |sc|
-      puts sc.inspect
     end
 
     # Do something for the recurrent events
@@ -154,16 +116,9 @@ module DevicesHelper
 
       device_schedule_events_from_recurrent_schedules = device.schedule_events.joins(:schedule).where(schedules: { is_recurrent: true }).order('schedules.created_at, schedules.priority')
 
-      puts "RECURRENT"
-      puts device_schedule_events_from_recurrent_schedules.inspect
-
       current_day   = current_time.day
       current_month = current_time.month
       current_year  = current_time.year
-
-      puts current_day
-      puts current_month
-      puts current_year
 
       device_schedule_events_from_recurrent_schedules.each do |schedule_event|
         frequency = nil
@@ -172,22 +127,23 @@ module DevicesHelper
         elsif schedule_event.schedule.recurrence_unit == Schedule::REPEAT_EVERY[:WEEK][:ID]
           frequency = schedule_event.schedule.recurrence_frequency.week.to_i
         end
-        schedule_data_sorted << { start: schedule_event.schedule.start_datetime.change(day: current_day, month: current_month, year: current_year), end: schedule_event.schedule.end_datetime.change(day: current_day, month: current_month, year: current_year), recurrent: frequency, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+
+        if (((current_time.at_beginning_of_day.to_formatted_s(:db).to_time - schedule_event.schedule.start_datetime.at_beginning_of_day.to_formatted_s(:db).to_time) % frequency) == 0)
+          schedule_data_sorted << { start: schedule_event.schedule.start_datetime.change(day: current_day, month: current_month, year: current_year), end: schedule_event.schedule.end_datetime.change(day: current_day, month: current_month, year: current_year), recurrent: frequency, priority: schedule_event.schedule.priority, actions: schedule_event.actions }
+        end
+
       end
 
     end
 
     # First, tell the device to delete the schedules that already had, and wait for the new ones
     payload = ActiveSupport::JSON.encode({ sc_del: :all })
-    puts payload
     mqtt_client.publish(device.uid.to_s, payload, false, 0)
 
     # Secondly, send the new schedules to the device
     schedule_data_sorted.each_with_index do |schedule_data, sc_idx|
-      puts "EDW #{sc_idx}"
       schedule_event_actions = schedule_data[:actions]
       payload                = ActiveSupport::JSON.encode({ sc: { idx: sc_idx, s: schedule_data[:start].time.to_i, e: schedule_data[:end].time.to_i, r: schedule_data[:recurrent], p: schedule_data[:priority] } })
-      puts payload
       mqtt_client.publish(device.uid.to_s, payload, false, 0)
       schedule_event_actions.each do |schedule_event_action|
         payload = ActiveSupport::JSON.encode(

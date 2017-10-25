@@ -65,7 +65,8 @@ FLUSH PRIVILEGES;
 + **WARNING**: DONT FORGET TO UPDATE THE CONFIGURATION ON SECRETS FOR HOW OFTEN ANALYZE TASKS RUNS
 
 ```cron
-*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:send_notification_for_offline_devices --silent
+*/5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> devices:send_offline_notifications --silent
+*/30 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:recalculate_smart_thermostat_start_datetime --silent
 */5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:training_set_sample --silent
 0 */6 * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:analyze_training_set --silent
 ```

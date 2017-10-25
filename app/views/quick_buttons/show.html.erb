@@ -74,11 +74,23 @@
         </div>
 
         <div class="col-md-3">
-          <%= action.device_attribute_start_value %>
+          <% if action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID] %>
+            <% DeviceAttribute::BOOL_VALUES.each do |key, hash| %>
+              <%= hash[:LABEL] if hash[:ID] == action.device_attribute_start_value.to_i %>
+            <% end %>
+          <% else %>
+            <%= action.device_attribute_start_value %> <%= action.device_attribute.unit %>
+          <% end %>
         </div>
 
         <div class="col-md-3">
-          <%= action.device_attribute_end_value %>
+          <% if action.device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID] %>
+            <% DeviceAttribute::BOOL_VALUES.each do |key, hash| %>
+              <%= hash[:LABEL] if hash[:ID] == action.device_attribute_end_value.to_i %>
+            <% end %>
+          <% else %>
+            <%= action.device_attribute_end_value %> <%= action.device_attribute.unit %>
+          <% end %>
         </div>
 
       </div>

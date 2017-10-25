@@ -21,13 +21,13 @@
 
     <div class="row">
 
-      <div data-label="<%= Device.human_attribute_name(:name) %>" class="col-md-2">
+      <div data-label="<%= DeviceAttribute.human_attribute_name(:name) %>" class="col-md-2">
         <div class="form-group responsive-table-element">
           <%= device_attribute_form.text_field :name, class: 'form-control' %>
         </div>
       </div>
 
-      <div data-label="<%= Device.human_attribute_name(:direction_c_id) %>" class="col-md-2">
+      <div data-label="<%= DeviceAttribute.human_attribute_name(:direction_c_id) %>" class="col-md-2">
         <div class="form-group responsive-table-element">
           <%= device_attribute_form.select(:direction_c_id, {}, {}, { class: 'form-control device-attribute-direction-selector' }) do %>
             <% options_for_select(@directions, device_attribute.direction_c_id) %>
@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <div data-label="<%= Device.human_attribute_name(:primitive_type_c_id) %>" class="col-md-2">
+      <div data-label="<%= DeviceAttribute.human_attribute_name(:primitive_type_c_id) %>" class="col-md-2">
         <div class="form-group responsive-table-element">
           <%= device_attribute_form.select(:primitive_type_c_id, {}, {}, { class: 'form-control device-attribute-primitive-type-selector' }) do %>
             <% options_for_select(@primitive_types, device_attribute.primitive_type_c_id) %>
@@ -43,13 +43,13 @@
         </div>
       </div>
 
-      <div data-label="<%= Device.human_attribute_name(:index_on_device) %>" class="col-md-1">
+      <div data-label="<%= DeviceAttribute.human_attribute_name(:index_on_device) %>" class="col-md-1">
         <div class="form-group responsive-table-element">
           <%= device_attribute_form.text_field(:index_on_device, class: 'form-control') %>
         </div>
       </div>
 
-      <div data-label="<%= Device.human_attribute_name(:min_value) %>" class="col-md-1">
+      <div data-label="<%= DeviceAttribute.human_attribute_name(:min_value) %>" class="col-md-1">
         <div class="form-group responsive-table-element">
           <% field_params = { class: 'form-control device-attribute-min-value' } %>
           <% (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:FEEDBACK_ONLY][:ID] || device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) ? field_params[:readonly] = true : field_params[:readonly] = false %>
@@ -58,7 +58,7 @@
         </div>
       </div>
 
-      <div data-label="<%= Device.human_attribute_name(:max_value) %>" class="col-md-1">
+      <div data-label="<%= DeviceAttribute.human_attribute_name(:max_value) %>" class="col-md-1">
         <div class="form-group responsive-table-element">
           <% field_params = { class: 'form-control device-attribute-max-value' } %>
           <% (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:FEEDBACK_ONLY][:ID] || device_attribute.primitive_type_c_id == DeviceAttribute::PRIMITIVE_TYPES[:BOOL][:ID]) ? field_params[:readonly] = true : field_params[:readonly] = false %>
@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <div data-label="<%= Device.human_attribute_name(:set_value) %>" class="col-md-1">
+      <div data-label="<%= DeviceAttribute.human_attribute_name(:set_value) %>" class="col-md-1">
         <div class="form-group responsive-table-element">
           <% field_params = { class: 'form-control device-attribute-set-value' } %>
           <% (device_attribute.direction_c_id == DeviceAttribute::DIRECTIONS[:FEEDBACK_ONLY][:ID]) ? field_params[:disabled] = true : nil %>
@@ -86,7 +86,7 @@
         </div>
       </div>
 
-      <div data-label="<%= Device.human_attribute_name(:unit) %>" class="col-md-1">
+      <div data-label="<%= DeviceAttribute.human_attribute_name(:unit) %>" class="col-md-1">
         <div class="form-group responsive-table-element">
           <%= device_attribute_form.text_field :unit, class: 'form-control' %>
         </div>
