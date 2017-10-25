@@ -5,7 +5,6 @@ namespace :smart_thermostat do
 
   desc 'Update smart thermostat schedules start datetime offset'
   task(:recalculate_smart_thermostat_start_datetime => [:environment]) do |t, args|
-
     smart_thermostat_devices = Device.where(type_c_id: Device::TYPES[:SMART_THERMOSTAT][:ID])
 
     mqtt_client      = MQTT::Client.new()
@@ -18,7 +17,6 @@ namespace :smart_thermostat do
     end
 
     mqtt_client.disconnect()
-
   end
 
   desc 'Update training dataset'
