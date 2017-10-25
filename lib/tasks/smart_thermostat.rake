@@ -3,6 +3,24 @@ include DevicesHelper
 
 namespace :smart_thermostat do
 
+  desc 'Update smart thermostat schedules start datetime offset'
+  task(:recalculate_smart_thermostat_start_datetime => [:environment]) do |t, args|
+
+    smart_thermostat_devices = Device.where(type_c_id: Device::TYPES[:SMART_THERMOSTAT][:ID])
+
+    mqtt_client      = MQTT::Client.new()
+    mqtt_client.host = Rails.application.secrets.mqtt[:host]
+    mqtt_client.port = Rails.application.secrets.mqtt[:port]
+    mqtt_client.connect()
+
+    smart_thermostat_devices.each do |smart_thermostat_device|
+      send_new_schedule_table_to_device(smart_thermostat_device, mqtt_client)
+    end
+
+    mqtt_client.disconnect()
+
+  end
+
   desc 'Update training dataset'
   task(:analyze_training_set => [:environment]) do |t, args|
     smart_thermostat_devices = Device.select(:uid).where(type_c_id: Device::TYPES[:SMART_THERMOSTAT][:ID])
@@ -207,33 +225,10 @@ namespace :smart_thermostat do
           sample.set_temperature      = set_temperature
           sample.save
         else
-          puts 'Smart thermostat associations missing'
+          # puts 'Smart thermostat associations missing'
         end
 
       end
-    end
-  end
-
-  desc 'Check which devices are offline for a certain amount of time and send notification to user owner'
-  task(:send_notification_for_offline_devices => [:environment]) do |t, args|
-    offline_period       = Rails.application.secrets.configs[:send_email_notification_after_device_offine_period_in_minutes]
-    current_time         = Time.now
-    minimum_offline_time = current_time.ago(offline_period.minutes).to_formatted_s(:db)
-
-    query_string = 'long_offline_time_notification_status = :long_offline_time_notification_status'
-    query_string += ' AND '
-    query_string += 'last_contact_at <= :minimum_offline_time'
-    query_params = {
-        minimum_offline_time:                  minimum_offline_time,
-        long_offline_time_notification_status: Device::OFFLINE_NOTIFICATION_STATUS[:NOT_SEND]
-    }
-
-    offline_devices_to_send_notification_for = Device.where([query_string, query_params])
-
-    offline_devices_to_send_notification_for.find_each do |offline_device|
-      UserMailer.notify_user_for_offline_devices(offline_device).deliver_now
-      offline_device.long_offline_time_notification_status = Device::OFFLINE_NOTIFICATION_STATUS[:EMAIL_SEND]
-      offline_device.save
     end
   end
 
