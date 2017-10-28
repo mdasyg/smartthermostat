@@ -66,9 +66,9 @@ FLUSH PRIVILEGES;
 
 ```cron
 */5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> devices:send_offline_notifications --silent
-*/30 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:recalculate_smart_thermostat_start_datetime --silent
 */5 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:training_set_sample --silent
 0 */6 * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:analyze_training_set --silent
+*/30 * * * * cd /var/www/html/home-auto && /home/vagrant/.rvm/wrappers/ruby-2.4.1/rake RAILS_ENV=<environment> smart_thermostat:recalculate_smart_thermostat_start_datetime --silent
 ```
 
 + To get more info about the tasks, look at the `lib/tasks`
