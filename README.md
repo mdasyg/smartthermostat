@@ -1,4 +1,4 @@
-# Device Manager
+# Smart Control
 
 'Device Manager' is a project it's creation started for the purposes of my thesis, with the title 'Design and implementation of the infrastructure of an intelligent ecological house'
 
