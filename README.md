@@ -1,6 +1,6 @@
 # Smart Control
 
-'Smart Control' is a project it's creation started for the purposes of my thesis, with the title 'Design and implementation of the infrastructure of an intelligent ecological house'
+'Smart Control' is a project its creation started for the purposes of my thesis, with the title 'Design and implementation of the infrastructure of an intelligent ecological house'
 
 # Requirements
 
