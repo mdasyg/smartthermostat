@@ -94,7 +94,6 @@ void setup() {
   Serial.println(DEVICE_SERIAL_NUMBER);
   Serial.print(F("F/W: "));
   Serial.println(DEVICE_FIRMWARE_VERSION);
-
 }
 
 void loop() {
@@ -220,7 +219,7 @@ void loop() {
   //     Serial.println();
   //   }
   //   Serial.println();
-  // 
+  //
   //   loop_counter = 0;
   //   lastHeartbeatTimestamp = now();
   // }

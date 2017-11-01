@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <MemoryFree.h>
 #include <avr/wdt.h>
@@ -7,8 +8,8 @@
 #include "Schedule.h"
 #include "QuickButtons.h"
 
-IPAddress ntpTimeServer(10, 168, 10, 60); // TODO REMOVE from here
-byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED }; // TODO REMOVE from here
+IPAddress ntpTimeServer(ntpTimeServerAddress[0], ntpTimeServerAddress[1], ntpTimeServerAddress[2], ntpTimeServerAddress[3]); // TODO REMOVE from here
+byte mac[] = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
 // led status
 byte ledStatus = 0b00000000;

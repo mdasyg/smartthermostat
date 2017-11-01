@@ -13,7 +13,6 @@
 const char DEVICE_FIRMWARE_VERSION[] = "0.0.1";
 const unsigned int DEVICE_FIRMWARE_VERSION_NUMBER = 0; // remember to increment by 1, when incrementing the fw version string.
 const byte WDT_TIMEOUT_TIME = WDTO_8S;
-const int timeZone = 3; // Athens with DST enabled
 const byte NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
 const byte FLASH_READ_BUFFER_MAX_SIZE = 110;
 const byte systemDataStructuresEepromAddressStart = 1;
