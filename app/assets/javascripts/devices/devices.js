@@ -46,10 +46,19 @@ function initSmartThermostatDeviceAttributesSourceSelectiorSelect2() {
     });
 }
 
+function titleMove(event) {
+    var title = this.legend.title;
+    title.translate(((this.legend.legendWidth / 2) - (title.width / 2)), title.y);
+}
+
 function displayChart(chartData) {
     Highcharts.chart('smart-thermostat-analyzed-data-graph-container', {
         chart: {
-            type: 'spline'
+            type: 'spline',
+            events: {
+                load: titleMove,
+                redraw: titleMove
+            }
         },
         title: {
             text: 'Function diagram'
@@ -58,11 +67,6 @@ function displayChart(chartData) {
             text: 'Irregular time data in Highcharts JS'
         },
         xAxis: {
-            //     type: 'datetime',
-            //     dateTimeLabelFormats: { // don't display the dummy year
-            //         month: '%e. %b',
-            //         year: '%b'
-            //     },
             title: {
                 text: 'Timeline (secs)'
             }
@@ -72,7 +76,14 @@ function displayChart(chartData) {
                 text: 'Inside Temperature (*C)'
             }
         },
-
+        legend: {
+            title: {
+                text: 'Outside Temperature (*C)',
+                style: {
+                    fontStyle: 'italic'
+                }
+            }
+        },
         plotOptions: {
             spline: {
                 marker: {
@@ -80,7 +91,6 @@ function displayChart(chartData) {
                 }
             }
         },
-
         series: chartData
     });
 }
