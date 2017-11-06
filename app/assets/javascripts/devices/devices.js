@@ -61,11 +61,11 @@ function displayChart(chartData) {
             }
         },
         title: {
-            text: 'Function diagram'
+            text: 'Room temperature gain timeline'
         },
-        subtitle: {
-            text: 'Irregular time data in Highcharts JS'
-        },
+        // subtitle: {
+        //     text: 'Irregular time data in Highcharts JS'
+        // },
         xAxis: {
             title: {
                 text: 'Timeline (secs)'
