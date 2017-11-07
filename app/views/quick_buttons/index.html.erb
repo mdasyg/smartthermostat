@@ -10,11 +10,14 @@
 
     <div class="responsive-table-header">
       <div class="row">
-        <div class="col-md-2"><b>Title</b></div>
-        <div class="col-md-2"><b>Description</b></div>
-        <div class="col-md-2"><b>Duration</b></div>
-        <div class="col-md-2"><b>Index</b></div>
-        <div class="col-md-2"><b>Device Name</b></div>
+        <div class="col-md-2">
+          <b><%= QuickButton.human_attribute_name(:title) %></b></div>
+        <div class="col-md-3">
+          <b><%= QuickButton.human_attribute_name(:description) %></b></div>
+        <div class="col-md-2">
+          <b><%= QuickButton.human_attribute_name(:duration) %></b></div>
+        <div class="col-md-3"><b><%= Device.human_attribute_name(:name) %></b>
+        </div>
         <div class="col-md-2"><b>Actions</b></div>
       </div>
     </div>
@@ -26,16 +29,13 @@
         <div data-label="<%= QuickButton.human_attribute_name(:title) %>" class="col-md-2">
           <div class="responsive-table-element"><%= quick_button.title %></div>
         </div>
-        <div data-label="<%= QuickButton.human_attribute_name(:description) %>" class="col-md-2">
+        <div data-label="<%= QuickButton.human_attribute_name(:description) %>" class="col-md-3">
           <div class="responsive-table-element"><%= quick_button.description %></div>
         </div>
         <div data-label="<%= QuickButton.human_attribute_name(:duration) %>" class="col-md-2">
           <div class="responsive-table-element"><%= quick_button.duration %></div>
         </div>
-        <div data-label="<%= QuickButton.human_attribute_name(:index_on_device) %>" class="col-md-2">
-          <div class="responsive-table-element"><%= quick_button.index_on_device %></div>
-        </div>
-        <div data-label="<%= Device.human_attribute_name(:name) %>" class="col-md-2">
+        <div data-label="<%= Device.human_attribute_name(:name) %>" class="col-md-3">
           <div class="responsive-table-element"><%= quick_button.device.name %></div>
         </div>
         <div data-label="Actions" class="col-md-2">
