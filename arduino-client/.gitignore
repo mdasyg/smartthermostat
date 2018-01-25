@@ -1,0 +1,8 @@
+# Project
+src/DeviceSecrets.h
+
+# PlatformIO
+.pioenvs
+.piolibdeps
+.clang_complete
+.gcc-flags.json
